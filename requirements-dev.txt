@@ -1,0 +1,3 @@
+# For running the test suite: python -m pytest
+-r requirements.txt
+pytest>=8

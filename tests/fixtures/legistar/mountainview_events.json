@@ -1,0 +1,27 @@
+[
+ {
+  "EventId": 3354,
+  "EventGuid": "4FDF21F6-B540-49F4-9581-1AC3221F8E75",
+  "EventLastModifiedUtc": "2026-02-20T00:53:18.49",
+  "EventRowVersion": "AAAAAAEHb1c=",
+  "EventBodyId": 138,
+  "EventBodyName": "City Council",
+  "EventDate": "2026-02-24T00:00:00",
+  "EventTime": "5:15 PM",
+  "EventVideoStatus": "Public",
+  "EventAgendaStatusId": 10,
+  "EventAgendaStatusName": "Final",
+  "EventMinutesStatusId": 10,
+  "EventMinutesStatusName": "Final",
+  "EventLocation": "Council Chambers and Video Conference, 500 Castro St., Mountain View, CA 94041",
+  "EventAgendaFile": "https://legistar1.granicus.com/mountainview/meetings/2026/2/3354_A_City_Council_26-02-24_Agenda_and_Notice.pdf",
+  "EventMinutesFile": null,
+  "EventAgendaLastPublishedUTC": "2026-02-20T00:53:18.383",
+  "EventMinutesLastPublishedUTC": null,
+  "EventComment": "JOINT MEETING OF CITY COUNCIL (REGULAR) AND SHORELINE REGIONAL PARK COMMUNITY (SPECIAL)",
+  "EventVideoPath": null,
+  "EventMedia": "5298",
+  "EventInSiteURL": "https://mountainview.legistar.com/MeetingDetail.aspx?LEGID=3354&GID=344&G=37932D0B-039B-4529-B6D8-73445A1D4799",
+  "EventItems": []
+ }
+]

@@ -1,0 +1,4 @@
+# Small pure wheels, nothing to compile.
+httpx>=0.28
+pypdf>=6.0
+PyYAML>=6.0

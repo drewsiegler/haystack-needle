@@ -1,0 +1,27 @@
+[
+ {
+  "EventId": 4119,
+  "EventGuid": "E43E97E9-3AB4-4E82-891D-9274ADB6D956",
+  "EventLastModifiedUtc": "2024-06-15T01:44:02.863",
+  "EventRowVersion": "AAAAAAGzJKk=",
+  "EventBodyId": 138,
+  "EventBodyName": "City Council",
+  "EventDate": "2027-12-31T00:00:00",
+  "EventTime": "12:15 AM",
+  "EventVideoStatus": "Public",
+  "EventAgendaStatusId": 14,
+  "EventAgendaStatusName": "Hidden",
+  "EventMinutesStatusId": 9,
+  "EventMinutesStatusName": "Draft",
+  "EventLocation": "Location Field",
+  "EventAgendaFile": null,
+  "EventMinutesFile": null,
+  "EventAgendaLastPublishedUTC": null,
+  "EventMinutesLastPublishedUTC": null,
+  "EventComment": "Notes Field",
+  "EventVideoPath": null,
+  "EventMedia": null,
+  "EventInSiteURL": "https://sunnyvaleca.legistar.com/MeetingDetail.aspx?LEGID=4119&GID=270&G=FA76FAAA-7A74-41EA-9143-F2DB1947F9A5",
+  "EventItems": []
+ }
+]
