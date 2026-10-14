@@ -36,7 +36,34 @@ Two items still match nothing by title: Saratoga's "Law Enforcement Town Hall" a
 - immigration: added `immigration enforcement`, the phrase in every 2025–26 city policy here (San José, Sunnyvale, Mountain View, Santa Clara). The case-sensitive `ICE` rule holds up: 624 San José titles since Jan 2025 contain the letters "ice", and none has the word "ICE".
 - tenants: added `tenant anti-harassment`, `tenant anti-retaliation`, `tenant relocation`, `eviction prevention`.
 
+## First replay, Oct 14, 2026
+
+`backtest/run.py` replayed the 8 Legistar cases against the live API (532 requests, about 10 minutes; cached after that). For each stage it read the item's title, its item text (agenda note and the matter's text, usually the staff recommendation) and its attachments, leaving out attachments changed after the meeting.
+
+| Case | First appearance | Caught there? | Matched in |
+| --- | --- | --- | --- |
+| Mountain View ends Flock | Feb 24, 2026, City Council | Yes | title, item text, staff report |
+| Cupertino ALPR program | Mar 1, 2023, TICC | Yes | title, item text (no attachments) |
+| Santa Clara Flock purchase | Dec 3, 2024, consent calendar | Yes | title, item text, report to council |
+| San José ALPR rules | Mar 10, 2026, City Council | Yes | title, item text, memo |
+| San José immigration enforcement | Oct 28, 2025, City Council | Yes | title, item text, memo |
+| Sunnyvale immigration enforcement | Mar 10, 2026, colleagues' memo | Yes | title, item text, memo |
+| Sunnyvale tenant protections | Apr 13, 2026, Planning Commission | Yes | title, item text, attachments |
+| Mountain View tenant anti-harassment | Mar 27, 2025, Rental Housing Committee | Yes | title, item text, staff report |
+
+All 8 are caught at their first appearance from the title, with the item text and attachments as backup, and every later stage found matched too. The other 3 cases (Saratoga, the county, Los Altos Hills) wait for their adapters.
+
+What else it turned up:
+
+- **San José ALPR, stage 2** (matter 16320, Sept 23 Rules): not on that day's agenda under that matter, though Legistar gives Sept 23 as its agenda date. Check by hand.
+- **San José ALPR, stage 5** (matter 16386): Legistar now dates it Oct 28, matching the deferral, so the case could list Oct 28.
+- **San José immigration**: the matter's text says "As recommended by the Rules and Open Government Committee on October 22, 2025", but no Rules item that week has an immigration title. The real first appearance may be a Rules memo under another title; check the Oct 22 agenda.
+- **No earlier appearances** turned up in the 60 days before any first appearance (titles and agenda notes). Before the Mountain View tenant case, the tenants watchlist matched 6 other items, mostly the Mobile Home Rent Stabilization Ordinance, plus a Rental Housing Committee "Notice to the Public" paragraph naming Rent Stabilization. That paragraph is what the boilerplate flag is for; the committee had too few meetings in the window (fewer than 4) to judge.
+- One Mountain View staff report is an encrypted PDF; reading it needs the `cryptography` package, now in requirements.txt.
+
 ## Still open
+
+- Cost of live runs: a matter's text takes 2 requests and each attachment a download, at one request a second. Phase 2b's state file should fetch only new or changed items (Legistar gives each a last-modified time).
 
 - `sheriff` catches Saratoga at every stage but will also fire on most Board of Supervisors agendas. One fix is to limit that term to city bodies, which needs per-term body limits the watchlist format doesn't have yet. Decide after phase 3 shows how noisy it is.
 - Check whether the county's ALPR policy for contract cities was on a 2025 agenda (the IQM2 calendar read starts in Jan 2026).

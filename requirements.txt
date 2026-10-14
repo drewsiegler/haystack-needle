@@ -1,4 +1,5 @@
 # Small pure wheels, nothing to compile.
 httpx>=0.28
 pypdf>=6.0
+cryptography>=3.1  # pypdf needs it to open AES-encrypted PDFs
 PyYAML>=6.0

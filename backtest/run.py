@@ -93,7 +93,7 @@ def where(matches) -> str:
         terms = ", ".join(dict.fromkeys(f'"{m.term}"' for m in found))
         label = LOCATION_NAMES[location]
         if location == "attachment":
-            pages = sorted({(m.attachment.name, m.page) for m in found}, key=lambda x: x[1])
+            pages = sorted({(m.attachment.name, m.page) for m in found}, key=lambda x: (x[1], x[0]))
             label += " (" + "; ".join(f"{name} p. {page}" for name, page in pages[:3]) + ")"
         parts.append(f"{label}: {terms}")
     return "; ".join(parts) or "nothing"
@@ -145,7 +145,7 @@ def report(results, skipped, lookback, attachments: bool) -> str:
                 continue
             late = f' ({s["late"]} attachment(s) changed after the meeting left out)' if s["late"] else ""
             out.append(f'- Stage {i}, {stage["date"]}, {s["meeting"].body.name}, matter {stage["matter"]}: '
-                       f'"{s["item"].title[:120]}"; {len(s["item"].attachments)} attachment(s){late}. '
+                       f'"{" ".join(s["item"].title.split())[:120]}"; {len(s["item"].attachments)} attachment(s){late}. '
                        f'Matched {where(s["matches"])}.')
         m = r["matter"]
         agenda_date = (m.get("MatterAgendaDate") or "")[:10]
@@ -157,11 +157,12 @@ def report(results, skipped, lookback, attachments: bool) -> str:
         seen = set()
         lines = []
         for x in sorted(earlier, key=lambda x: x.meeting.date):
-            if x.item.id in seen:
+            key = (x.meeting.id, x.item.matter_id or x.item.title)  # one line per item, not per row or term
+            if key in seen:
                 continue
-            seen.add(x.item.id)
+            seen.add(key)
             lines.append(f'  - {x.meeting.date}, {x.meeting.body.name}, matter {x.item.matter_id}: '
-                         f'"{x.item.title[:120]}" ({LOCATION_NAMES[x.location]}: "{x.term}")')
+                         f'"{" ".join(x.item.title.split())[:120]}" ({LOCATION_NAMES[x.location]}: "{x.term}")')
         out.append(f'- Earlier matches in the {lookback} days before (titles and agenda notes, '
                    f'{r["swept"]} meetings): {len(lines) or "none"}')
         out += lines[:10]
