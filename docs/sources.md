@@ -4,18 +4,18 @@ Phase 1 source check, done Oct 14, 2026. It replaces the platform table in [scop
 
 ## The short version
 
-Seven adapters cover about 50 bodies. Four of them read an official JSON API or a plain agenda page and need no scraping tricks. The hard part isn't the platforms, it's **robots.txt**: BoardDocs and PrimeGov tell every bot except search engines to stay out, and that covers 15 bodies, including the County Board of Education, all four community college districts and Palo Alto. That's a decision for phase 4 (see [Open question](#open-question-boarddocs-and-primegov)).
+Seven adapters cover about 51 bodies. Four of them read an official JSON API or a plain agenda page and need no scraping tricks. The hard part isn't the platforms, it's **robots.txt**: BoardDocs and PrimeGov tell every bot except search engines to stay out, and that covers 15 bodies, including the County Board of Education, all four community college districts and Palo Alto. That's a decision for phase 4 (see [Open question](#open-question-boarddocs-and-primegov)).
 
 | Adapter | Bodies | How it reads | robots.txt | Phase |
 | --- | --- | --- | --- | --- |
 | Legistar | 6 | Official Web API, JSON | none (404) | 2 |
 | Granicus IQM2 | 3 | HTML calendar + RSS feed, PDFs | `Crawl-delay: 60` | 3 |
-| CivicClerk | 4 | Public OData API, JSON (agenda items and attachments) | none (404) | 4 |
+| CivicClerk | 5 | Public OData API, JSON (agenda items and attachments) | none (404) | 4 |
 | CivicPlus AgendaCenter | 4 | Agenda list + PDFs | `Disallow: /RSS.aspx`, Campbell adds `Crawl-delay: 20` | 4 (or 2) |
 | Simbli (eBoardSolutions) | 18 (12 confirmed) | Meeting pages | none found | 4 |
 | BoardDocs | 13 | — | **disallows all but search engines** | 4, blocked |
 | PrimeGov | 2 | Public API works, JSON | **`Disallow: /`** | 4, blocked |
-| One-offs | 8 | Municode Meetings, CivicWeb, iCompass, AgendaOnline, Granicus, Laserfiche, Los Altos's own site | varies | later |
+| One-offs | 7 | Municode Meetings, CivicWeb, iCompass, AgendaOnline, Granicus, Laserfiche | varies | later |
 
 ## By body
 
@@ -48,7 +48,7 @@ Gilroy's site still links an old `gilroyca.iqm2.com` portal; it has moved to Civ
 
 ### CivicClerk (phase 4, easy)
 
-Each city has an open OData API at `https://{tenant}.api.civicclerk.com/v1/`. `Events` lists meetings; `Meetings/{agendaId}` returns the agenda as nested items with their attachments. Tested on the Los Altos Hills Jan 15, 2026 council agenda, which listed the Flock termination item by title.
+Los Altos moved its current meetings to CivicClerk (found by hand on Oct 14; losaltosca.gov itself returns 403 to scripts). Its older agendas stay in a CivicPlus AgendaCenter archive with RSS and Notify Me, which the app doesn't need. Each city has an open OData API at `https://{tenant}.api.civicclerk.com/v1/`. `Events` lists meetings; `Meetings/{agendaId}` returns the agenda as nested items with their attachments. Tested on the Los Altos Hills Jan 15, 2026 council agenda, which listed the Flock termination item by title.
 
 | Body | Tenant |
 | --- | --- |
@@ -56,6 +56,7 @@ Each city has an open OData API at `https://{tenant}.api.civicclerk.com/v1/`. `E
 | Morgan Hill | `morganhillca` |
 | Gilroy | `gilroyca` |
 | Los Altos Hills City Council (commissions use AgendaCenter) | `losaltoshillsca` |
+| Los Altos City Council and commissions | `losaltosca` |
 
 ### CivicPlus AgendaCenter (phase 4, or phase 2 for Saratoga)
 
@@ -97,14 +98,13 @@ PrimeGov's public API (`/api/v2/PublicPortal/ListUpcomingMeetings`) returned Pal
 
 | Body | Platform | Status |
 | --- | --- | --- |
-| Los Gatos Town Council | Municode Meetings (losgatos-ca.municodemeetings.com) | Drops the connection for scripted clients; check by hand |
+| Los Gatos Town Council | Municode Meetings (losgatos-ca.municodemeetings.com) | Agendas and packets load fine for a script, as HTML (meetings.municode.com/adaHtmlDocument) and PDF (Azure blob storage). The meeting list doesn't: the portal drops scripted connections, and there's no RSS. Phase 4 needs another way to learn new meeting ids: the portal's own data calls (look in browser dev tools) or the town's Notify Me emails |
 | Monte Sereno | iCompass CivicWeb (montesereno.civicweb.net) | Found, not yet tested |
 | Mountain View-Los Altos HSD | iCompass / Diligent (mvla.ic-board.com, mvlapub.ic-board.com) | Found by search, not tested |
 | Milpitas Unified | AgendaOnline (per its website) | Not tested |
 | Gilroy Unified | AgendaOnline (gilroy.agendaonline.net); also links Simbli | Confirm which is current |
 | Housing Authority of the County of Santa Clara | Granicus (hacsc.granicus.com) | Found, not tested |
 | Midpeninsula Regional Open Space District | Laserfiche portal | Found, not tested |
-| Los Altos (city) | Its own website (losaltosca.gov/citycouncil/...) | Returns 403 to any non-browser client; check by hand, fall back to its email notices |
 
 Still unknown: Lakeside Joint SD, El Camino Healthcare District, Santa Clara County Central Fire.
 
