@@ -1,0 +1,303 @@
+# Past items Haystack Needle should have caught, and when each first appeared.
+#
+# backtest/run.py (phase 2) replays these: for each case it fetches the
+# body's agendas around `first_appearance`, runs the matcher with today's
+# watchlists.yaml, and reports whether the item was caught, at which stage,
+# and from where (title, item text or attachment).
+#
+# Fields
+#   watchlist         which watchlist should fire
+#   source            adapter and client/tenant, so the replay knows where to look
+#   phase             the build phase whose adapter covers it
+#   first_appearance  earliest agenda the item shows up on (meeting date)
+#   stages            every agenda appearance found so far, oldest first;
+#                     matter ids are Legistar MatterIds
+#   title_match       does the item's first-appearance title match the current
+#                     watchlists.yaml under the matcher rules in docs/scope.md?
+#                     "no" means only item text or attachments could catch it.
+#                     Comments say where the starting watchlist differed.
+#   confirmed         false when a date comes from news coverage, not the agenda
+#
+# Dates are meeting dates. The agenda posts 72 hours before a regular meeting
+# and 24 hours before a special one.
+
+- id: saratoga-law-enforcement-2026
+  summary: Saratoga weighs a 33% Sheriff contract increase against switching to Los Gatos-Monte Sereno Police
+  watchlist: policing-contracts
+  source: {adapter: civicplus, site: www.saratoga.ca.us}
+  phase: 4  # or 2, if Saratoga is added early
+  first_appearance: 2026-01-21
+  stages:
+    - date: 2025-11-17
+      body: Finance Advisory Committee
+      item: "Budget packet: \"Public Safety – increased by $664,240 as a result of Sheriff contract increases\""
+      where: attachment, p. 15 of a 156-page packet  # should be a low-score digest match
+      url: https://www.saratoga.ca.us/AgendaCenter/ViewFile/Agenda/_11172025-1384
+    - date: 2026-01-21
+      body: City Council
+      item: "2.1 Multi-Jurisdictional Sheriff's Office Contract Negotiations Ad Hoc Committee"
+      url: https://www.saratoga.ca.us/AgendaCenter/ViewFile/Agenda/_01212026-1401
+    - date: 2026-01-27
+      body: City Council (special meeting, 24-hour notice)
+      item: "2. Sheriff Contract Renewal (Attachment A: 2026-27 Sheriff Cost Proposal)"
+      url: https://www.saratoga.ca.us/AgendaCenter/ViewFile/Agenda/_01272026-1403
+    - date: 2026-04-27
+      body: City Council (special)
+      item: "Saratoga Law Enforcement Options (Attachment E: Los Gatos Preliminary Proposal)"
+      url: https://www.saratoga.ca.us/AgendaCenter/ViewFile/Agenda/_04272026-1434
+    - date: 2026-06-03
+      body: City Council
+      item: "2.1 Review Law Enforcement Services Options of the Santa Clara County Sheriff and the Los Gatos - Monte Sereno Police Department"
+      url: https://www.saratoga.ca.us/AgendaCenter/ViewFile/Agenda/_06032026-1444
+    - date: 2026-08-11
+      body: City Council (special)
+      item: "1. Santa Clara County Sheriff Contract FY 2026-27 Service Levels"
+      url: https://www.saratoga.ca.us/AgendaCenter/ViewFile/Agenda/_08112026-1461
+    - date: 2026-09-19
+      body: City Council (special)
+      item: Law Enforcement Town Hall (repeated 2026-09-30)
+      url: https://www.saratoga.ca.us/AgendaCenter/ViewFile/Agenda/_09192026-1477
+    - date: 2026-10-07
+      body: City Council
+      item: "2.1 Law Enforcement Discussion and Agreement Determination"
+      url: https://www.saratoga.ca.us/AgendaCenter/ViewFile/Agenda/_10072026-1482
+  title_match: "yes"  # "sheriff"
+  confirmed: true
+  notes: >
+    NBC Bay Area reported a 4-1 vote to stay with the Sheriff; the Oct 7 item is the
+    likely vote (confirm in minutes). PDF text renders the department as
+    "Los Gatos - Monte Sereno", "Los Gatos -Monte Sereno" and "Los Gatos Monte Sereno",
+    which is why the matcher treats a hyphen and a space alike. The starting term
+    "law enforcement services agreement" never appears; the agendas say "law enforcement
+    agreement" and "law enforcement services", so the term is now "law enforcement
+    service". Five of the eight stages were special
+    meetings posted 24 hours ahead. The Oct 7 decision's title matches nothing; its
+    item text matches "LGMSPD", "Los Gatos Monte Sereno" (hyphen rule) and "Sheriff's".
+
+- id: county-alpr-surveillance-policy-2026
+  summary: Board of Supervisors bars Flock as the Sheriff's license plate reader vendor (3-2)
+  watchlist: surveillance
+  source: {adapter: iqm2, site: sccgov.iqm2.com}
+  phase: 3
+  first_appearance: 2026-01-27  # approximate; see confirmed
+  stages:
+    - date: 2026-01-27
+      body: Board of Supervisors
+      item: Renewal of the Sheriff's ALPR surveillance use policy, deferred one month (Supervisor Duong)
+    - date: 2026-02-24
+      body: Board of Supervisors
+      item: Updated Surveillance Use Policy adopted 3-2, excluding Flock
+  title_match: unknown
+  confirmed: false
+  notes: >
+    Dates are inferred from news coverage (San José Spotlight, Feb 3, 2026: "last week";
+    KQED, Feb 25, 2026: "Tuesday afternoon"). Find the actual items on sccgov.iqm2.com,
+    and check whether a committee (Public Safety and Justice?) saw it first. Affects
+    Cupertino, Saratoga and Los Altos Hills, which contract with the Sheriff.
+    Sources: https://www.kqed.org/news/12074467 and San José Spotlight,
+    republished at https://piedmontexedra.com/?p=1569117.
+
+- id: los-altos-hills-flock-2026
+  summary: Los Altos Hills ends its Flock contract and takes 31 cameras offline
+  watchlist: surveillance
+  source: {adapter: civicclerk, tenant: losaltoshillsca}
+  phase: 4
+  first_appearance: 2026-01-15  # earliest found; "Ongoing Business" implies an earlier one
+  stages:
+    - date: 2026-01-15
+      body: City Council
+      item: "Discussion and Possible Direction on Terminating Agreement with FLOCK Safety for the Town's Automatic License Plate Reader System"
+      civicclerk_agenda_id: 4957
+  title_match: "yes"  # "Flock"
+  confirmed: true
+  notes: >
+    Listed under Ongoing Business, so it likely appeared on a late-2025 agenda first.
+    Search the CivicClerk API for earlier council or Technology Committee items.
+
+- id: mountain-view-flock-termination-2026
+  summary: Mountain View cancels its Flock contract after outside agencies searched its data
+  watchlist: surveillance
+  source: {adapter: legistar, client: mountainview}
+  phase: 2
+  first_appearance: 2026-02-24
+  stages:
+    - date: 2026-02-24
+      body: City Council
+      item: Automated License Plate Reader Contract
+      matter: 10357
+  title_match: "yes"  # "automated license plate", "license plate reader"
+  confirmed: true
+  notes: >
+    The police chief turned the cameras off on Feb 2, 2026, before any agenda; that
+    announcement is outside what this app reads. The 2024 adoption ran Public Safety
+    Advisory Board (2024-04-25, matter 8543) then Council (2024-05-28, matter 8297).
+
+- id: cupertino-flock-2023-2024
+  summary: Cupertino builds a city-owned ALPR program and leases cameras from Flock
+  watchlist: surveillance
+  source: {adapter: legistar, client: cupertino}
+  phase: 2
+  first_appearance: 2023-03-01
+  stages:
+    - date: 2023-03-01
+      body: Technology, Information and Communications Commission (TICC)
+      item: Receive presentation on License Plate Recognition
+      matter: 13202
+    - date: 2023-03-16
+      body: Public Safety Commission
+      item: Automated License Plate Reader (ALPR) - City Work Program Update
+      matter: 13250
+    - date: 2024-09-12
+      body: Public Safety Commission
+      item: City-Owned Automated License Plate Reader (ALPR) Program
+      matter: 14484
+    - date: 2024-10-01
+      body: City Council
+      item: City-Owned ALPR Program and award of a contract for the lease of ALPR cameras to Flock Safety
+      matter: 14503
+  title_match: "yes"  # "license plate recognition"; the starting watchlist missed it until PSC two weeks later
+  confirmed: true
+  notes: >
+    The best example of a fight surfacing in a commission first: 19 months between the
+    first commission presentation and the council contract.
+
+- id: santa-clara-flock-purchase-2024
+  summary: Santa Clara buys Flock license plate readers on the consent calendar, through a reseller
+  watchlist: surveillance
+  source: {adapter: legistar, client: santaclara}
+  phase: 2
+  first_appearance: 2024-12-03
+  stages:
+    - date: 2024-12-03
+      body: City Council and Authorities Concurrent (consent calendar)
+      item: Action on Purchase Order with Insight Public Sector for FLOCK Automated License Plate Reader Systems
+      matter: 23898
+    - date: 2026-03-24
+      body: City Council and Authorities Concurrent
+      item: Informational Report Regarding the Santa Clara Police Department's ALPR Policy, Compliance Review, and Program Operations
+      matter: 26138
+  title_match: "yes"  # "Flock", "automated license plate"
+  confirmed: true
+  notes: >
+    The contracting party is a reseller (Insight Public Sector), not Flock. Here the
+    title still names Flock; a vaguer title would leave only the attachment to catch it.
+
+- id: san-jose-alpr-2026
+  summary: San José keeps its 474 Flock cameras but cuts retention to 30 days; council memos keep coming
+  watchlist: surveillance
+  source: {adapter: legistar, client: sanjose}
+  phase: 2
+  first_appearance: 2026-03-10
+  stages:
+    - date: 2026-03-10
+      body: City Council
+      item: Automated License Plate Readers Data Usage Protocol Update
+      matter: 15601
+    - date: 2026-09-23
+      body: Rules and Open Government Committee
+      item: Automated License Plate Reader Data Access and Safeguards (Kamei)
+      matter: 16320
+    - date: 2026-09-30
+      body: Rules and Open Government Committee
+      item: Automated License Plate Reader Data Access and Safeguards (Kamei, Tordillos, Cohen, and Mulcahy)
+      matter: 16339
+    - date: 2026-09-30
+      body: Rules and Open Government Committee
+      item: Internal Controls for Automatic License Plate Readers (Mayor, Foley, Candelas, and Casey)
+      matter: 16343
+    - date: 2026-10-21
+      body: Rules and Open Government Committee
+      item: Automated License Plate Readers - DEFERRED TO 10/28/26 PER ADMINISTRATION
+      matter: 16386
+  title_match: "yes"  # "automated license plate"; the Mayor's memo (16343) matched only after "automatic license plate" and plurals were added
+  confirmed: true
+  notes: >
+    Still live: the Rules item is deferred to Oct 28, 2026, and the contract was to run
+    "until June" with direction to explore other vendors. "Readers" (plural) is why the
+    matcher lets a term's last word be plural.
+
+- id: san-jose-immigration-enforcement-2025
+  summary: San José restricts civil immigration enforcement on city property
+  watchlist: immigration
+  source: {adapter: legistar, client: sanjose}
+  phase: 2
+  first_appearance: 2025-10-28
+  stages:
+    - date: 2025-10-28
+      body: City Council
+      item: Restricting Civil Immigration Enforcement Activities on Certain City Properties and Facilities
+      matter: 15221
+    - date: 2026-01-13
+      body: City Council
+      item: Adoption of City Council Policy 7-15, Prohibiting the Use of City Parking Lots, Vacant Lots, and Garages for Civil Immigration Enforcement
+      matter: 15409
+  title_match: "yes"  # "immigration enforcement"; no starting term matched "Civil Immigration Enforcement"
+  confirmed: true
+  notes: >
+    Of 624 San José titles since Jan 2025 containing the letters "ice", none has
+    whole-word capital "ICE"; the only two immigration items say "Civil Immigration
+    Enforcement". Mountain View (2026-06-23, matter 10612) and Santa Clara (Policy 056, update
+    on 2026-05-19, matter 26347) took up similar policies.
+
+- id: sunnyvale-immigration-enforcement-2026
+  summary: Sunnyvale colleagues' memo leads to a policy barring civil immigration enforcement on city property
+  watchlist: immigration
+  source: {adapter: legistar, client: sunnyvaleca}
+  phase: 2
+  first_appearance: 2026-03-10
+  stages:
+    - date: 2026-03-10
+      body: City Council
+      item: "Colleagues Memorandum: Prohibiting the Use of City Properties for Civil Immigration Enforcement Purposes and Related Policies"
+      matter: 16745
+    - date: 2026-04-07
+      body: City Council
+      item: Consider Adopting a Resolution Establishing a City Council Policy Prohibiting the Use of City Properties for Civil Immigration Enforcement
+      matter: 16526
+  title_match: "yes"  # "immigration enforcement"; the starting watchlist missed it
+  confirmed: true
+  notes: A colleagues' memo is the earliest public signal, four weeks before the policy vote.
+
+- id: sunnyvale-tenant-protections-2026
+  summary: Sunnyvale amends its Residential Tenant Protections Program (Chapter 19.71)
+  watchlist: tenants
+  source: {adapter: legistar, client: sunnyvaleca}
+  phase: 2
+  first_appearance: 2026-04-13
+  stages:
+    - date: 2026-04-13
+      body: Planning Commission
+      item: Introduce an Ordinance Amending Chapter 19.71 of the Sunnyvale Municipal Code Relating to the Residential Tenant Protections Program
+      matter: 16529
+    - date: 2026-04-14
+      body: Housing and Human Services Commission
+      item: Introduce an Ordinance Amending Chapter 19.71 of the Sunnyvale Municipal Code Relating to the Residential Tenant Protections Program
+      matter: 16846
+    - date: 2026-05-05
+      body: City Council
+      item: Introduce an Ordinance Amending Chapter 19.71 (SMC) Relating to the Residential Tenant Protections Program
+      matter: 16857
+  title_match: "yes"  # "tenant protection" with the plural rule; a strict whole-word match missed "Tenant Protections"
+  confirmed: true
+  notes: >
+    Two commissions saw it three weeks before council. An earlier round went Planning
+    Commission (2025-02-10, matter 15562) then Council (2025-02-25, matter 15659).
+
+- id: mountain-view-tenant-anti-harassment-2025
+  summary: Mountain View's Rental Housing Committee takes up tenant anti-harassment and anti-retaliation protections
+  watchlist: tenants
+  source: {adapter: legistar, client: mountainview}
+  phase: 2
+  first_appearance: 2025-03-27
+  stages:
+    - date: 2025-03-27
+      body: Rental Housing Committee
+      item: Study Session - Tenant Anti-Harassment & Retaliation Protections
+      matter: 9517
+    - date: 2025-10-23
+      body: Rental Housing Committee
+      item: Tenant Anti-Retaliation and Anti-Harassment Protections
+      matter: 10018
+  title_match: "yes"  # "tenant anti-harassment"; the starting watchlist had no harassment or retaliation term
+  confirmed: true
+  notes: A study session seven months before the action item.

@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+.pytest_cache/
+.env
+
+# Agenda PDFs are re-downloaded when needed, never stored in git.
+*.pdf

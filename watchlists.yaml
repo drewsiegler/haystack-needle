@@ -1,0 +1,36 @@
+# Watchlists: one per campaign. Drew edits this file; the app reads it.
+#
+# terms           phrases to match, whole word
+# case_sensitive  terms that match only in the case written here
+# priority        high = email right away; normal = 7 a.m. digest
+#
+# How a term matches:
+# - Whole words only, any case unless listed under case_sensitive.
+# - The last word may be plural: "license plate reader" matches
+#   "License Plate Readers". So write terms in the singular; a plural term
+#   doesn't match the singular.
+# - A hyphen, with or without spaces around it, counts the same as a space:
+#   "Los Gatos-Monte Sereno" matches "Los Gatos - Monte Sereno" and
+#   "Los Gatos Monte Sereno".
+
+surveillance:
+  priority: high
+  terms: [Flock, Flock Safety, ALPR, automated license plate, automatic license plate,
+          license plate reader, license plate recognition,
+          real-time crime center, ShotSpotter, SoundThinking, drone as first responder,
+          surveillance use policy, surveillance technology]
+policing-contracts:
+  priority: high
+  terms: [sheriff, law enforcement service,
+          police services contract, contract for police services,
+          Los Gatos-Monte Sereno, LGMSPD]
+immigration:
+  priority: high
+  terms: [ICE, Immigration and Customs Enforcement, immigration enforcement, 287(g),
+          immigration detainer, SB 54, sanctuary]
+  case_sensitive: [ICE]
+tenants:
+  priority: normal
+  terms: [rent stabilization, rent control, just cause eviction, tenant protection,
+          tenant anti-harassment, tenant anti-retaliation, tenant relocation,
+          eviction prevention, anti-displacement, mobilehome rent, rent registry]
