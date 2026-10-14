@@ -79,23 +79,28 @@
   watchlist: surveillance
   source: {adapter: iqm2, site: sccgov.iqm2.com}
   phase: 3
-  first_appearance: 2026-01-27  # approximate; see confirmed
+  first_appearance: 2026-01-27
   stages:
     - date: 2026-01-27
       body: Board of Supervisors
-      item: Renewal of the Sheriff's ALPR surveillance use policy, deferred one month (Supervisor Duong)
+      item: "Item 56: Consider recommendations relating to the Surveillance Use Policy for the Automated License Plate Readers for the City of Saratoga, the City of Cupertino, and the Town of Los Altos Hills."
+      iqm2_meeting_id: 17578
+      url: https://sccgov.iqm2.com/Citizens/Detail_Meeting.aspx?ID=17578
     - date: 2026-02-24
       body: Board of Supervisors
-      item: Updated Surveillance Use Policy adopted 3-2, excluding Flock
-  title_match: unknown
-  confirmed: false
+      item: "Held from January 27, 2026 (Item No. 56): Consider recommendations relating to the Surveillance Use Policy for the Automated License Plate Readers ... (Office of the Sheriff)"
+      iqm2_meeting_id: 17581
+      url: https://sccgov.iqm2.com/Citizens/Detail_Meeting.aspx?ID=17581
+  title_match: "yes"  # "surveillance use policy", "automated license plate"; the starting watchlist matched too
+  confirmed: true
   notes: >
-    Dates are inferred from news coverage (San José Spotlight, Feb 3, 2026: "last week";
-    KQED, Feb 25, 2026: "Tuesday afternoon"). Find the actual items on sccgov.iqm2.com,
-    and check whether a committee (Public Safety and Justice?) saw it first. Affects
-    Cupertino, Saratoga and Los Altos Hills, which contract with the Sheriff.
-    Sources: https://www.kqed.org/news/12074467 and San José Spotlight,
-    republished at https://piedmontexedra.com/?p=1569117.
+    Attachments are named "Office of the Sheriff ALPR SUP Saratoga" (clean and redlined,
+    one pair per city), plus a Feb 24 memo from Sheriff Jonsen. Not on the agendas of the
+    Public Safety and Justice Committee (Jan 23, Feb 20) or the Board on Jan 13; the IQM2
+    calendar checked starts in Jan 2026, so a 2025 appearance is still possible. The Feb 24
+    outcome (3-2, excluding Flock) comes from news coverage, not the minutes: KQED,
+    https://www.kqed.org/news/12074467. IQM2 has no matter id like Legistar's; the
+    "Held from January 27, 2026 (Item No. 56)" prefix is what links the two stages.
 
 - id: los-altos-hills-flock-2026
   summary: Los Altos Hills ends its Flock contract and takes 31 cameras offline

@@ -9,7 +9,7 @@ Before any code, each case's first-appearance title was checked against the watc
 | Case | Watchlist | First appearance | Starting watchlist | After Oct 14 changes |
 | --- | --- | --- | --- | --- |
 | Saratoga Sheriff vs. Los Gatos police | policing-contracts | Jan 21, 2026, City Council | Yes | Yes |
-| County surveillance policy (Flock) | surveillance | ~Jan 27, 2026, Board of Supervisors | Not checked (IQM2) | Not checked |
+| County surveillance policy (Flock) | surveillance | Jan 27, 2026, Board of Supervisors | Yes | Yes |
 | Los Altos Hills ends Flock | surveillance | Jan 15, 2026, City Council | Yes | Yes |
 | Mountain View ends Flock | surveillance | Feb 24, 2026, City Council | Yes | Yes |
 | Cupertino ALPR program | surveillance | Mar 1, 2023, TICC | No: "License Plate Recognition" | Yes |
@@ -20,7 +20,7 @@ Before any code, each case's first-appearance title was checked against the watc
 | Sunnyvale tenant protections | tenants | Apr 13, 2026, Planning Commission | No: "Tenant Protections" (plural) | Yes |
 | Mountain View tenant anti-harassment | tenants | Mar 27, 2025, Rental Housing Committee | No | Yes |
 
-The starting watchlist caught 5 of the 10 checked cases by title, and every miss had the same cause: the watchlist's phrase wasn't the phrase local staff use. After the changes below, all 10 match by title. The San José Mayor's Sept 30 memo, "Internal Controls for Automatic License Plate Readers", now matches too.
+The starting watchlist caught 6 of the 11 cases by title, and every miss had the same cause: the watchlist's phrase wasn't the phrase local staff use. After the changes below, all 11 match by title. The San José Mayor's Sept 30 memo, "Internal Controls for Automatic License Plate Readers", now matches too.
 
 Two items still match nothing by title: Saratoga's "Law Enforcement Town Hall" and its Oct 7 decision, "Law Enforcement Discussion and Agreement Determination". The Oct 7 item text does match: "LGMSPD", "Los Gatos Monte Sereno" and "Sheriff's". Item text has to be read, not just titles.
 
@@ -39,7 +39,7 @@ Two items still match nothing by title: Saratoga's "Law Enforcement Town Hall" a
 ## Still open
 
 - `sheriff` catches Saratoga at every stage but will also fire on most Board of Supervisors agendas. One fix is to limit that term to city bodies, which needs per-term body limits the watchlist format doesn't have yet. Decide after phase 3 shows how noisy it is.
-- Find the county's Flock items on sccgov.iqm2.com and check for an earlier committee appearance.
+- Check whether the county's ALPR policy for contract cities was on a 2025 agenda (the IQM2 calendar read starts in Jan 2026).
 - Look for an earlier Los Altos Hills Flock item (Jan 15 was listed under Ongoing Business).
 - Confirm Saratoga's Oct 7, 2026 vote in the minutes.
 - Add a case for a vague title where only the attachment names Flock, if one turns up.
