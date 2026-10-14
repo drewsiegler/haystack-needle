@@ -6,14 +6,24 @@ It's built for catching an item at its first public appearance, often a committe
 
 ## Status
 
-**Phase 1 of 6: research, no code yet.**
+**Phase 2 of 6, first half: the Legistar adapter, the matcher and the backtest work. Email alerts come next.**
 
 - [docs/scope.md](docs/scope.md): what the app does, v1 scope and build phases.
 - [docs/sources.md](docs/sources.md): which platform each body posts its agendas on, and what each host's robots.txt allows.
 - [backtest/cases.yaml](backtest/cases.yaml): 11 past items the app should have caught, with every agenda they appeared on. [backtest/README.md](backtest/README.md) has what a first titles-only check found.
 - [watchlists.yaml](watchlists.yaml): the starting watchlists.
 
-Phase 2 builds the Legistar adapter (San José, Sunnyvale, Mountain View, Santa Clara, Cupertino, Valley Water), the matcher and email alerts.
+Phase 2 covers the six agencies on Legistar (San José, Sunnyvale, Mountain View, Santa Clara, Cupertino, Valley Water). The adapter and matcher are built; email alerts, the schedule and health checks are next.
+
+## Trying it
+
+```bash
+python3 -m venv .venv && .venv/bin/pip install -r requirements-dev.txt
+.venv/bin/python -m pytest
+.venv/bin/python backtest/run.py
+```
+
+The tests never touch the network. `backtest/run.py` replays the past cases against the live Legistar API, one request a second, and caches what it downloads in `.cache/` so a second run is quick.
 
 ## How it will run
 
