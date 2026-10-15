@@ -1,6 +1,7 @@
 """Polite HTTP: an honest user agent, at most one request a second per host
-(slower where a host's robots.txt sets a Crawl-delay), a few retries, and an
-optional on-disk cache for the backtest."""
+(slower where a host's robots.txt sets a Crawl-delay), a few retries, an
+optional on-disk cache for the backtest, and no more requests to a host that
+answers with a bot check."""
 
 from __future__ import annotations
 
@@ -24,8 +25,15 @@ CRAWL_DELAYS = {"iqm2.com": 60.0}
 
 
 class Deferred(httpx.HTTPError):
-    """A request to a slow host that would have to wait past the run's time for
-    slow hosts. Nothing was sent; try it on the next run."""
+    """A request left for the next run without being sent: a slow host that would
+    have to wait past the run's time for slow hosts, or a host that answered an
+    earlier request with a bot check."""
+
+
+class BotCheck(httpx.HTTPError):
+    """The host answered with a bot check (a Cloudflare challenge) instead of what
+    was asked for. Haystack Needle doesn't try to get past one: the host is left
+    alone for the rest of the run."""
 
 
 class Fetcher:
@@ -43,7 +51,8 @@ class Fetcher:
         # after that, a request that would wait raises Deferred. None: no limit.
         self.slow_until = None if slow_budget is None else clock() + slow_budget
         self.requests = 0  # network requests made, not cache hits
-        self.deferred = 0  # requests left for the next run
+        self.deferred = 0  # requests to slow hosts left for the next run
+        self.refused: set[str] = set()  # hosts that answered with a bot check this run
         self._last: dict[str, float] = {}
 
     def interval(self, host: str) -> float:
@@ -84,6 +93,8 @@ class Fetcher:
             if cached.exists():
                 return cached.read_bytes()
         host = urlsplit(full).hostname or ""
+        if host in self.refused:
+            raise Deferred(f"{host} answered an earlier request with a bot check; left for the next run")
         for attempt in range(1, RETRIES + 1):
             self._wait_turn(host)
             self.requests += 1
@@ -94,6 +105,10 @@ class Fetcher:
                     raise
                 self.sleep(5 * attempt)
                 continue
+            if response.headers.get("cf-mitigated") == "challenge":
+                self.refused.add(host)
+                raise BotCheck(f"{host} answered with a bot check instead of the file or page, so "
+                               "nothing more is asked of it this run")
             if (response.status_code >= 500 or response.status_code == 429) and attempt < RETRIES:
                 self.sleep(5 * attempt)
                 continue

@@ -4,7 +4,7 @@ import httpx
 
 import pytest
 
-from needle.fetch import USER_AGENT, Deferred, Fetcher
+from needle.fetch import USER_AGENT, BotCheck, Deferred, Fetcher
 
 
 def make(handler, **kwargs):
@@ -102,3 +102,23 @@ def test_post_json_sends_the_body_with_the_same_user_agent_rate_and_retries(tmp_
     assert seen == [("POST", USER_AGENT, {"calendarStartDate": "2026-10-12"})] * 2 + [
         ("POST", USER_AGENT, {"calendarStartDate": "2026-11-01"})]
     assert slept == [5, 1.0]  # the retry's back-off, then a second between requests to the host
+
+
+def test_leaves_a_host_alone_for_the_run_once_it_answers_with_a_bot_check():
+    sent = []
+
+    def handler(request):
+        sent.append(str(request.url))
+        if "FileStream" in str(request.url):
+            return httpx.Response(403, headers={"cf-mitigated": "challenge"}, text="Verifying your browser")
+        return httpx.Response(200, content=b"%PDF")
+
+    fetcher, slept = make(handler)
+    portal = "https://pub-campbell.escribemeetings.com"
+    assert fetcher.get(f"{portal}/Meeting.aspx?Id=1") == b"%PDF"
+    with pytest.raises(BotCheck, match="bot check"):
+        fetcher.get(f"{portal}/FileStream.ashx?DocumentId=2053")
+    with pytest.raises(Deferred):  # not sent: no second try, no retry
+        fetcher.get(f"{portal}/Meeting.aspx?Id=2")
+    assert fetcher.get("https://webapi.legistar.com/v1/x/events") == b"%PDF"  # other hosts carry on
+    assert len(sent) == 3 and fetcher.requests == 3 and fetcher.deferred == 0
