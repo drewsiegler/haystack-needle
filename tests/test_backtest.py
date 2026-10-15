@@ -2,6 +2,7 @@ import importlib.util
 from datetime import date
 from pathlib import Path
 
+from adapters import civicclerk
 from conftest import FakeFetcher, load
 from needle.matcher import compile_terms
 
@@ -73,7 +74,8 @@ def test_replay_civicclerk_stage_finds_the_item_by_agenda_and_title():
     stage = {"date": date(2026, 1, 15), "body": "City Council", "civicclerk_agenda_id": 4957,
              "item": "Discussion and Possible Direction on Terminating Agreement with FLOCK Safety for the "
                      "Town's Automatic License Plate Reader System"}
-    result = run.replay_stage(FakeFetcher({f"{base}/Events": january,
+    jan15 = civicclerk.events_url("losaltoshillsca", date(2026, 1, 15), date(2026, 1, 15))
+    result = run.replay_stage(FakeFetcher({jan15: january,
                                            f"{base}/Meetings/4957": load("civicclerk/losaltoshillsca_meeting_4957.json")}),
                               "losaltoshillsca", stage, TERMS, None)
 
@@ -83,9 +85,9 @@ def test_replay_civicclerk_stage_finds_the_item_by_agenda_and_title():
 
 
 def test_replay_civicclerk_stage_is_not_found_when_no_meeting_has_that_agenda():
-    base = "https://losaltoshillsca.api.civicclerk.com/v1"
     stage = {"date": date(2026, 1, 15), "body": "City Council", "civicclerk_agenda_id": 9999, "item": "Anything"}
-    result = run.replay_stage(FakeFetcher({f"{base}/Events": load("civicclerk/losaltoshillsca_events_2026-01-10_2026-01-20.json")}),
+    jan15 = civicclerk.events_url("losaltoshillsca", date(2026, 1, 15), date(2026, 1, 15))
+    result = run.replay_stage(FakeFetcher({jan15: load("civicclerk/losaltoshillsca_events_2026-01-10_2026-01-20.json")}),
                               "losaltoshillsca", stage, TERMS, None)
 
     assert result["item"] is None and result["matches"] == []

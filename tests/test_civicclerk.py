@@ -14,7 +14,7 @@ TODAY = date(2026, 10, 14)  # a window of Oct 12 to Nov 13
 
 
 def events(name):
-    return load(f"civicclerk/{name}")["value"]
+    return load(f"civicclerk/{name}")["items"]
 
 
 def raw_item(agenda: dict, item_id: int) -> dict:
@@ -140,6 +140,9 @@ def test_the_flock_item_is_found_by_title():
     assert ("6.A", "Flock", "title") in found
 
 
+WINDOW = (date(2026, 10, 12), date(2026, 11, 13))
+
+
 def routes():
     base = "https://losaltoshillsca.api.civicclerk.com/v1"
     page1 = load("civicclerk/losaltoshillsca_events_2026-10-12_2026-11-13_page1.json")
@@ -147,8 +150,8 @@ def routes():
     agenda = load("civicclerk/losaltoshillsca_meeting_4957.json")
     empty = load("civicclerk/milpitasca_meeting_2129_unpublished.json")
     return page1, {
-        f"{base}/Events": page1,
-        page1["@odata.nextLink"]: page2,
+        civicclerk.events_url("losaltoshillsca", *WINDOW, skip=0): page1,
+        civicclerk.events_url("losaltoshillsca", *WINDOW, skip=3): page2,
         f"{base}/Meetings/5138": agenda,
         f"{base}/Meetings/5169": empty,
     }
@@ -162,9 +165,11 @@ def test_collect_asks_for_the_window_and_follows_the_next_page():
 
     assert failures == {}
     assert len(meetings) == 6  # three events on each page
-    _, params = fetcher.calls[0]
-    assert params["$filter"] == "startDateTime ge 2026-10-12T00:00:00Z and startDateTime lt 2026-11-14T00:00:00Z"
-    assert fetcher.calls[1] == (page1["@odata.nextLink"], None)
+    # toDate is left out of the list, so the window ends the day after Nov 13.
+    assert fetcher.calls[0] == ("https://losaltoshillsca.api.civicclerk.com/v1/Events/GetEventsList("
+                                "fromDate='2026-10-12',toDate='2026-11-14',categoryIds=[],skip=0,"
+                                "sortDescending=false,cursorId=0)", None)
+    assert fetcher.calls[1][0].endswith(",skip=3,sortDescending=false,cursorId=0)")  # page 1 had three
     # An agenda is read only for events that have one: two agendas, not six.
     assert [url.rsplit("/", 1)[1] for url, _ in fetcher.calls if "/Meetings/" in url] == ["5169", "5138"]
     regular = next(m for m in meetings if m.id == "4654")
@@ -173,8 +178,8 @@ def test_collect_asks_for_the_window_and_follows_the_next_page():
 
 def test_collect_leaves_out_deleted_and_unpublished_events():
     page1, table = routes()
-    page1["value"][0]["isDeleted"] = True
-    page1["value"][1]["isPublished"] = "Unpublished"
+    page1["items"][0]["isDeleted"] = True
+    page1["items"][1]["isPublished"] = "Unpublished"
 
     meetings, _ = civicclerk.collect(FakeFetcher(table), ["losaltoshillsca"], today=TODAY, with_text=False)
 
@@ -184,8 +189,8 @@ def test_collect_leaves_out_deleted_and_unpublished_events():
 
 def test_collect_leaves_out_events_dated_outside_the_window():
     page1, table = routes()
-    page1["value"][2]["startDateTime"] = "2027-12-31T10:00:00Z"
-    page1["value"][2]["agendaId"] = 0
+    page1["items"][2]["startDateTime"] = "2027-12-31T10:00:00Z"
+    page1["items"][2]["agendaId"] = 0
 
     meetings, _ = civicclerk.collect(FakeFetcher(table), ["losaltoshillsca"], today=TODAY, with_text=False)
 
@@ -194,7 +199,7 @@ def test_collect_leaves_out_events_dated_outside_the_window():
 
 def test_a_client_that_is_down_doesnt_stop_the_others():
     _, table = routes()
-    table["https://milpitasca.api.civicclerk.com/v1/Events"] = lambda params: (_ for _ in ()).throw(
+    table[civicclerk.events_url("milpitasca", *WINDOW)] = lambda params: (_ for _ in ()).throw(
         httpx.ConnectError("no route"))
 
     meetings, failures = civicclerk.collect(FakeFetcher(table), ["milpitasca", "losaltoshillsca"],
@@ -204,20 +209,20 @@ def test_a_client_that_is_down_doesnt_stop_the_others():
     assert len(meetings) == 6
 
 
-def test_a_next_page_on_another_host_is_not_followed():
+def test_a_page_that_says_there_is_more_but_lists_nothing_ends_the_list():
     page1, table = routes()
-    page1["@odata.nextLink"] = "https://example.com/v1/Events?$skiptoken=1"
+    table[civicclerk.events_url("losaltoshillsca", *WINDOW, skip=3)] = {"hasMore": True, "items": []}
     fetcher = FakeFetcher(table)
 
     meetings, failures = civicclerk.collect(fetcher, ["losaltoshillsca"], today=TODAY, with_text=False)
 
-    assert "losaltoshillsca" in failures and meetings == []
-    assert all("example.com" not in url for url, _ in fetcher.calls)
+    assert failures == {} and len(meetings) == 3
+    assert sum("GetEventsList" in url for url, _ in fetcher.calls) == 2
 
 
 def test_an_answer_that_isnt_json_is_a_failure_not_a_crash():
     _, table = routes()
-    table["https://losaltoshillsca.api.civicclerk.com/v1/Events"] = lambda params: (_ for _ in ()).throw(
+    table[civicclerk.events_url("losaltoshillsca", *WINDOW)] = lambda params: (_ for _ in ()).throw(
         ValueError("Expecting value"))
 
     _, failures = civicclerk.collect(FakeFetcher(table), ["losaltoshillsca"], today=TODAY, with_text=False)

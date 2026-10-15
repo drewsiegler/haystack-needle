@@ -3,9 +3,12 @@
 Each city has an open OData API with no key, at https://{tenant}.api.civicclerk.com/v1/
 (the hosts have no robots.txt, so the usual one request a second applies):
 
-- /Events lists meetings; $filter and $orderby work on startDateTime. The server
-  returns a page at a time (15 rows for Los Altos Hills) and ends it with an
-  @odata.nextLink, which is followed. Times come back as local time labelled "Z".
+- /Events/GetEventsList(fromDate=,toDate=,...,skip=) lists the published meetings
+  from fromDate up to, but not including, toDate, oldest first: what the public
+  portal itself asks for. It answers a page at a time (15 rows for Los Altos Hills)
+  with hasMore, and skip asks for the next page. Times come back as local time
+  labelled "Z". (Until Oct 15, 2026 the list was /Events with an OData $filter;
+  that now answers 500.)
 - /Meetings/{agendaId} is a whole agenda in one request: items nested under their
   section headings, each with its description and attachments. An agenda that
   isn't published yet comes back with no items.
@@ -26,7 +29,6 @@ import html
 import re
 import sys
 from datetime import date, datetime, timedelta
-from urllib.parse import urlsplit
 from zoneinfo import ZoneInfo
 
 import httpx
@@ -76,10 +78,6 @@ def attachment_url(client: str, attachment_id: int) -> str:
     return f"{_base(client)}/Meetings/GetAttachmentFile(fileId={attachment_id})"
 
 
-def _odata_date(d: date) -> str:
-    return f"{d.isoformat()}T00:00:00Z"
-
-
 def _local(value: str) -> datetime:
     """CivicClerk's event times are local time with a "Z" on the end; drop the Z."""
     return datetime.fromisoformat(value.rstrip("Z"))
@@ -104,30 +102,21 @@ def _line(fragment: str | None) -> str:
     return " ".join(_paragraphs(fragment).split())
 
 
-def _next_page(client: str, page: dict) -> str | None:
-    """The page's nextLink, if it points at this client's own API."""
-    link = page.get("@odata.nextLink")
-    if not link:
-        return None
-    parts = urlsplit(link)
-    if parts.scheme != "https" or parts.hostname != f"{client}.api.civicclerk.com":
-        raise ValueError(f"the next page of events is at an address outside {client}.api.civicclerk.com")
-    return link
+def events_url(client: str, start: date, end: date, skip: int = 0) -> str:
+    """A page of the events dated start to end, inclusive (toDate itself is left out)."""
+    return (f"{_base(client)}/Events/GetEventsList(fromDate='{start.isoformat()}',"
+            f"toDate='{(end + timedelta(days=1)).isoformat()}',categoryIds=[],skip={skip},"
+            "sortDescending=false,cursorId=0)")
 
 
 def fetch_events(fetcher: Fetcher, client: str, start: date, end: date) -> list[dict]:
     """Every event dated start to end, inclusive, oldest first."""
     rows: list[dict] = []
-    page = fetcher.get_json(f"{_base(client)}/Events", {
-        "$filter": f"startDateTime ge {_odata_date(start)} and startDateTime lt {_odata_date(end + timedelta(days=1))}",
-        "$orderby": "startDateTime,id",
-    })
     for _ in range(MAX_PAGES):
-        rows += page["value"]
-        link = _next_page(client, page)
-        if not link:
-            return rows
-        page = fetcher.get_json(link)
+        page = fetcher.get_json(events_url(client, start, end, skip=len(rows)))
+        rows += page["items"]
+        if not page.get("hasMore") or not page["items"]:
+            break
     return rows
 
 
@@ -141,7 +130,9 @@ def item_text(fetcher: Fetcher, client: str, item: Item) -> str:
 
 
 def is_listed(event: dict) -> bool:
-    return not event.get("isDeleted") and event.get("isPublished") == "Published"
+    # GetEventsList lists only published events and leaves these two fields out;
+    # they're checked in case they come back.
+    return not event.get("isDeleted") and event.get("isPublished", "Published") == "Published"
 
 
 def _published(event: dict, *types: str) -> list[dict]:
@@ -205,7 +196,7 @@ def parse_meeting(client: str, event: dict, agenda: dict | None) -> Meeting:
     start = _local(event["startDateTime"])
     agendas = sorted(_published(event, "Agenda"), key=lambda f: f.get("publishOn") or "")
     meeting = Meeting(
-        body=Body(SOURCES[client], str(event["eventCategoryId"]),
+        body=Body(SOURCES[client], str(event["categoryId"]),
                   _line(event.get("categoryName")) or _line(event.get("eventName"))),
         id=str(event["id"]),
         date=start.date(),
@@ -243,8 +234,8 @@ def collect(fetcher: Fetcher, clients=tuple(SOURCES), today: date | None = None,
     for client in clients:
         try:
             for event in fetch_events(fetcher, client, start, end):
-                # The filter already limits dates; checking again keeps a stray
-                # event out even if the API ignores the filter.
+                # The list already limits dates; checking again keeps a stray
+                # event out even if the API ignores the dates.
                 if is_listed(event) and start <= _local(event["startDateTime"]).date() <= end:
                     meetings.append(read_meeting(fetcher, client, event))
         except (httpx.HTTPError, ValueError, KeyError) as error:
