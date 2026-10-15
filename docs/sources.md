@@ -4,7 +4,7 @@ Phase 1 source check, done Oct 14, 2026. It replaces the platform table in [scop
 
 ## The short version
 
-**School boards are shelved for a later release** (decided Oct 15, 2026): v1 doesn't read K-12 districts, the County Board of Education or the community college districts, since so many of them sit behind robots.txt or bot checks. That leaves Simbli, BoardDocs, Diligent Community, Boardable and ElectronicSchoolBoard out of v1; what was learned about them stays below for the later release.
+**School boards are shelved for a later release** (decided Oct 15, 2026): v1 doesn't read K-12 districts or the community college districts, since so many of them sit behind robots.txt or bot checks. The County Board of Education is the exception: it stays in v1, read from its agenda emails. That leaves Simbli, BoardDocs, Diligent Community, Boardable and ElectronicSchoolBoard out of v1; what was learned about them stays below for the later release.
 
 Nine adapters were built for about 52 bodies, and v1 runs five of them (Legistar, IQM2, CivicClerk, CivicPlus and eScribe). Four of them read an official JSON API or a plain agenda page and need no scraping tricks. The hard part isn't the platforms, it's **robots.txt**: BoardDocs, Diligent Community and PrimeGov tell every bot except search engines to stay out. On Oct 15, 2026 that covered 11 bodies, including the County Board of Education, three community college districts and Palo Alto, and Drew decided to cover them through their own agenda emails instead of scraping (see [Agenda emails](#decided-agenda-emails-for-boarddocs-diligent-community-and-primegov)).
 
@@ -16,7 +16,7 @@ Nine adapters were built for about 52 bodies, and v1 runs five of them (Legistar
 | CivicPlus AgendaCenter | 3 | Agenda search page + PDFs | `Disallow: /Search`, `/RSS.aspx` (not `/AgendaCenter/`) | 4, built |
 | eScribe | 1 | Meeting calendar (JSON POST) + HTML agenda, PDFs | none (404); a Cloudflare bot check on files | 4, built |
 | Simbli (eBoardSolutions) | 21 (15 confirmed) | Meeting list (HTML) + agenda JSON, one request per item | none (the URL is an error page); **an Imperva bot check** | later release (schools); stopped by a bot check |
-| BoardDocs | 6 | Their own agenda emails | **disallows all but search engines** | later release (schools); emails requested |
+| BoardDocs | 6 (1 in v1) | Their own agenda emails | **disallows all but search engines** | County Board of Education in v1 by email; the rest later (schools); emails requested |
 | Diligent Community | 3 | Their own agenda emails | **disallows all** | later release (schools); emails requested |
 | PrimeGov | 2 | Their own agenda emails (the public API works, but robots.txt says no) | **`Disallow: /`** | 4, by email (planned) |
 | iCompass ElectronicSchoolBoard | 1 | RSS feed + agenda and item pages, PDFs | none (404) | built; later release (schools) |
@@ -195,7 +195,7 @@ Options, for Drew:
 
 Whichever it is, `Fetcher` now recognizes Imperva's page as a bot check (since Oct 14, 2026), so an adapter won't read the block page as a district with no meetings. It looks at the start of HTML answers only, for a page titled "Pardon Our Interruption" or Imperva's older "Request unsuccessful. Incapsula incident ID" page, raises `BotCheck` and sends nothing more to the host that run. The `_Incapsula_Resource` script alone isn't a sign: every normal page has it.
 
-### BoardDocs (shelved with the schools; agenda emails requested)
+### BoardDocs (by email: the County Board of Education in v1, the others shelved with the schools)
 
 Checked again Oct 15, 2026 from each body's own website, six still post their agendas on BoardDocs: the Santa Clara County Office of Education (County Board of Education), Palo Alto Unified, Evergreen, West Valley-Mission CCD, San José-Evergreen CCD and Gavilan CCD. They're covered by their own agenda emails (see [Agenda emails](#decided-agenda-emails-for-boarddocs-diligent-community-and-primegov)).
 
@@ -250,7 +250,7 @@ Still unknown: El Camino Healthcare District and Santa Clara County Central Fire
 
 BoardDocs, Diligent Community and PrimeGov say no to every bot that isn't a search engine, and the scope says to honor robots.txt. On Oct 15, 2026 Drew decided to leave them out of the scraper and cover their bodies through the bodies' own agenda emails, matched like any agenda. It's slower and thinner (an email may only say that an agenda is up, with a link the app can't follow), but it's within the rules. The other options were asking each body for permission to fetch, or fetching anyway, which would break the scope's rule.
 
-Later on Oct 15 Drew shelved school boards for a later release. Nine of the thirteen bodies below are schools; their requests had gone out, so their emails will arrive, and v1 reads only the other four: Palo Alto, the Open Space Authority, Los Gatos and Monte Sereno. The school emails are kept for the later release.
+Later on Oct 15 Drew shelved school boards for a later release. Eight of the thirteen bodies below are school districts; their requests had gone out, so their emails will arrive, and v1 reads only the other five: Palo Alto, the Open Space Authority, Los Gatos, Monte Sereno and the County Board of Education (kept in v1 at Drew's request). The school emails are kept for the later release.
 
 Also on Oct 15 Drew added two towns on the same terms: Monte Sereno, whose CivicWeb robots.txt also says no, and Los Gatos, whose Municode portal refuses scripts (see [One-offs](#one-offs)). A Los Gatos agenda email should carry the meeting's Municode id, and with it the app can read the agenda itself from meetings.municode.com, which allows scripts.
 

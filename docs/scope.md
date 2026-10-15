@@ -59,7 +59,7 @@ With the project now called Haystack Needle, the names no longer clash. It's sti
 
 ## v1 scope
 
-v1 runs through phase 4: the Legistar and IQM2 bodies and the other long-tail platforms, but not school boards, which wait for a later release (decided Oct 15, 2026). It reads every item title and attached staff report and emails matches to you. Everything else waits until v1 has caught a real item.
+v1 runs through phase 4: the Legistar and IQM2 bodies and the other long-tail platforms, but not school district boards, which wait for a later release (decided Oct 15, 2026). The County Board of Education stays in v1, read from its agenda emails. It reads every item title and attached staff report and emails matches to you. Everything else waits until v1 has caught a real item.
 
 **v1 does**
 
@@ -76,7 +76,7 @@ v1 runs through phase 4: the Legistar and IQM2 bodies and the other long-tail pl
 - Read minutes, video or transcripts.
 - Offer public sign-up, accounts or a web dashboard.
 - Use AI triage (planned for after v1).
-- Read school boards: K-12 districts, the County Board of Education and the community college districts. So many sit behind robots.txt or bot checks (BoardDocs, Diligent Community, Simbli) that they're shelved for a later release; the two adapters already built for them (Boardable, ElectronicSchoolBoard) are kept but not run.
+- Read school district boards: K-12 districts and the community college districts (the County Board of Education is in v1, by email). So many sit behind robots.txt or bot checks (BoardDocs, Diligent Community, Simbli) that they're shelved for a later release; the two adapters already built for them (Boardable, ElectronicSchoolBoard) are kept but not run.
 
 ## Matching
 
@@ -246,7 +246,7 @@ All six are settled, and the Claude Code prompt above reflects them.
 - [x] **Name.** Haystack Needle (Agenda Watch was taken).
 - [x] **Who gets v1 alerts.** Just you for now; SURJ and partners later.
 - [x] **Hosting.** GitHub: a public repo with scheduled Actions, $0, with credentials in Actions secrets.
-- [x] **School boards in v1.** No: shelved for a later release (decided Oct 15, 2026), since so many sit behind robots.txt or bot checks. Earlier that day the answer was yes, with BoardDocs and Diligent Community boards covered by their own agenda emails; those requests have gone out, and the emails are kept for the later release (see [sources.md](sources.md)).
+- [x] **School boards in v1.** No: shelved for a later release (decided Oct 15, 2026), since so many sit behind robots.txt or bot checks. The County Board of Education is the exception and stays in v1, read from its agenda emails. Earlier that day the answer was yes, with BoardDocs and Diligent Community boards covered by their own agenda emails; those requests have gone out, and the emails are kept for the later release (see [sources.md](sources.md)).
 - [x] **AI triage later.** Yes, after v1. It would summarize matches and drop false positives for a small per-run cost.
 - [x] **License.** AGPL-3.0, so anyone running a modified copy as a service has to share their changes.
 
