@@ -104,7 +104,7 @@ def build(meeting: Meeting, matches: list[Match], alert_id: str, priority: str,
     source = meeting.body.source
     body = oneline(f"{source.name} {meeting.body.name}", 120)
     watchlists = list(dict.fromkeys(m.watchlist for m in matches))
-    number = oneline(item.number, 20)
+    number = oneline(item.number, 20).rstrip(".")  # Cupertino prints "1."
     links = [("Agenda", safe_url(meeting.agenda_url)), ("Meeting page", safe_url(meeting.url))]
     seen = set()
     for m in matches:

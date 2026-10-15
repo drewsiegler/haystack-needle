@@ -16,7 +16,7 @@
 {% if a.comment %}
 <p style="margin:12px 0 0"><b>Comment by:</b> “{{ a.comment }}” (from agenda; address: {{ a.comment_email }})</p>
 {% else %}
-<p style="margin:12px 0 0"><b>Comment by:</b> the agenda doesn't say; check the agenda link above.</p>
+<p style="margin:12px 0 0"><b>Comment by:</b> not found in the agenda; check the meeting page.</p>
 {% endif %}
 <p style="margin:12px 0 0"><b>Prior history:</b>{% if not a.history %} none found{% endif %}</p>
 {% if a.history %}

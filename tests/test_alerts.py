@@ -10,7 +10,7 @@ def sample(title="Approve agreement\nfor public safety technology", url="https:/
     meeting = Meeting(Body(TOWN, "1", "City Council"), "9", date(2026, 10, 20), "6:00 PM",
                       agenda_url="javascript:alert(1)", url="https://town.example/meeting")
     attachment = Attachment("5", "Staff Report", url)
-    item = Item("1", title, number="7", attachments=[attachment])
+    item = Item("1", title, number="7.", attachments=[attachment])
     match = Match(meeting, item, "surveillance", "Flock", "attachment", 10,
                   "…install 12 <b>Flock</b> cameras…", page=3, attachment=attachment)
     return meeting, match
