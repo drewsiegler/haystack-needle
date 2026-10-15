@@ -5,6 +5,7 @@ import pytest
 
 from needle import run as needle_run
 from needle import state as statefile
+from needle.fetch import Deferred
 from needle.models import Attachment, Body, Item, Meeting, Source
 from pdfs import make_pdf
 
@@ -29,7 +30,7 @@ class FakeAdapter:
         self.text_reads = 0
         self.windows = []
 
-    def collect(self, fetcher, today, with_text, days_back=2, days_ahead=30):
+    def collect(self, fetcher, today, with_text, days_back=2, days_ahead=30, cache=None):
         self.windows.append((days_back, days_ahead))
         if self.fail:
             return [], {"town": "ConnectError: the site is down"}
@@ -49,9 +50,11 @@ class FakeAdapter:
 
 class FakeFetcher:
     def __init__(self, files):
-        self.files, self.gets = files, []
+        self.files, self.gets, self.slow = files, [], set()
 
     def get(self, url):
+        if url in self.slow:
+            raise Deferred("a slow site's time is up")
         self.gets.append(url)
         return self.files[url]
 
@@ -201,3 +204,30 @@ def test_meetings_past_the_time_budget_wait_for_the_next_run(setup):
     ticks = iter([0, 0, 100, 100])  # the second meeting comes after the budget runs out
     assert len(go(budget=timedelta(seconds=50), clock=lambda: next(ticks))) == 1
     assert len(go(NOW + timedelta(hours=2))) == 1
+
+
+def test_an_adapter_can_keep_item_text_until_it_changes(setup):
+    adapter, fetcher, state, go = setup
+    adapter.TEXT_TTL = None  # IQM2: its staff reports carry no modified time
+    adapter.meetings = [meeting(COUNCIL, date(2026, 10, 20))]
+    go()
+    go(NOW + timedelta(days=2))
+    assert adapter.text_reads == 1
+
+
+def test_downloads_from_a_slow_site_out_of_time_wait_quietly_for_the_next_run(setup, capsys):
+    adapter, fetcher, state, go = setup
+    adapter.meetings = [meeting(COUNCIL, date(2026, 10, 20), title="Agreement",
+                                attachments=[Attachment("a1", "Staff Report", REPORT)])]
+    fetcher.slow = {REPORT}
+    assert go() == []
+    assert "Couldn't" not in capsys.readouterr().err
+    fetcher.slow = set()
+    assert go(NOW + timedelta(hours=2)) == [
+        "[Haystack Needle: surveillance] Townsville City Council, Tue Oct 20, Item 7"]
+
+
+def test_only_one_adapter_is_for_dry_runs(capsys):
+    with pytest.raises(SystemExit):
+        needle_run.main(["--only", "iqm2"])
+    assert "--only is for dry runs" in capsys.readouterr().err

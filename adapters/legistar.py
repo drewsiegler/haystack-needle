@@ -191,9 +191,11 @@ def read_meeting(fetcher: Fetcher, client: str, event: dict, with_text: bool = T
 
 
 def collect(fetcher: Fetcher, clients=tuple(SOURCES), today: date | None = None,
-            with_text: bool = True, days_back: int = DAYS_BACK,
-            days_ahead: int = DAYS_AHEAD) -> tuple[list[Meeting], dict[str, str]]:
+            with_text: bool = True, days_back: int = DAYS_BACK, days_ahead: int = DAYS_AHEAD,
+            cache: dict | None = None) -> tuple[list[Meeting], dict[str, str]]:
     """Meetings from days_back days ago to days_ahead days ahead for each client.
+
+    cache is unused: the API is fast enough to read everything again each run.
 
     Returns the meetings and, for any client that failed, what went wrong, so one
     client being down doesn't stop the others.

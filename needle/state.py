@@ -29,6 +29,7 @@ def empty() -> dict:
         "bodies": {},  # body key -> {"name", "dates", "warned", "agendas": {meeting id: {"date", "hits"}}}
         "sources": {},  # adapter/client -> {"fails", "error", "warned"}
         "boilerplate": {},  # "body key|watchlist|term" -> {"note", "reported"}: held back as likely boilerplate
+        "cache": {},  # adapter -> what it keeps between runs (IQM2: agenda outlines); the adapter prunes it
     }
 
 

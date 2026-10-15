@@ -2,6 +2,7 @@
 
     python -m needle.run --state data/state.json   # what the workflow runs
     python -m needle.run --dry-run                 # print what would be sent; send and save nothing
+    python -m needle.run --dry-run --only iqm2     # the same, for one adapter
     python -m needle.run --test-email              # send one sample alert to check the mail setup
 
 The workflow runs hourly. Every 2 hours the run reads every meeting from 2
@@ -24,10 +25,10 @@ from zoneinfo import ZoneInfo
 import httpx
 import yaml
 
-from adapters import legistar
+from adapters import iqm2, legistar
 from needle import alerts, health, mailer
 from needle import state as statefile
-from needle.fetch import Fetcher
+from needle.fetch import Deferred, Fetcher
 from needle.matcher import DEEP_SCORE, compile_terms, match_meeting, snippet
 from needle.models import Attachment, Body, Item, Match, Meeting, Source
 from needle.pdftext import pdf_pages
@@ -36,13 +37,17 @@ ROOT = Path(__file__).resolve().parents[1]
 WATCHLISTS = ROOT / "watchlists.yaml"
 DEFAULT_STATE = ROOT / ".state" / "state.json"
 PACIFIC = ZoneInfo("America/Los_Angeles")
-ADAPTERS = {"legistar": legistar}
+ADAPTERS = {"legistar": legistar, "iqm2": iqm2}
 FULL_EVERY = timedelta(minutes=110)  # a full run every 2 hours
 NEAR_DAYS = 3  # between full runs, re-check meetings from 72 hours out through meeting day
 TEXT_TTL = timedelta(hours=24)  # re-read item text at least daily, in case it changed quietly
 DIGEST_HOUR = 7  # Pacific
 MAX_DOWNLOADS = 150  # PDFs per run; the rest wait for the next run, soonest meetings first
 BUDGET = timedelta(minutes=40)  # then stop reading meetings, well inside the job's 55-minute limit
+# Slow hosts (IQM2 asks for a minute between requests) may hold the run up only
+# this long; after that, a request that would wait is left for the next run.
+# Requests whose minute has passed while the run did other work still go out.
+SLOW_BUDGET = timedelta(minutes=25)
 AGENDA_PAGES = 40  # how far into an agenda to look for the public comment notice
 MIN_AGENDAS = 4  # a body's agendas needed before a phrase can be judged boilerplate
 
@@ -96,13 +101,16 @@ class Reader:
         that matched last time if the item hasn't changed and was read in the last day."""
         k = key(meeting.body.source, "item", item.id)
         entry = self.state["items"].get(k)
+        ttl = getattr(adapter, "TEXT_TTL", TEXT_TTL)  # None: read once
         if (entry and entry["modified"] == iso(item.modified)
-                and self.now - datetime.fromisoformat(entry["read"]) < TEXT_TTL):
+                and (ttl is None or self.now - datetime.fromisoformat(entry["read"]) < ttl)):
             item.text = "\n\n".join(entry["hits"])
             entry["date"] = iso(meeting.date)
             return
         try:
             text = adapter.item_text(self.fetcher, meeting.body.source.client, item)
+        except Deferred:
+            return  # a slow host's time is up; match the agenda note alone and read it next run
         except httpx.HTTPError as error:
             print(f"Couldn't read the text of item {item.id}: {type(error).__name__}", file=sys.stderr)
             return  # match the agenda note alone; try the text again next run
@@ -112,12 +120,16 @@ class Reader:
                                   "read": iso(self.now), "hits": first_hits([item.text], self.terms).get("1", [])}
 
     def _download(self, url: str) -> bytes | None:
-        self.downloads += 1
         try:
-            return self.fetcher.get(url)
+            data = self.fetcher.get(url)
+        except Deferred:
+            return None  # a slow host's time is up; try next run
         except httpx.HTTPError as error:
+            self.downloads += 1
             print(f"Couldn't download {url}: {type(error).__name__}", file=sys.stderr)
             return None
+        self.downloads += 1
+        return data
 
     def pages(self, source: Source, attachment: Attachment) -> list[str]:
         k = key(source, "attachment", attachment.id)
@@ -280,7 +292,8 @@ def run(state: dict, fetcher, outbox: Outbox, now: datetime, adapters: dict = AD
     meetings: list[Meeting] = []
     for name, adapter in adapters.items():
         window = {} if full else {"days_back": 0, "days_ahead": NEAR_DAYS}
-        found, failures = adapter.collect(fetcher, today=today, with_text=False, **window)
+        found, failures = adapter.collect(fetcher, today=today, with_text=False,
+                                          cache=state["cache"].setdefault(name, {}), **window)
         meetings += found
         for client, source in adapter.SOURCES.items():
             source_key = f"{name}/{client}"
@@ -342,6 +355,7 @@ def run(state: dict, fetcher, outbox: Outbox, now: datetime, adapters: dict = AD
           f"{len(all_matches)} matches, {reader.texts_read} item texts read, "
           f"{reader.downloads} downloads ({reader.deferred} left for the next run), "
           f"{left} meetings left for the next run (time budget), "
+          f"{getattr(fetcher, 'deferred', 0)} requests to slow sites left for the next run, "
           f"{len(outbox.sent)} emails, {len(state['digest'])} waiting for the digest.")
 
 
@@ -367,7 +381,10 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument("--full", action="store_true", help="read every meeting, even between full runs")
     parser.add_argument("--max-downloads", type=int, default=MAX_DOWNLOADS, help="PDF downloads this run")
     parser.add_argument("--cache", type=Path, help="cache responses here (for repeated dry runs)")
+    parser.add_argument("--only", choices=sorted(ADAPTERS), help="run one adapter (dry runs only)")
     args = parser.parse_args(argv)
+    if args.only and not args.dry_run:
+        parser.error("--only is for dry runs: a real run with one adapter would make the others look quiet")
 
     try:
         settings = None if args.dry_run else mailer.settings_from_env()
@@ -381,7 +398,8 @@ def main(argv: list[str] | None = None) -> None:
     state = statefile.load(args.state)
     ping_url = None if args.dry_run else os.environ.get("HEALTHCHECKS_URL")
     try:
-        run(state, Fetcher(cache_dir=args.cache), outbox, datetime.now(timezone.utc),
+        run(state, Fetcher(cache_dir=args.cache, slow_budget=SLOW_BUDGET.total_seconds()), outbox,
+            datetime.now(timezone.utc), adapters={args.only: ADAPTERS[args.only]} if args.only else ADAPTERS,
             full=True if args.full else None, max_downloads=args.max_downloads)
     except Exception as error:
         if ping_url:
