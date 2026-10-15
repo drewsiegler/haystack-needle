@@ -68,6 +68,11 @@ def test_hyphen_counts_as_space(text):
     assert hits(text, "Los Gatos-Monte Sereno")
 
 
+def test_straight_and_curly_apostrophes_count_alike():
+    assert hits("Multi-Jurisdictional Sheriff’s Office Contract Negotiations", "Sheriff's Office contract")
+    assert hits("the Sheriff's Office contract", "Sheriff’s Office contract")
+
+
 def test_term_with_punctuation():
     assert hits("Section 287(g) agreements", "287(g)") == ["287(g)"]
     assert hits("real time crime center", "real-time crime center")

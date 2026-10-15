@@ -86,6 +86,7 @@ Watchlists match phrases, not bare words, and score where the match landed. "ICE
 - Whole-word, case-aware matching. "ICE" matches only in capitals; "Immigration and Customs Enforcement" matches any case.
 - The last word of a term may be plural: "license plate reader" matches "License Plate Readers". (Added Oct 14 after the backtest dry run.)
 - A hyphen, with or without spaces around it, counts the same as a space, because PDF text breaks hyphenated names unpredictably: "Los Gatos-Monte Sereno" matches "Los Gatos - Monte Sereno" and "Los Gatos Monte Sereno". (Added Oct 14.)
+- A straight apostrophe and a curly one count the same, because PDF text turns most apostrophes curly: "Sheriff's Office" matches "Sheriff’s Office". (Added Oct 14.)
 - Each watchlist has terms, exclusions, a priority and optional bodies to limit it to.
 - Score by location: a match in the item title is high; in the staff report, medium; only deep in a 300-page packet, low and digest-only.
 - Skip boilerplate. Some bodies print the same legal paragraph on every agenda; a phrase that appears in more than half of a body's agendas gets flagged for review instead of alerting.

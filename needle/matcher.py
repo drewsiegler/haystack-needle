@@ -6,6 +6,7 @@ The rules (docs/scope.md, Matching):
 - A term's last word may be plural: "license plate reader" matches "Readers".
 - A hyphen, with or without spaces around it, counts as a space:
   "Los Gatos-Monte Sereno" matches "Los Gatos - Monte Sereno" and "Los Gatos Monte Sereno".
+- A straight and a curly apostrophe count alike: "Sheriff's" matches "Sheriff’s".
 - Score by where the match landed: title > item text > attachment, and lower
   again deep in a long packet.
 - A term that matches in more than half of a body's agendas is flagged as
@@ -33,6 +34,8 @@ SNIPPET_CHARS = 80  # of context on each side of a match
 DASHES = "-‐‑–"
 _SPLIT = re.compile(rf"\s*[{DASHES}]\s*|\s+")
 _SEPARATOR = rf"(?:\s*[{DASHES}]\s*|\s+)"
+# Straight, curly and backwards apostrophes: PDF text turns most of them curly.
+APOSTROPHES = "'’‘`"
 
 
 @dataclass(frozen=True)
@@ -42,12 +45,16 @@ class Term:
     pattern: re.Pattern
 
 
+def _escape(word: str) -> str:
+    return "".join(f"[{APOSTROPHES}]" if c in APOSTROPHES else re.escape(c) for c in word)
+
+
 def _word_pattern(word: str, last: bool) -> str:
     if not last or not word[-1:].isalpha():
-        return re.escape(word)
+        return _escape(word)
     if len(word) > 2 and word[-1] in "yY" and word[-2].lower() not in "aeiou":
-        return re.escape(word[:-1]) + "(?:y|ies)"  # technology, technologies
-    return re.escape(word) + "(?:e?s)?"  # reader(s), sheriff(s)
+        return _escape(word[:-1]) + "(?:y|ies)"  # technology, technologies
+    return _escape(word) + "(?:e?s)?"  # reader(s), sheriff(s)
 
 
 def term_pattern(term: str) -> str:
