@@ -43,3 +43,25 @@ def test_replay_stage_reports_a_matter_not_on_the_agenda():
     stage = {"date": date(2026, 2, 24), "matter": 1}
     result = run.replay_stage(fetcher(), "mountainview", stage, TERMS, None)
     assert result["item"] is None and result["matches"] == []
+
+
+class PageFetcher:
+    def __init__(self, pages):
+        self.pages, self.gets = pages, []
+
+    def get(self, url):
+        self.gets.append(url)
+        return next(page for part, page in self.pages.items() if part in url).encode()
+
+
+def test_replay_iqm2_stage_finds_the_item_by_meeting_and_title():
+    fixtures = Path(__file__).parent / "fixtures" / "iqm2"
+    fetcher = PageFetcher({"Detail_Meeting.aspx?ID=17578": (fixtures / "sccgov_meeting_17578.html").read_text(),
+                           "Detail_LegiFile.aspx?ID=127331": "<html>no report sections</html>"})
+    stage = {"date": date(2026, 1, 27), "body": "Board of Supervisors", "iqm2_meeting_id": 17578,
+             "item": "Item 56: Consider recommendations relating to the Surveillance Use Policy for the "
+                     "Automated License Plate Readers ... (Office of the Sheriff)"}
+    result = run.replay_stage(fetcher, "sccgov", stage, TERMS, None)
+    assert result["item"].number == "56" and result["item"].matter_id == "127331"
+    assert run.where(result["matches"]) == 'title: "license plate reader"; item text: "license plate reader"'
+    assert run.stage_label(stage) == "meeting 17578"

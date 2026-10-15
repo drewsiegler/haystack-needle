@@ -1,13 +1,15 @@
-"""Replay the Legistar cases in backtest/cases.yaml through the matcher.
+"""Replay the Legistar and IQM2 cases in backtest/cases.yaml through the matcher.
 
 For each case, every listed stage is looked up on the agenda for its date (by
-MatterId), and the item's title, item text and attachments are matched against
+MatterId on Legistar; on IQM2, by the meeting's ID and the start of the item's
+title), and the item's title, item text and attachments are matched against
 today's watchlists.yaml. Attachments changed after the meeting are left out,
 since they couldn't have been read before it. The report says whether the case
 was caught at its first appearance, the earliest stage caught, and where the
 match landed. It also sweeps every agenda of the same agency in the weeks
 before the first appearance, by title and agenda note, for earlier items the
-case list may have missed.
+case list may have missed. On IQM2, which asks for a minute between requests,
+the sweep covers only the first stage's board.
 
 Uses the network. Responses and attachments are cached in .cache/backtest
 (gitignored), so a second run is fast and makes no requests.
@@ -18,6 +20,7 @@ Uses the network. Responses and attachments are cached in .cache/backtest
 from __future__ import annotations
 
 import argparse
+import re
 import sys
 from datetime import date, timedelta
 from pathlib import Path
@@ -27,7 +30,7 @@ import yaml
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from adapters import legistar  # noqa: E402
+from adapters import iqm2, legistar  # noqa: E402
 from needle.fetch import Fetcher  # noqa: E402
 from needle.matcher import flag_boilerplate, load_terms, match_item, match_meeting  # noqa: E402
 from needle.pdftext import pdf_pages  # noqa: E402
@@ -59,8 +62,29 @@ def find_stage(fetcher, client, day: date, matter_id: int):
     return None, None
 
 
+def find_iqm2_stage(fetcher, client, stage):
+    """The stage's IQM2 meeting and the item whose title starts like the case's
+    (up to any "..."), with its staff report."""
+    row = {"id": str(stage["iqm2_meeting_id"]), "date": stage["date"], "time": "",
+           "board": stage["body"], "agenda": None}
+    page = iqm2._decode(fetcher.get(iqm2.meeting_page(client, row["id"])))
+    meeting = iqm2.build_meeting(client, row, iqm2.parse_outline(page, row["id"]))
+    wanted = " ".join(re.sub(r"^Item \d+:\s*", "", stage["item"]).split("...")[0].split())[:80].lower()
+    item = next((i for i in meeting.items if " ".join(i.title.split()).lower().startswith(wanted)), None)
+    if item:
+        item.text = "\n\n".join(t for t in (item.text, iqm2.item_text(fetcher, client, item)) if t)
+    return meeting, item
+
+
+def stage_label(stage) -> str:
+    return f'matter {stage["matter"]}' if "matter" in stage else f'meeting {stage["iqm2_meeting_id"]}'
+
+
 def replay_stage(fetcher, client, stage, terms, read_pages):
-    meeting, item = find_stage(fetcher, client, stage["date"], stage["matter"])
+    if "iqm2_meeting_id" in stage:
+        meeting, item = find_iqm2_stage(fetcher, client, stage)
+    else:
+        meeting, item = find_stage(fetcher, client, stage["date"], stage["matter"])
     result = {"stage": stage, "meeting": meeting, "item": item, "matches": [], "late": 0}
     if item is None:
         return result
@@ -84,6 +108,19 @@ def sweep(fetcher, client, first: date, days: int, terms):
     return meetings, matches
 
 
+def sweep_iqm2(fetcher, client, board: str, first: date, days: int, terms):
+    """The same as sweep, for one IQM2 board's posted agendas."""
+    page = iqm2._decode(fetcher.get(iqm2.calendar_page(client, first - timedelta(days=days),
+                                                       first - timedelta(days=1))))
+    meetings = []
+    for row in iqm2.parse_calendar(page):
+        if row["board"] == board and row["agenda"] and row["status"] != "Cancelled":
+            outline = iqm2.parse_outline(iqm2._decode(fetcher.get(iqm2.meeting_page(client, row["id"]))), row["id"])
+            meetings.append(iqm2.build_meeting(client, row, outline))
+    matches = [m for meeting in meetings for m in match_meeting(meeting, terms)]
+    return meetings, matches
+
+
 def where(matches) -> str:
     parts = []
     for location in ("title", "item_text", "attachment"):
@@ -100,15 +137,20 @@ def where(matches) -> str:
 
 
 def run_case(fetcher, case, all_terms, lookback, read_pages):
-    client = case["source"]["client"]
+    source = case["source"]
+    client = source.get("client") or source["site"].split(".")[0]
     terms = [t for t in all_terms if t.watchlist == case["watchlist"]]
     stages = [replay_stage(fetcher, client, s, terms, read_pages) for s in case["stages"]]
     first = case["first_appearance"]
-    swept, sweep_matches = sweep(fetcher, client, first, lookback, terms)
+    if source["adapter"] == "iqm2":
+        swept, sweep_matches = sweep_iqm2(fetcher, client, case["stages"][0]["body"], first, lookback, terms)
+    else:
+        swept, sweep_matches = sweep(fetcher, client, first, lookback, terms)
     first_stage = stages[0]
     if first_stage["matches"]:
         flag_boilerplate(swept + [first_stage["meeting"]], sweep_matches + first_stage["matches"])
-    matter = legistar.fetch_matter(fetcher, client, case["stages"][0]["matter"])
+    matter = (legistar.fetch_matter(fetcher, client, case["stages"][0]["matter"])
+              if source["adapter"] == "legistar" else {})
     return {"case": case, "stages": stages, "earlier": sweep_matches, "swept": len(swept),
             "matter": matter}
 
@@ -141,10 +183,10 @@ def report(results, skipped, lookback, attachments: bool) -> str:
         for i, s in enumerate(r["stages"], start=1):
             stage = s["stage"]
             if s["item"] is None:
-                out.append(f'- Stage {i}, {stage["date"]}, matter {stage["matter"]}: not found on that day\'s agenda')
+                out.append(f'- Stage {i}, {stage["date"]}, {stage_label(stage)}: not found on that day\'s agenda')
                 continue
             late = f' ({s["late"]} attachment(s) changed after the meeting left out)' if s["late"] else ""
-            out.append(f'- Stage {i}, {stage["date"]}, {s["meeting"].body.name}, matter {stage["matter"]}: '
+            out.append(f'- Stage {i}, {stage["date"]}, {s["meeting"].body.name}, {stage_label(stage)}: '
                        f'"{" ".join(s["item"].title.split())[:120]}"; {len(s["item"].attachments)} attachment(s){late}. '
                        f'Matched {where(s["matches"])}.')
         m = r["matter"]
@@ -152,8 +194,8 @@ def report(results, skipped, lookback, attachments: bool) -> str:
         if agenda_date and agenda_date < str(case["first_appearance"]):
             out.append(f"- Legistar gives this matter a first agenda date of {agenda_date}, "
                        "earlier than the case's first appearance.")
-        earlier = [x for x in r["earlier"]
-                   if x.item.matter_id not in {str(s["matter"]) for s in case["stages"]}]
+        replayed = {s["item"].matter_id or s["item"].id for s in r["stages"] if s["item"]}
+        earlier = [x for x in r["earlier"] if (x.item.matter_id or x.item.id) not in replayed]
         seen = set()
         lines = []
         for x in sorted(earlier, key=lambda x: x.meeting.date):
@@ -161,7 +203,8 @@ def report(results, skipped, lookback, attachments: bool) -> str:
             if key in seen:
                 continue
             seen.add(key)
-            lines.append(f'  - {x.meeting.date}, {x.meeting.body.name}, matter {x.item.matter_id}: '
+            which = f"matter {x.item.matter_id}" if x.item.matter_id else f"item {x.item.number}"
+            lines.append(f'  - {x.meeting.date}, {x.meeting.body.name}, {which}: '
                          f'"{" ".join(x.item.title.split())[:120]}" ({LOCATION_NAMES[x.location]}: "{x.term}")')
         out.append(f'- Earlier matches in the {lookback} days before (titles and agenda notes, '
                    f'{r["swept"]} meetings): {len(lines) or "none"}')
@@ -192,7 +235,7 @@ def main() -> None:
     for case in cases:
         if args.case and case["id"] != args.case:
             continue
-        if case["source"]["adapter"] != "legistar":
+        if case["source"]["adapter"] not in ("legistar", "iqm2"):
             skipped.append(case["id"])
             continue
         print(f"Replaying {case['id']}…", file=sys.stderr)
