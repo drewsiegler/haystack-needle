@@ -39,13 +39,15 @@ class Deferred(httpx.HTTPError):
 
 
 class BotCheck(httpx.HTTPError):
-    """The host answered with a bot check (a Cloudflare challenge or Imperva's block
-    page) instead of what was asked for. Haystack Needle doesn't try to get past one:
+    """The host answered with a bot check (a Cloudflare or Vercel challenge, or Imperva's
+    block page) instead of what was asked for. Haystack Needle doesn't try to get past one:
     the host is left alone for the rest of the run."""
 
 
 def is_bot_check(response: httpx.Response) -> bool:
-    if response.headers.get("cf-mitigated") == "challenge":
+    # Cloudflare's challenge, and Vercel's challenge or block (Boardable's public sites run on Vercel).
+    if (response.headers.get("cf-mitigated") == "challenge"
+            or response.headers.get("x-vercel-mitigated") in ("challenge", "deny")):
         return True
     if "html" not in response.headers.get("content-type", "").lower():
         return False

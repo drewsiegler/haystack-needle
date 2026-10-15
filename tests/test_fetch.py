@@ -126,6 +126,23 @@ def test_leaves_a_host_alone_for_the_run_once_it_answers_with_a_bot_check():
     assert len(sent) == 3 and fetcher.requests == 3 and fetcher.deferred == 0
 
 
+@pytest.mark.parametrize("status, mitigated", [(429, "challenge"), (403, "deny")])
+def test_takes_vercels_challenge_or_block_as_a_bot_check(status, mitigated):
+    sent = []
+
+    def handler(request):
+        sent.append(str(request.url))
+        return httpx.Response(status, headers={"x-vercel-mitigated": mitigated}, text="Vercel Security Checkpoint")
+
+    fetcher, slept = make(handler)
+    site = "https://site.boardable.com/foothill-de-anza-community-college-district"
+    with pytest.raises(BotCheck, match="bot check"):
+        fetcher.get(site)
+    with pytest.raises(Deferred):  # not sent
+        fetcher.get(f"{site}/meetings")
+    assert len(sent) == 1 and slept == [] and fetcher.refused == {"site.boardable.com"}  # no retry of the 429
+
+
 # Imperva's block pages, cut down. Both come as ordinary HTML with a 200 status.
 IMPERVA_PARDON = """<!DOCTYPE html>
 <html lang="en">
