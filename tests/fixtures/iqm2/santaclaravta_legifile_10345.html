@@ -1,0 +1,543 @@
+
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"  xml:lang="en" lang="en">
+<head id="HeadMain"><title>
+	Silicon Valley Express Lanes Strategic Plan Discussion - Santa Clara Valley Transportation Authority
+</title><meta http-equiv="X-UA-Compatible" content="IE=9" />
+
+    <!-- this fixes a minor rendering issue with tables on the ipad -->
+    <meta content="width=device-width, initial-scale=1.0;" name="viewport" />
+
+    <!-- Agency specific meta tags -->
+    <meta name='google-site-verification' content='v8iNp5ToI5384_S9_Exw0F10KJ__b35Fs7jqvTvb0TY' />
+<meta name='msvalidate.01' content='8C654B10898A718CB62BCB19E52589CD' />
+
+
+    <!-- open search discovery -->
+    <link rel="search" type="application/opensearchdescription+xml" href="/Services/GetFederatedSearch.aspx" title="IQM2 search" />
+
+    <!-- Icon -->
+    <link href="/favicon.ico?v=2018" rel="icon" />
+
+    <!-- CSS Links -->
+    <link type="text/css" href="/App_Themes/Main.css?v=86" rel="Stylesheet" /><link type="text/css" href="/lib/jquery-ui.css" rel="stylesheet" />
+ 
+  <script>
+      !function () { var a, b, c, d = window, e = document, f = arguments, g = "script", h = ["config", "track", "trackForm", "trackClick", "identify", "visit", "push", "call"], i = function () { var a, b = this, c = function (a) { b[a] = function () { return b._e.push([a].concat(Array.prototype.slice.call(arguments, 0))), b } }; for (b._e = [], a = 0; a < h.length; a++) c(h[a]) }; for (d.__woo = d.__woo || {}, a = 0; a < f.length; a++) d.__woo[f[a]] = d[f[a]] = d[f[a]] || new i; b = e.createElement(g), b.async = 1, b.src = "//static.woopra.com/js/w.js", c = e.getElementsByTagName(g)[0], c.parentNode.insertBefore(b, c) }("woopra");
+
+      woopra.config({
+          domain: "iqm2.com",
+          cookie_name:"accelaTracker"
+      });
+      woopra.track("mp_pv", {
+          domain: window.location.hostname,
+          title: document.title,
+          url: window.location.href,
+          uri: window.location.pathname,
+          hash: window.location.hash,
+          error: null
+      });
+  </script>
+    <!-- IQM2 Scripts -->
+    <script type="text/javascript" src="/lib/jquery.js"></script>
+    <script type="text/javascript" language="javascript" src="/App_Themes/Global.js?v=8_10_48"></script>
+    <script type="text/javascript" src="/lib/MinuteTraq.PopupWindow.js"></script>
+    <script type="text/javascript" src="/lib/jquery-ui.js"></script>
+    <link href="https://unpkg.com/video.js@7.21.1/dist/video-js.css" rel="stylesheet" /><link href="/Scripts/videojs-live-dvr/videojs-dvrseekbar.css" rel="stylesheet" />
+    <script src="https://unpkg.com/video.js@7.21.1/dist/video.js"></script>
+    <script src='https://unpkg.com/videojs-flash@2.1.0/dist/videojs-flash.min.js'></script>
+    <script src="https://unpkg.com/videojs-contrib-hls/dist/videojs-contrib-hls.js"></script>
+    <script src="/Scripts/videojs-live-dvr/videojs-dvrseekbar.min.js"></script>
+    <script type='text/javascript' src='/Scripts/player.js'></script>
+    <script type="text/javascript" src="/Scripts/js.cookie-2.0.3.min.js"></script>
+    <!-- RSS Feeds (Site) -->
+    
+
+    <!-- Generated CSS Link -->
+    
+  
+    <!-- External CSS / Script Links -->
+    <link type='text/css' href='/Lib/GetCustomCSS.ashx?timestamp=639221368160000000' rel='Stylesheet' /><link type='text/css' href='/Citizens/GetImage.aspx?ID=1003' rel='Stylesheet' /><script type='text/javascript' src='/Citizens/GetImage.aspx?ID=1004'></script>
+    
+   
+    <!--[if IE 7]>
+	   <style type="text/css">
+        .Section H2 { display:inline;}
+        .RowTop div { display:inline;}
+   </style>
+	
+	<![endif]-->
+    
+    <script type="text/javascript" src="/Lib/MinuteTraq.Search.js?v=8_10_66"></script>
+    
+    <script type="text/javascript">
+        
+        // configure tracker
+        
+        $(function () {
+            
+            
+            FixFooterPosition();
+            $(window).on('resize', FixFooterPosition);
+
+            var h = $("#Banner").height();
+            //  var w = $("body").width();
+
+            var sCoords = "0,0,5000," + h;
+
+            $("#lnkBanner").attr("coords", sCoords);
+            var hideTopBanner = Cookies.get('hideTopBanner');
+            var appStyles = {display:'block'};
+            if (hideTopBanner) {
+                appStyles.display = 'none';
+            }
+            $('#topbarAppBanner').css(appStyles);
+            $('.close-topbar-app-banner').bind('click', function () {
+                $('#topbarAppBanner').css('display', 'none');
+                Cookies.set('hideTopBanner', true);
+            });
+            $('.link-wrapper-banner').bind('click', function () {
+                woopra.track('portal-wegovern-banner', {
+                    agency: Cookies.get('AgencyName'),
+                    username: Cookies.get('WebUserName')
+                });
+                return true;
+            });
+        });
+
+        function FixFooterPosition() {
+            //hack for the footer, display at bottom of screen if page is short
+            if ($("form").height() < $(window).height() - 100) {
+                $("#Footer").css("position", "absolute");
+                $("#Footer").css("bottom", "0");
+            }
+            else {
+                $("#Footer").css("position", "");
+            }
+        }
+
+    </script>
+    <style type="text/css" media="screen">
+        #topbarAppBanner {
+            min-height: 40px;
+            z-index: 1000;
+        }
+        .top-banner-app-inner{
+            margin-top: 10px;
+            margin-bottom: 10px;
+            width: 100%;
+            height: 40px;
+            border: 1px solid rgba(10,10,10,.5);
+            box-shadow: 0px 0px 16px 0px #303030;
+            background-color: #456ca7;
+        }
+        .close-topbar-app-banner {
+            position: absolute;
+            display: block;
+            top: 25px;
+            right: 5%;
+            font-size: 1em;
+            color: #e3e3e3
+        }
+        .app-link{
+            display: block;
+            margin: 0 auto;
+            width: 40%;
+        }
+        .wegovern-banner-logo {
+            left: 22px;
+            position: relative;
+            padding-top: 1px;
+        }
+
+        @media screen and (max-width: 981px ){
+            .inside-banner-link {
+                position: relative;
+                top: -15px;
+                left: 30px;
+                color: #e3e3e3;
+                white-space: nowrap;
+            }
+        }
+        @media screen and (min-width: 1595px){
+            .inside-banner-link {
+                position: relative;
+                top: -15px;
+                left: 30px;
+                color: #e3e3e3;
+                white-space: nowrap;
+            }
+        }
+        @media screen and (max-width: 1594px){
+            .inside-banner-link {
+                position: relative;
+                top: -30px;
+                left: 75px;
+                color: #e3e3e3;
+                white-space: nowrap;
+            }
+        }
+        @media screen and (min-width:1100px){
+            .app-link{
+                display: block;
+                margin: 0 auto;
+                width: 40%;
+            }
+            .close-topbar-app-banner {
+                right: 5%;
+            }
+        }
+        @media screen and (max-width:1099px){
+            .app-link {
+                display: block;
+                margin: 0 auto;
+                width: 65%;
+            }
+            .close-topbar-app-banner {
+                right: 5%;
+            }
+            .inside-banner-link {
+                position: relative;
+                top: -15px;
+                left: 30px;
+                color: #e3e3e3;
+                white-space: nowrap;
+            }
+        }
+    </style>
+    
+
+    <!-- Page Level Header Stuff -->
+    
+
+    </head>
+
+<body id="MainLayout">
+    
+    <form method="post" action="../Agency/LegiFile.aspx?Frame=&amp;MeetingID=4678&amp;MediaPosition=&amp;ID=10345&amp;CssClass=" id="aspnetForm" enctype="multipart/form-data">
+<div class="aspNetHidden">
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="3ljI9q9T7XnXafmYkbLJY+JhF4qu1B7ppL346594KY7yr5e6IukDKIWJRsf7qb/LPYZWkoep/QoXce6wPM1Pmnk4k9VmzTwUu48j0rYABkGItgx1c5r8psfF/+PRx1A8P0AlY2uGetob6ftrxd52rqxlQAuk0SX+3vrqvhGmSLKiCgzc6Ut6fQPuI12uj5mE/NMEoDCxTiN6WylMs0H5yQ==" />
+</div>
+
+<div class="aspNetHidden">
+
+	<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="A517CA1D" />
+	<input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="kQQFrB3glTimyttFh+SOv3mEJnb7rcuwUO4e7iZ/U0UbG00Xeut4SYBOYD2PMPPmObgjZuVhPP/21t7s3pqy+oqJBF3eHa5oUwwdpXa0r1NcMjn+m+mCoAhozrz8LUr8O7slw/dwplvcawNeKJn5a1/HR8kaDF05TiuYo5ml4KAtTsY6BiqFXOMSHvzjMEEKxlqgssjoDPSTQbszr79UAgQ8Q23Qkedoxl+K+YuJ6LMjh0iBCMPEN/YfAtoeiXwZhg7WEca2qDBDyrTl9g5AeZQrb5podQQy/jJePwhiMY+w1T7BmsjLSuHCeIj4mkMQe4IJWb1E8F8ydhmAty2ooHImntaVc/O4vUpGu1WsFrc=" />
+</div>
+        <div style="display: none">
+            <input type="submit" name="ctl00$btnRefreshPageAfterLogin" value="Button" id="btnRefreshPageAfterLogin" class="btnRefreshPage" />
+            <input name="ctl00$hfShowPopupOnLoad" type="hidden" id="hfShowPopupOnLoad" class="hfShowPopup" />
+        </div>
+        <span id="lblScript"></span>
+  
+    <div id="MainWindow">
+    
+            <div id="Banner" role="banner"  >
+                <img usemap="#bannerMap" src="/Citizens/GetImage.aspx?ID=1010&TimeStamp=639221368160000000" alt="IQM2 Meeting Portal" />
+                <map name="bannerMap">
+                    <area href="/Citizens/Default.aspx" id="lnkBanner" shape="rect" alt="Home" Target="_self" />
+                </map>
+
+                <div id="LogoHeaderTextHolder">
+                    
+                                                                       
+                </div>
+            </div>
+            
+            <div id="ToolStrip" role="navigation" aria-label="site">
+                <div id="Tabs">
+                    <div class="Shadow"></div>
+                    <a href="https://www.vta.org" id="lnkMainSite" class="Tab LeftTab"><div><span>&laquo;Back to Main Site</span></div></a>
+                    <a href="/Citizens/default.aspx" class="Tab NormalTab"><div><span id="tabWelcome">Welcome</span></div></a>
+                    <a href="/Citizens/calendar.aspx" class="Tab NormalTab"><div><span id="tabMeetings">Meetings</span></div></a>                
+                    <a href="/Citizens/" style="display:none" class="Tab NormalTab"><div dropdown="Browse"><span>Browse</span></div></a>
+                                        
+                    <a href="/Citizens/Media.aspx" id="lnkMedia" class="Tab NormalTab"><div><span id="tabMedia">Media</span></div></a>                    
+                    <a href="/Citizens/LegalNotice.aspx" id="lnkNotices" class="Tab NormalTab"><div id="tabNotices"><span>Notices</span></div></a>                                        
+                    <a href="/Citizens/Board" class="Tab NormalTab"><div><span id="tabContactUs">Boards+</span></div></a>                                                        
+                </div>
+                <div id="TopExtraBoxTransparentBG"></div>
+                <div id="TopExtraBox">  
+                    <div id="TopLine">
+                        
+                     <a href="../MasterPages/#" id="lnkLogin" onclick="javascript:return PopupWindowShow(&#39;/Citizens/Login.aspx&#39;);">Log in</a><span id="spnThatOneStupidBar"> | </span><a href="mailto:support@granicus.com" id="lnkHelp">Help</a>                                                  
+                    </div> 
+                    <div id="BottomLine">                       
+                          
+                    </div>                            
+                   <input name="ctl00$txtQuickSearch" type="text" id="txtQuickSearch" value="Search" title="Search" />
+                   <input type="image" name="ctl00$btnQuickSearch" id="btnQuickSearch" alt="Search" src="/Lib/images/search.png" style="cursor:pointer" />                   
+                </div>     
+            </div>
+                     
+            <table class="LayoutTable" role="presentation">
+                <tr>
+                    <td id="tdLeftPanel" class="LeftPanel">
+                        
+                        <div role="navigation" aria-label="Meeting Group">
+                            
+                        </div>
+                        
+                        <div class="DetailBox">
+                            <img src="/Citizens/images/Print.gif" border="0" alt="Print" />
+                            <a href="/Citizens/Detail_LegiFile.aspx?MeetingID=4678&MediaPosition=&ID=10345&CssClass=&Print=Yes" id="lnkPrint" class="PrintButton" target="_blank">Print This Page</a>                           
+                        </div>
+                        
+                        
+                                                
+                       <!-- <div class="QuickLink">
+                            <img src="/Lib/buttonexample.png" alt="Quick Link 1" />
+                            <a href="#">Quick Link #1</a>
+                        </div>
+                        <div class="QuickLink">
+                            <img src="/Lib/buttonexample.png" alt="Quick Link 2"  />
+                            <a href="#">Quick Link #2</a>
+                        </div>     -->
+                                      
+                    </td>
+
+                    <td id="MainContentHolder">
+                        <div style="width:100%;height:100%;position:relative;margin:0;padding:0;border:0;">
+                            <div id="MainContentLeftShadow">                           
+                            </div>   
+                          
+                            <div class="MainContentPlaceholder" role="main">
+                                
+                                
+
+    <script type="text/javascript" src="../Lib/MinuteTraq.DetailLegiFile.js"></script>
+    <script type="text/javascript" src="../Lib/MinuteTraq.Transcript.js"></script>
+    <script src="../Scripts/userdiscussion-charactercount.js"></script>
+
+
+    
+    
+
+    <div id="ContentPlaceholder1_pnlMain" class="LegiFileDetails DetailPage">
+
+        <input type="hidden" name="ctl00$ContentPlaceholder1$txtLegiFileID" id="ContentPlaceholder1_txtLegiFileID" value="10345" />
+        <input type="hidden" name="ctl00$ContentPlaceholder1$txtFileFormat" id="ContentPlaceholder1_txtFileFormat" value="rtf" />
+        <input name="ctl00$ContentPlaceholder1$hfVideo" type="hidden" id="ContentPlaceholder1_hfVideo" value="False" />
+        <input name="ctl00$ContentPlaceholder1$hfDisableSilverlight" type="hidden" id="ContentPlaceholder1_hfDisableSilverlight" value="False" />
+
+
+
+
+        <div class="LegiFileHeader">
+            <img src="/Shared/GetImage.aspx?ContentNumber=10&AgencyID=1028" id="ContentPlaceholder1_imgBoardLogo" class="Logo" alt="Logo" />
+
+            <div class="HeaderCenter">
+                <div id="ContentPlaceholder1_lblAgency">Santa Clara Valley Transportation Authority</div>
+                <br />
+                <div id="ContentPlaceholder1_lblLegiFileType">Information Item</div>
+                <div id="ContentPlaceholder1_lblResNum">10345</div>
+            </div>
+
+            <div class="HeaderRight">
+                
+            </div>
+        </div>
+
+
+        <div class="LegiFileTitle">
+            <h1 id="ContentPlaceholder1_lblLegiFileTitle" class="LegiFileHeading"> Silicon Valley Express Lanes Strategic Plan Discussion</h1>
+        </div>
+
+        <div class="LegiFileInfo">
+            <h4>Information</h4>
+            <div class="LegiFileSectionContents">
+                <table id="tblLegiFileInfo" class="LegiFileSectionContents"><tr><th><strong>Department</strong>:</th><td>Dept - Traffic Engineering and Express Lanes</td><th><strong>Sponsors</strong>:</th><td>Chief Engineering & Prog Delivery Officer Casey Emoto</td></tr><tr><th><strong>Category</strong>:</th><td>Information</td></tr></table>
+            </div>
+        </div>
+
+        
+
+        
+
+        
+
+        <div id="ContentPlaceholder1_divDownloads" class="LegiFileSection">
+            <h4>Attachments</h4>
+            <div id="divSnapshotDropdown" class="SlidingWindow" style="display: none">
+                <div class="Header">Version History</div>
+                <ul id="lstSnapshots">
+                </ul>
+            </div>
+            <ol class="UndecoratedList LegiFileSectionContents">
+                
+                        <li class="snapShotListItem">
+                            <a id='lnkDownload' href='/Citizens/FileOpen.aspx?Type=30&ID=40688' target='_blank' runat='server'>Printout</a>
+                        </li>
+                    
+                        <li class="snapShotListItem">
+                            <a id='lnkDownload' href='https://santaclaravta.iqm2.com/Citizens/FileOpen.aspx?Type=4&ID=15121' target='_blank' runat='server'>Attachment A - SVEL Map Near-Term Projects</a>
+                        </li>
+                    
+                        <li class="snapShotListItem">
+                            <a id='lnkDownload' href='https://santaclaravta.iqm2.com/Citizens/FileOpen.aspx?Type=4&ID=15248' target='_blank' runat='server'>261016_SVEL_SP_BdWkshp</a>
+                        </li>
+                    
+            </ol>
+            
+        </div>
+
+        <div id="ContentPlaceholder1_divFinancialImpact" class="LegiFileSection">
+            <h4 id="ContentPlaceholder1_hdrFinancialImpact">Financial Impact</h4>
+            <div class="LegiFileSectionContents">
+                There is no financial impact. The Strategic Plan is a guidance document.
+                <p>
+                    
+                </p>
+            </div>
+        </div>
+
+
+        <div class="LegiFileSection" id="divDocumentComments"><h4>Recommendation</h4><div class='LegiFileSectionContents'><div><p style="margin:0pt"><span style="font-family:'Times New Roman'; font-size:12pt">Receive item on Silicon Valley Express Lanes (SVEL) Program with focused discussion related to the SVEL Strategic Plan. </span></p><p style="margin:0pt"><span style="font-family:'Times New Roman'; font-size:12pt">&#xa0;</span></p></div></div></div><div class="LegiFileSection" id="divItemDiscussion"><h4>Item Discussion</h4><div class='LegiFileSectionContents'><div><p style="margin:6pt 0pt 12pt; orphans:0; widows:0"><span style="font-family:'Times New Roman'; font-size:12pt; font-weight:bold; text-decoration:underline">EXECUTIVE SUMMARY:</span></p><p style="margin:0pt; orphans:0; widows:0"><span style="font-family:'Times New Roman'; font-size:12pt; font-weight:normal; text-decoration:none">At its December 2008 meeting, the Board approved the Silicon Valley Express Lanes (SVEL) Program. VTA has developed the SVEL Strategic Plan covering Fiscal Years 2026 to 2035. </span><span style="font-family:'Times New Roman'; font-size:12pt; font-weight:normal; text-decoration:none">The SVEL Strategic Plan outlines a phased project delivery approach highlighting near-term (Attachment A) (3 to 5 years), mid-term (5 to 10 years), and long-term (beyond 10 years) milestones. The SVEL Strategic Plan also presents several key policy areas of the SVEL Program and provides recommendations for future related action items. </span></p><p style="margin:0pt; orphans:0; widows:0"><span style="font-family:'Times New Roman'; font-size:12pt; font-weight:normal">&#xa0;</span></p><p style="margin:0pt 0pt 0pt 36pt; orphans:0; text-indent:-18pt; widows:0"><span style="font-family:Symbol; font-size:12pt; font-weight:normal; text-decoration:none">·</span><span style="font-family:Symbol; font-size:12pt; font-weight:normal; text-decoration:none">              </span><span style="font-family:'Times New Roman'; font-size:12pt; font-weight:normal; text-decoration:none">The purpose of this item to be brought to the Board Workshop is to provide the Board of Directors with an opportunity to receive staff input on areas of focus on the SVEL Strategic Plan where feedback was received from the Committees and public. </span></p><p style="margin:0pt 0pt 0pt 36pt; orphans:0; text-indent:-18pt; widows:0"><span style="font-family:Symbol; font-size:12pt; font-weight:normal; text-decoration:none">·</span><span style="font-family:Symbol; font-size:12pt; font-weight:normal; text-decoration:none">              </span><span style="font-family:'Times New Roman'; font-size:12pt; font-weight:normal; text-decoration:none">The Board input will allow staff to refine the SVEL Strategic Plan before the report is finalized.    </span></p><p style="margin:0pt; orphans:0; widows:0"><span style="font-family:'Times New Roman'; font-size:12pt; font-weight:normal">&#xa0;</span></p><p style="margin:0pt 0pt 12pt; orphans:0; widows:0"><span style="font-family:'Times New Roman'; font-size:12pt; font-weight:bold; text-decoration:underline">STRATEGIC PLAN/GOALS:</span></p><p style="margin:0pt 0pt 12pt; orphans:0; widows:0"><span style="font-family:'Times New Roman'; font-size:12pt; font-weight:normal; text-decoration:none">The SVEL Program aligns with VTA’s Business Line 3: Transportation Systems Management, in providing support to its member agencies in transportation systems management, funding, integration, and innovation. The SVEL Program supports Business Line 1: Faster, Frequent, Reliable Transit, as it is proposed to provide funding for transit, and supports Business Line 2: Delivering Projects and Programs, as it is proposed to be a funding source for multimodal corridor improvements.</span></p><p style="margin:0pt 0pt 12pt; orphans:0; widows:0"><span style="font-family:'Times New Roman'; font-size:12pt; font-weight:normal; text-decoration:none">The SVEL Program tolling system assets are owned and operated by VTA with policy direction provided by the VTA Board in a manner consistent with core values in the VTA Strategic Plan. The most relevant core goals in the VTA Strategic Plan include delivering the SVEL Program by maximizing user benefits, strengthening compliance, protecting revenue integrity, and reinforcing public confidence. Another core goal is to accelerate the delivery of express lanes to generate revenue and to provide revenue diversification for the agency for long-term financial sustainability. </span></p><p style="margin:0pt 0pt 12pt; orphans:0; widows:0"><span style="font-family:'Times New Roman'; font-size:12pt; font-weight:normal">&#xa0;</span></p></div></div></div><div class="LegiFileSection" id="divBody"><h4>Body</h4><div class='LegiFileSectionContents'><div><p style="margin:0pt; orphans:0; widows:0"><span style="font-family:'Times New Roman'; font-size:12pt; font-weight:bold; text-decoration:underline">BACKGROUND:</span></p><p style="margin:0pt; orphans:0; widows:0"><span style="font-family:'Times New Roman'; font-size:12pt; font-weight:normal">&#xa0;</span></p><p style="margin:0pt 0pt 12pt; orphans:0; widows:0"><span style="font-family:'Times New Roman'; font-size:12pt; font-weight:normal; text-decoration:none">At its December 2008 meeting, the Board approved the SVEL Program to provide congestion relief by implementing a roadway pricing system that enables the use of unused capacity in carpool lanes. This is accomplished by allowing solo commuters to use the available capacity in the carpool lanes for a fee. The fee changes dynamically in response to congestion levels and the available capacity in the lanes. The result of these changes is the implementation of express lanes on what were formerly carpool lanes and, in some cases, the construction of additional lanes to support operations and safety. </span></p><p style="margin:0pt 0pt 12pt; orphans:0; widows:0"><span style="font-family:'Times New Roman'; font-size:12pt; font-weight:normal; text-decoration:none">The SVEL Program’s primary objectives include: </span></p><p style="margin:0pt 0pt 0pt 36pt; orphans:0; text-indent:-18pt; widows:0"><span style="font-family:Symbol; font-size:12pt; font-weight:normal; text-decoration:none">·</span><span style="font-family:Symbol; font-size:12pt; font-weight:normal; text-decoration:none">              </span><span style="font-family:'Times New Roman'; font-size:12pt; font-weight:normal; text-decoration:none">Provide congestion relief through more effective use of existing roadways. </span></p><p style="margin:0pt 0pt 0pt 36pt; orphans:0; text-indent:-18pt; widows:0"><span style="font-family:Symbol; font-size:12pt; font-weight:normal; text-decoration:none">·</span><span style="font-family:Symbol; font-size:12pt; font-weight:normal; text-decoration:none">              </span><span style="font-family:'Times New Roman'; font-size:12pt; font-weight:normal; text-decoration:none">Provide commuters with a new mobility option. </span></p><p style="margin:0pt 0pt 12pt 36pt; orphans:0; text-indent:-18pt; widows:0"><span style="font-family:Symbol; font-size:12pt; font-weight:normal; text-decoration:none">·</span><span style="font-family:Symbol; font-size:12pt; font-weight:normal; text-decoration:none">              </span><span style="font-family:'Times New Roman'; font-size:12pt; font-weight:normal; text-decoration:none">Establish a new funding source for transportation improvements including public transit.</span></p><p style="margin:0pt 0pt 12pt; orphans:0; widows:0"><span style="font-family:'Times New Roman'; font-size:12pt; font-weight:normal; text-decoration:none">The SVEL Program consists of two corridors, namely US 101/SR 85 and SR 237/I-880. The state law that authorized tolling on these two corridors stipulates that net revenues generated in each corridor be used within the same corridor for transportation improvement projects, including support for transit operations and carpool lanes. Caltrans owns the underlying roadway on which VTA has built the express lanes, while VTA owns the signs, sensors, and communication equipment that comprise the express lanes tolling system. </span></p><p style="margin:0pt 0pt 12pt; orphans:0; widows:0"><span style="font-family:'Times New Roman'; font-size:12pt; font-weight:normal; text-decoration:none">The SVEL Program has served over 46 million toll users to date, providing key operational benefits with average operating speeds exceeding 45 miles per hour and ensuring travel time reliability, resulting in travel time savings of up to 20 minutes. The SVEL Program has generated positive net revenues since its inception. </span></p><p style="margin:0pt; orphans:0; widows:0"><span style="font-family:'Times New Roman'; font-size:12pt; font-weight:bold; text-decoration:underline">DISCUSSION:</span></p><p style="margin:0pt; orphans:0; widows:0"><span style="font-family:'Times New Roman'; font-size:12pt; font-weight:normal">&#xa0;</span></p><p style="margin:0pt; orphans:0; widows:0"><span style="font-family:'Times New Roman'; font-size:12pt; font-weight:normal; text-decoration:none">The SVEL Strategic Plan aligns with the overall VTA Strategic Plan (currently under development) by meeting the agency's goals of improved mobility, financial sustainability, and economic development. This first iteration of the SVEL Strategic Plan documents the history and development, </span><span style="font-family:'Times New Roman'; font-size:12pt; font-weight:normal; text-decoration:none">goals and objectives, and operational policies for the SVEL Program. The Board Workshop will provide an opportunity for the Board to engage with VTA staff to provide input and directions. </span></p><p style="margin:0pt; orphans:0; widows:0"><span style="font-family:'Times New Roman'; font-size:12pt; font-weight:normal">&#xa0;</span></p><p style="margin:0pt; orphans:0; widows:0"><span style="font-family:'Times New Roman'; font-size:12pt; font-weight:bold; text-decoration:underline">CLIMATE IMPACT:</span></p><p style="margin:0pt; orphans:0; widows:0"><span style="font-family:'Times New Roman'; font-size:12pt; font-weight:normal">&#xa0;</span></p><p style="margin:0pt; orphans:0; widows:0"><span style="font-family:'Times New Roman'; font-size:12pt; font-weight:normal; text-decoration:none">Express lanes improves system efficiency by enhancing operations as a congestion relief management tool and by moving more people more efficiently within a shorter period. The SVEL Program promotes increased person throughput by providing toll free travel and toll discounts for eligible carpoolers and higher vehicle occupancy. The toll revenues from the SVEL Program are planned to be allocated to support transit operations, amongst other corridor improvements. Based on the above factors, the SVEL Program is estimated to not have a negative climate impact. It should be noted that the effects of each project on the climate, which has yet to be environmentally approved, would be evaluated during each project's environmental review process.</span></p><p style="margin:0pt; orphans:0; widows:0"><span style="font-family:'Times New Roman'; font-size:12pt; font-weight:bold">&#xa0;</span></p></div></div></div>
+
+        
+
+        
+
+        
+
+        
+
+        <!-- Edit Attachments -->
+        <div id="divAttachmentEdit" class="PopupBox PopupLargeText AttachmentEdit" style="display:none;">
+            <div id="popupTitleMessage" class="Title" style="display:none" ></div>
+            <ul style="list-style-type:none;">
+                <li>
+                    <div class="HeaderWithIcon">
+                        <div class="LeftSide">
+                            <img alt="Edit Attachment" src="/Citizens/images/document_edit_32X32.png" alt="Edit Attachment" />
+                        </div>
+                        <div class="RightSide">
+                            <input type="text" id ="txtTitle" name="popupTitle" style="width:100%; margin-top:10px;"/>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <h2 class="PopupSectionHeader" id="hdrUpdateFile">Choose a File</h2>
+                    <ul class="UndecoratedList">
+                        <li>
+                            <input name="ctl00$ContentPlaceholder1$fileAttachment" type="file" id="ContentPlaceholder1_fileAttachment" />
+                        </li>                
+                    </ul>
+                 </li>
+                <li>
+                    <h2 class="PopupSectionHeader" id="h1">Properties</h2>
+                    <ul class="UndecoratedList">
+                        <li>
+                            <span>Include Options</span>
+                            <select id="cboIncludeOptions" name="popupIncludeOptions"></select>
+                        </li>                
+                        <li>
+                            <span>Visibility</span>
+                            <select id="cboVisibility" name="popupVisibility"></select>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <div class="DialogButtonHolder">
+                        <div class="DialogButtonContainerHalfWidth">
+                            <input type="hidden" id="hfAttachmentID" name="popupAttachmentID"/>              
+                            <input type="submit" name="ctl00$ContentPlaceholder1$btnAttachmentUpdate" value="Create Attachment" id="ContentPlaceholder1_btnAttachmentUpdate" class="btnAttachmentUpdate DialogButton SubmitButton" />
+                        </div>
+                        <div class="DialogButtonContainerHalfWidth">
+                            <input type="submit" name="ctl00$ContentPlaceholder1$btnCancelAttachmentEdit" value="Cancel" id="ContentPlaceholder1_btnCancelAttachmentEdit" Class="DialogButton CancelButton" />
+                        </div>
+                        
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Delete Attachments -->
+        <div id="divAttachmentDelete" class="PopupBox PopupLargeText AttachmentEdit" style="display:none;">
+            <div id="popupDeleteTitle" class="Title" style="display:none" ></div>
+            <ul style="list-style-type:none;">
+                <li><h3>Are you sure you want to delete this attachment?</h3></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li>
+                    <div class="DialogButtonHolder">
+                        <div class="DialogButtonContainerHalfWidth">            
+                            <input type="button" id="btnAttachmentDelete" class="btnAttachmentUpdate DialogButton SubmitButton" value="Yes" />
+                        </div>
+                        <div class="DialogButtonContainerHalfWidth">
+                            <input type="button" id="btnAttachmentDeleteCancel" class="DialogButton CancelButton" value="Cancel" />
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Error Attachments -->
+        <div id="divAttachmentError" class="PopupBox PopupLargeText AttachmentEdit" style="display:none;">
+            <div id="divAttachmentErrorTitle" class="Title" style="display:none" ></div>
+            <ul style="list-style-type:none;">
+                <li></li>
+            </ul>
+        </div>
+
+    </div>
+
+    
+
+    
+                            </div>
+                        </div>                                                           
+                    </td>
+                </tr>               
+            </table>                                
+        </div>
+        
+    <div id="Footer" role="contentinfo">
+        <br />
+        <span id="lblPoweredBy">
+            Powered by <a href="https://granicus.com/" target="_blank" >Granicus</a>
+        </span>
+    </div>
+
+    <!-- Analytics Stuff (Start) *********************************** -->
+<script async src='https://www.googletagmanager.com/gtag/js?id=UA-44426936-12'></script>
+  <script>
+   window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+  gtag('config', 'UA-44426936-12');</script>
+<!-- Analytics Stuff (End)   *********************************** -->
+    <!-- Analytics Stuff (Start) *********************************** -->
+<script async src='https://www.googletagmanager.com/gtag/js?id=UA-70364301-2'></script>
+  <script>
+   window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+  gtag('config', 'UA-70364301-2');</script>
+<!-- Analytics Stuff (End)   *********************************** -->
+    
+        <!-- Popup Menus -->
+        <div id="mnuBrowse" class="PopupMenu" dropdown="Browse">
+            <ul>
+                <li><a href="#">Legislative Files</a></li>
+                <li><a href="#">Legal Notices</a></li>
+                <li><a href="#">Some other Sort of Thing</a></li>
+            </ul>
+        </div>
+
+    
+
+<script type="text/javascript">
+//<![CDATA[
+$(document).ready(function(){woopra.identify({ email:"", name:"Anonymous User", agency:"SantaClaraVTA", userlogin:"Anonymous"}).push(); })//]]>
+</script>
+</form>
+</body>
+</html>
+
+

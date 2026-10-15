@@ -1,0 +1,1206 @@
+
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"  xml:lang="en" lang="en">
+<head id="HeadMain"><title>
+	2026/01/27 09:30 AM Board of Supervisors Regular Meeting - Web Outline - The County of Santa Clara, California
+</title><meta http-equiv="X-UA-Compatible" content="IE=9" />
+
+    <!-- this fixes a minor rendering issue with tables on the ipad -->
+    <meta content="width=device-width, initial-scale=1.0;" name="viewport" />
+
+    <!-- Agency specific meta tags -->
+    <meta name='google-site-verification' content='v8iNp5ToI5384_S9_Exw0F10KJ__b35Fs7jqvTvb0TY' />
+<meta name='msvalidate.01' content='8C654B10898A718CB62BCB19E52589CD' />
+
+
+    <!-- open search discovery -->
+    <link rel="search" type="application/opensearchdescription+xml" href="/Services/GetFederatedSearch.aspx" title="IQM2 search" />
+
+    <!-- Icon -->
+    <link href="/favicon.ico?v=2018" rel="icon" />
+
+    <!-- CSS Links -->
+    <link type="text/css" href="/App_Themes/Main.css?v=86" rel="Stylesheet" /><link type="text/css" href="/lib/jquery-ui.css" rel="stylesheet" />
+ 
+  <script>
+      !function () { var a, b, c, d = window, e = document, f = arguments, g = "script", h = ["config", "track", "trackForm", "trackClick", "identify", "visit", "push", "call"], i = function () { var a, b = this, c = function (a) { b[a] = function () { return b._e.push([a].concat(Array.prototype.slice.call(arguments, 0))), b } }; for (b._e = [], a = 0; a < h.length; a++) c(h[a]) }; for (d.__woo = d.__woo || {}, a = 0; a < f.length; a++) d.__woo[f[a]] = d[f[a]] = d[f[a]] || new i; b = e.createElement(g), b.async = 1, b.src = "//static.woopra.com/js/w.js", c = e.getElementsByTagName(g)[0], c.parentNode.insertBefore(b, c) }("woopra");
+
+      woopra.config({
+          domain: "iqm2.com",
+          cookie_name:"accelaTracker"
+      });
+      woopra.track("mp_pv", {
+          domain: window.location.hostname,
+          title: document.title,
+          url: window.location.href,
+          uri: window.location.pathname,
+          hash: window.location.hash,
+          error: null
+      });
+  </script>
+    <!-- IQM2 Scripts -->
+    <script type="text/javascript" src="/lib/jquery.js"></script>
+    <script type="text/javascript" language="javascript" src="/App_Themes/Global.js?v=8_10_48"></script>
+    <script type="text/javascript" src="/lib/MinuteTraq.PopupWindow.js"></script>
+    <script type="text/javascript" src="/lib/jquery-ui.js"></script>
+    <link href="https://unpkg.com/video.js@7.21.1/dist/video-js.css" rel="stylesheet" /><link href="/Scripts/videojs-live-dvr/videojs-dvrseekbar.css" rel="stylesheet" />
+    <script src="https://unpkg.com/video.js@7.21.1/dist/video.js"></script>
+    <script src='https://unpkg.com/videojs-flash@2.1.0/dist/videojs-flash.min.js'></script>
+    <script src="https://unpkg.com/videojs-contrib-hls/dist/videojs-contrib-hls.js"></script>
+    <script src="/Scripts/videojs-live-dvr/videojs-dvrseekbar.min.js"></script>
+    <script type='text/javascript' src='/Scripts/player.js'></script>
+    <script type="text/javascript" src="/Scripts/js.cookie-2.0.3.min.js"></script>
+    <!-- RSS Feeds (Site) -->
+    
+
+    <!-- Generated CSS Link -->
+    
+  
+    <!-- External CSS / Script Links -->
+    <link type='text/css' href='/Lib/GetCustomCSS.ashx?timestamp=639106415000000000' rel='Stylesheet' /><link type='text/css' href='/Citizens/GetImage.aspx?ID=1003' rel='Stylesheet' /><script type='text/javascript' src='/Citizens/GetImage.aspx?ID=1004'></script>
+    
+   
+    <!--[if IE 7]>
+	   <style type="text/css">
+        .Section H2 { display:inline;}
+        .RowTop div { display:inline;}
+   </style>
+	
+	<![endif]-->
+    
+    <script type="text/javascript" src="/Lib/MinuteTraq.Search.js?v=8_10_66"></script>
+    
+    <script type="text/javascript">
+        
+        // configure tracker
+        
+        $(function () {
+            
+            
+            FixFooterPosition();
+            $(window).on('resize', FixFooterPosition);
+
+            var h = $("#Banner").height();
+            //  var w = $("body").width();
+
+            var sCoords = "0,0,5000," + h;
+
+            $("#lnkBanner").attr("coords", sCoords);
+            var hideTopBanner = Cookies.get('hideTopBanner');
+            var appStyles = {display:'block'};
+            if (hideTopBanner) {
+                appStyles.display = 'none';
+            }
+            $('#topbarAppBanner').css(appStyles);
+            $('.close-topbar-app-banner').bind('click', function () {
+                $('#topbarAppBanner').css('display', 'none');
+                Cookies.set('hideTopBanner', true);
+            });
+            $('.link-wrapper-banner').bind('click', function () {
+                woopra.track('portal-wegovern-banner', {
+                    agency: Cookies.get('AgencyName'),
+                    username: Cookies.get('WebUserName')
+                });
+                return true;
+            });
+        });
+
+        function FixFooterPosition() {
+            //hack for the footer, display at bottom of screen if page is short
+            if ($("form").height() < $(window).height() - 100) {
+                $("#Footer").css("position", "absolute");
+                $("#Footer").css("bottom", "0");
+            }
+            else {
+                $("#Footer").css("position", "");
+            }
+        }
+
+    </script>
+    <style type="text/css" media="screen">
+        #topbarAppBanner {
+            min-height: 40px;
+            z-index: 1000;
+        }
+        .top-banner-app-inner{
+            margin-top: 10px;
+            margin-bottom: 10px;
+            width: 100%;
+            height: 40px;
+            border: 1px solid rgba(10,10,10,.5);
+            box-shadow: 0px 0px 16px 0px #303030;
+            background-color: #456ca7;
+        }
+        .close-topbar-app-banner {
+            position: absolute;
+            display: block;
+            top: 25px;
+            right: 5%;
+            font-size: 1em;
+            color: #e3e3e3
+        }
+        .app-link{
+            display: block;
+            margin: 0 auto;
+            width: 40%;
+        }
+        .wegovern-banner-logo {
+            left: 22px;
+            position: relative;
+            padding-top: 1px;
+        }
+
+        @media screen and (max-width: 981px ){
+            .inside-banner-link {
+                position: relative;
+                top: -15px;
+                left: 30px;
+                color: #e3e3e3;
+                white-space: nowrap;
+            }
+        }
+        @media screen and (min-width: 1595px){
+            .inside-banner-link {
+                position: relative;
+                top: -15px;
+                left: 30px;
+                color: #e3e3e3;
+                white-space: nowrap;
+            }
+        }
+        @media screen and (max-width: 1594px){
+            .inside-banner-link {
+                position: relative;
+                top: -30px;
+                left: 75px;
+                color: #e3e3e3;
+                white-space: nowrap;
+            }
+        }
+        @media screen and (min-width:1100px){
+            .app-link{
+                display: block;
+                margin: 0 auto;
+                width: 40%;
+            }
+            .close-topbar-app-banner {
+                right: 5%;
+            }
+        }
+        @media screen and (max-width:1099px){
+            .app-link {
+                display: block;
+                margin: 0 auto;
+                width: 65%;
+            }
+            .close-topbar-app-banner {
+                right: 5%;
+            }
+            .inside-banner-link {
+                position: relative;
+                top: -15px;
+                left: 30px;
+                color: #e3e3e3;
+                white-space: nowrap;
+            }
+        }
+    </style>
+    
+
+    <!-- Page Level Header Stuff -->
+    
+
+    <!-- JQuery & UI -->
+    <link type="text/css" href="/lib/jquery-ui.css" rel="stylesheet" />
+	<script type="text/javascript" src="/lib/jquery-ui.js"></script>
+	<script type="text/javascript" src="/lib/jquery.caret.js"></script>
+
+    <script type="text/javascript" src="/lib/MinuteTraq.UserComment.js"></script>
+    
+    <script type="text/javascript">
+        
+        function showSpeakerSignup(meetingid) 
+        {
+            PopupWindowShow("/Citizens/SpeakerSignup.aspx?ID=" + meetingid);
+        }
+        
+        $(function () {
+           
+            $('.tracked').bind('click', function () {
+                var $link = $(this);
+
+                if (woopra) {
+                    woopra.track("download", {
+                        url: window.location.href,
+                        type: $link.attr('data-type')
+                    });
+                }
+            });
+            $(".ShowMoreSpeakersButton").click(function ()
+            {
+                var link = $(this);
+                link.css("display", "none");
+                var hidden = link.parent().find(".HiddenSpeakers");
+                hidden.slideDown();
+                return false;
+            });
+
+            $(".ShowFewerSpeakersButton").click(function () {
+                var link = $(this);
+                var hidden = link.parent().parent().find(".HiddenSpeakers");
+                hidden.slideUp();
+
+                var showMoreLink = link.parent().parent().find(".ShowMoreSpeakersButton");
+                showMoreLink.css("display", "");
+                return false;
+            });
+        });
+
+      
+    </script>
+    <style>
+        a.lastClicked {
+            background-color: khaki;
+            color: #000;
+        }
+        #MeetingDetail * {
+            max-width:685px;
+        }
+    </style>
+    <meta http-equiv="CACHE-CONTROL" content="NO-CACHE">
+    <meta http-equiv="EXPIRES" content="0">
+</head>
+
+<body id="MainLayout">
+    
+    <form method="post" action="./Detail_Meeting.aspx?ID=17578" id="aspnetForm" enctype="multipart/form-data">
+<div class="aspNetHidden">
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="E3ADifvuXRyn7FtQ8oFHCM3vMzFkJmgJpP7Cu8EAQ0wRZOJV3aw9OqPP3mJoHkFHO5J5F23CWRRITWcaUlF0ooLllA+1m+IpQKv1JdDtee9jrH6QMRIu425NxfuZAfOv5bN73Ru/h2GHE7KwFzL/dtXkk+0bAKqYh44Qg5aqeSi/EYPxw+XJfp7LC21Sl8hoW9zt3D31Njv6FDG3oCXe1w==" />
+</div>
+
+<div class="aspNetHidden">
+
+	<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="1BACF619" />
+	<input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="WC8v43GPuSRpXl4TwJrYrzpCMHQjA0QU8i/Peiyu7NCo9H6d5uy4FxSb8hwlqTiWK/wSqotLtceZ49/92aNcV1/Hcq1iEn0oU/YI8PZYlQ62oyVi/OCzZix6OEHPcKhF6Z4UYqQmgfE79uHHFqtzsAPjjt8iFReq9KxKWSV72MNXbVP9VPnuyA1M8QpgOlW9WGfx3cH2I6ejbGHHpMy5+bG+gbCndmeuFYsiXjtK43o2vUku6EAYD3Sfs1iz5b4zUArWtQDfFu70KJIHYRopkQ/VrvqRqhFyGfLmdkwVTGuJxKA3beTjVRjAV7akWsSz" />
+</div>
+        <div style="display: none">
+            <input type="submit" name="ctl00$btnRefreshPageAfterLogin" value="Button" id="btnRefreshPageAfterLogin" class="btnRefreshPage" />
+            <input name="ctl00$hfShowPopupOnLoad" type="hidden" id="hfShowPopupOnLoad" class="hfShowPopup" />
+        </div>
+        <span id="lblScript"></span>
+  
+    <div id="MainWindow">
+    
+            <div id="Banner" role="banner"  >
+                <img usemap="#bannerMap" src="/Citizens/GetImage.aspx?ID=1005&TimeStamp=639106415000000000" alt="IQM2 Meeting Portal" />
+                <map name="bannerMap">
+                    <area href="/Citizens/Default.aspx" id="lnkBanner" shape="rect" alt="Home" Target="_self" />
+                </map>
+
+                <div id="LogoHeaderTextHolder">
+                    
+                                                                       
+                </div>
+            </div>
+            
+            <div id="ToolStrip" role="navigation" aria-label="site">
+                <div id="Tabs">
+                    <div class="Shadow"></div>
+                    <a href="https://www.santaclaracounty.gov/search" id="lnkMainSite" class="Tab LeftTab"><div><span>&laquo;Back to Main Site</span></div></a>
+                    <a href="/Citizens/default.aspx" class="Tab NormalTab"><div><span id="tabWelcome">Welcome</span></div></a>
+                    <a href="/Citizens/calendar.aspx" class="Tab NormalTab"><div><span id="tabMeetings">Meetings</span></div></a>                
+                    <a href="/Citizens/" style="display:none" class="Tab NormalTab"><div dropdown="Browse"><span>Browse</span></div></a>
+                                        
+                    <a href="/Citizens/Media.aspx" id="lnkMedia" class="Tab NormalTab"><div><span id="tabMedia">Videos</span></div></a>                    
+                    <a href="/Citizens/LegalNotice.aspx" id="lnkNotices" class="Tab NormalTab"><div id="tabNotices"><span>Notices</span></div></a>                                        
+                    <a href="/Citizens/Board" class="Tab NormalTab"><div><span id="tabContactUs">Boards+</span></div></a>                                                        
+                </div>
+                <div id="TopExtraBoxTransparentBG"></div>
+                <div id="TopExtraBox">  
+                    <div id="TopLine">
+                        
+                     <a href="../MasterPages/#" id="lnkLogin" onclick="javascript:return PopupWindowShow(&#39;/Citizens/Login.aspx&#39;);">Log in</a><span id="spnThatOneStupidBar"> | </span><a href="mailto:support@granicus.com" id="lnkHelp">Help</a>                                                  
+                    </div> 
+                    <div id="BottomLine">                       
+                          
+                    </div>                            
+                   <input name="ctl00$txtQuickSearch" type="text" id="txtQuickSearch" value="Search" title="Search" />
+                   <input type="image" name="ctl00$btnQuickSearch" id="btnQuickSearch" alt="Search" src="/Lib/images/search.png" style="cursor:pointer" />                   
+                </div>     
+            </div>
+                     
+            <table class="LayoutTable" role="presentation">
+                <tr>
+                    <td id="tdLeftPanel" class="LeftPanel">
+                        
+                        <div role="navigation" aria-label="Meeting Group">
+                            
+                        </div>
+                        
+                        <div class="DetailBox">
+                            <img src="/Citizens/images/Print.gif" border="0" alt="Print" />
+                            <a href="/Citizens/Detail_Meeting.aspx?ID=17578&Print=Yes" id="lnkPrint" class="PrintButton" target="_blank">Print This Page</a>                           
+                        </div>
+                        
+                        
+                                                
+                       <!-- <div class="QuickLink">
+                            <img src="/Lib/buttonexample.png" alt="Quick Link 1" />
+                            <a href="#">Quick Link #1</a>
+                        </div>
+                        <div class="QuickLink">
+                            <img src="/Lib/buttonexample.png" alt="Quick Link 2"  />
+                            <a href="#">Quick Link #2</a>
+                        </div>     -->
+                                      
+                    </td>
+
+                    <td id="MainContentHolder">
+                        <div style="width:100%;height:100%;position:relative;margin:0;padding:0;border:0;">
+                            <div id="MainContentLeftShadow">                           
+                            </div>   
+                          
+                            <div class="MainContentPlaceholder" role="main">
+                                
+                                
+
+    <style>
+        a.lastClicked {
+            background-color: khaki;
+            color: #000;
+        }
+    </style>
+    <script>
+        $('#divOutlineScroller a').click(function (e) {
+            $('a.lastClicked').removeClass('lastClicked');
+            $(e.currentTarget).addClass('lastClicked');
+        });
+    </script>
+    
+
+    <div       
+        >        
+        <div id="CC" style="background: Black; color: White; display:none;"></div>
+           
+        <div id="ContentPlaceholder1_pnlStart" style="width:100%;">
+	
+            <table border="0" width="100%" id="table1" cellpadding="5" role="presentation">
+                <tr>
+                    <td colspan="2" align="center" class="MeetingHeading">
+                        <span id="ContentPlaceholder1_lblMeetingGroup">Board of Supervisors</span><br />
+                        <span id="ContentPlaceholder1_lblMeetingType">Regular Meeting</span><br />
+                        <span id="ContentPlaceholder1_lblMeetingDate">1/27/2026 9:30 AM</span>
+                        <br /> Board of Supervisors Chambers<div class='MeetingAddress'>70 West Hedding Street&nbsp;&nbsp;&nbsp;San Jose, CA  95110</div>
+                       
+                        <span id="ContentPlaceholder1_lblMeetingStatus"></span>
+                        <input type="hidden" name="ctl00$ContentPlaceholder1$txtMeetingID" id="ContentPlaceholder1_txtMeetingID" value="17578" />
+                        <input type="hidden" name="ctl00$ContentPlaceholder1$txtMinutesID" id="ContentPlaceholder1_txtMinutesID" value="11006" />
+                        <input type="hidden" name="ctl00$ContentPlaceholder1$txtAgendaID" id="ContentPlaceholder1_txtAgendaID" value="15470" />
+                        <input type="hidden" name="ctl00$ContentPlaceholder1$txtFileFormat" id="ContentPlaceholder1_txtFileFormat" value="pdf" />
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align:center">
+                        
+                    </td>
+                </tr>
+                <tr id="ContentPlaceholder1_trMeetingDetail">
+		<td id="ContentPlaceholder1_tdMainContent" align="left" valign="top" colspan="2" role="main" class=""> 
+                        <div id="ContentPlaceholder1_pnlDownloads" class="MeetingDownloads" style="width:100%;">
+			
+                            <strong>Downloads:</strong><br />
+                            <img id="ContentPlaceholder1_imgPublicAgendaFile" src="images/PublicAgenda.jpg" />
+                            <a id="ContentPlaceholder1_hlPublicAgendaFile" class="tracked Link" data-type="agenda" href="FileOpen.aspx?Type=14&amp;ID=15470&amp;Inline=True" target="_blank">Agenda</a>
+                            <img id="ContentPlaceholder1_imgFullAgendaFile" src="images/FullAgenda.jpg" />
+                            <a id="ContentPlaceholder1_hlFullAgendaFile" class="tracked Link" data-type="agenda_packet" href="FileOpen.aspx?Type=1&amp;ID=15470&amp;Inline=True" target="_blank">Agenda Packet</a>
+                            
+                            
+                            
+                            
+                            
+                            <br />
+                            
+                            
+                            <img id="ContentPlaceholder1_imgFullMinutesFile" src="images/FullMinutes.jpg" />
+                            <a id="ContentPlaceholder1_hlFullMinutesFile" class="Link" data-type="minutes_package" href="FileOpen.aspx?Type=12&amp;ID=11006&amp;Inline=True" target="_blank">Minutes</a>
+                            
+                            
+                            
+                            
+                            
+                            
+                            <a href='javascript:void(0);' style='cursor:hand' Class='Link' OnClick='javascript:OpenWindow("/Citizens/SplitView.aspx?Mode=Video&MeetingID=17578&MinutesID=11006&FileFormat=pdf&Format=Minutes&MediaFileFormat=mp4");' &MediaFileFormat=mp4')><img src='images/VideoIcon_Off.gif' border='0' alt='Video (Windows Media)' /></a> <a href='javascript:void(0);' style='cursor:hand' Class='Link' OnClick='javascript:OpenWindow("/Citizens/SplitView.aspx?Mode=Video&MeetingID=17578&MinutesID=11006&FileFormat=pdf&Format=Minutes&MediaFileFormat=mp4");' &MediaFileFormat=mp4')>Video</a>
+                            <img src='images/Transcript.png' alt='Transcript' /> <a href='/Citizens/Detail_Transcript.aspx?ID=2791&CssClass=&Frame=' class='Link' >Transcript</a>
+                            
+                        
+		</div>
+                        
+                        <span id="ContentPlaceholder1_lblOutline"><table id='MeetingDetail' class='MeetingDetail' cellpadding='0' cellspacing='0'>
+<tr><td class='Num'><strong></strong></td><td class='Title' colspan='10'><a target='_top' class='Link'  href='Detail_Motion.aspx?Frame=&MeetingID=17578&MinutesID=11006&MediaPosition=&ID=437079&Type=70&CssClass= style='cursor: hand'><strong>Opening</strong></a></td></tr>
+
+<tr><td></td><td class='Num'>1. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_Motion.aspx?Frame=&MeetingID=17578&MinutesID=11006&MediaPosition=26835.776&ID=437080&Type=80&CssClass= style='cursor: hand'>Roll Call.</a></td></tr>
+
+<tr><td></td><td class='Num'>2. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_Motion.aspx?Frame=&MeetingID=17578&MinutesID=11006&MediaPosition=26835.776&ID=437081&Type=50&CssClass= style='cursor: hand'>Pledge of Allegiance.</a></td></tr>
+
+<tr><td></td><td class='Num'>3. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127421&CssClass='>Invocation by Albert Wright, Chief Executive Officer and Founder of Infinite Potential. (Ellenberg)</a></td></tr>
+<tr><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='8'><a href='FileOpen.aspx?Type=30&ID=221009&MeetingID=17578'>Commendation/Proclamation Printout</a></td></tr>
+
+<tr><td class='Num'><strong></strong></td><td class='Title' colspan='10'><a target='_top' class='Link'  href='Detail_Motion.aspx?Frame=&MeetingID=17578&MinutesID=11006&MediaPosition=&ID=437083&Type=70&CssClass= style='cursor: hand'><strong>Ceremonial Presentations</strong></a></td></tr>
+
+<tr><td></td><td class='Num'><strong>4. </strong></td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_Motion.aspx?Frame=&MeetingID=17578&MinutesID=11006&MediaPosition=26835.776&ID=437084&Type=70&CssClass= style='cursor: hand'><strong>Announce Adjournments in Memoriam. (See Item No. 20)</strong></a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='8'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=&ID=127313&CssClass='>Adjourn in honor and memory of Danilo Sales Boac. (Lee)</a></td></tr>
+<tr><td></td><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='7'><a href='FileOpen.aspx?Type=30&ID=221005&MeetingID=17578'>Commendation/Proclamation Printout</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>b. </td><td class='Title' colspan='8'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=&ID=127420&CssClass='>Adjourn in honor and memory of Roma Dawson. (Ellenberg/Duong)</a></td></tr>
+<tr><td></td><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='7'><a href='FileOpen.aspx?Type=30&ID=221008&MeetingID=17578'>Commendation/Proclamation Printout</a></td></tr>
+
+<tr><td></td><td class='Num'><strong>5. </strong></td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_Motion.aspx?Frame=&MeetingID=17578&MinutesID=11006&MediaPosition=26835.776&ID=437087&Type=70&CssClass= style='cursor: hand'><strong>Commendations and Proclamations. (See Item No. 59)</strong></a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='8'><a target='_top' class='Link'  href='Detail_Motion.aspx?Frame=&MeetingID=17578&MinutesID=11006&MediaPosition=&ID=437088&Type=50&CssClass= style='cursor: hand'>Present Proclamation declaring February 2026 as "National Children's Dental Health Month" in Santa Clara County. (Duong)</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>b. </td><td class='Title' colspan='8'><a target='_top' class='Link'  href='Detail_Motion.aspx?Frame=&MeetingID=17578&MinutesID=11006&MediaPosition=&ID=437089&Type=50&CssClass= style='cursor: hand'>Present Proclamation declaring January 2026 as "Human Trafficking Prevention Month" in Santa Clara County. (Duong/Arenas)</a></td></tr>
+
+<tr><td class='Num'><strong></strong></td><td class='Title' colspan='10'><a target='_top' class='Link'  href='Detail_Motion.aspx?Frame=&MeetingID=17578&MinutesID=11006&MediaPosition=&ID=437090&Type=70&CssClass= style='cursor: hand'><strong>Public Issues</strong></a></td></tr>
+
+<tr><td></td><td class='Num'>6. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127510&CssClass='>Public Comment.</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265713&MeetingID=17578'>Public Comment</a><span class='ItemTag' title='Supplemental Information'><img src='images/Tag.png' alt='' />Supplemental Information</span></td></tr>
+
+<tr><td></td><td class='Num'>7. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_Motion.aspx?Frame=&MeetingID=17578&MinutesID=11006&MediaPosition=82125.000&ID=437092&Type=60&CssClass= style='cursor: hand'>Approve Consent Calendar and changes to the Board of Supervisors Agenda.</a></td></tr>
+
+<tr><td class='Num'><strong></strong></td><td class='Title' colspan='10'><a target='_top' class='Link'  href='Detail_Motion.aspx?Frame=&MeetingID=17578&MinutesID=11006&MediaPosition=&ID=437093&Type=70&CssClass= style='cursor: hand'><strong>Time Certain - To Be Heard No Earlier Than 9:30 a.m.</strong></a></td></tr>
+
+<tr><td></td><td class='Num'>8. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127096&CssClass='>Receive report relating to the role of Santa Clara Valley Healthcare (SCVH) as a safety-net healthcare provider and fiscal overview of SCVH.</a></td></tr>
+<tr><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='8'><a href='FileOpen.aspx?Type=30&ID=221030&MeetingID=17578'>Report Printout</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265557&MeetingID=17578'>SCVH Budget Study Session - 1.27.26 BOS Meeting</a><span class='ItemTag' title='Supplemental Information'><img src='images/Tag.png' alt='' />Supplemental Information</span></td></tr>
+
+<tr><td class='Num'><strong></strong></td><td class='Title' colspan='10'><a target='_top' class='Link'  href='Detail_Motion.aspx?Frame=&MeetingID=17578&MinutesID=11006&MediaPosition=&ID=437096&Type=70&CssClass= style='cursor: hand'><strong>Time Certain - To Be Heard No Earlier Than 10:00 a.m.</strong></a></td></tr>
+
+<tr><td></td><td class='Num'><strong>9. </strong></td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_Motion.aspx?Frame=&MeetingID=17578&MinutesID=11006&MediaPosition=&ID=437097&Type=70&CssClass= style='cursor: hand'><strong>Public Hearing - Environmental Health Branch Fee Adjustments and Proposed New Fees. (Public Health Department)</strong></a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='8'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127161&CssClass='>Public hearing to consider adoption of Resolution modifying existing fees, establishing new fees, and adopting fee schedules for permits and services provided by the Environmental Health Branch of the Public Health Department, effective March 1, 2026.</a></td></tr>
+<tr><td></td><td></td><td></td><td class='Comments' colspan='8'>	i.	Open public hearing and receive testimony.<br>	ii.	Close public hearing.<br></td></tr>
+<tr><td></td><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='7'><a href='FileOpen.aspx?Type=30&ID=221042&MeetingID=17578'>Hearing Printout</a></td></tr>
+
+<tr><td></td><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='7'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=264979&MeetingID=17578'>Public Hearing - Copy of Notice</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>b. </td><td class='Title' colspan='8'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127160&CssClass='>BOS-2026-14 : Under advisement from October 21, 2025 (Item No. 24) and December 9, 2025 (Item No. 8): Consider recommendations relating to the Microenterprise Home Kitchen Operations (MEHKO) Program and Environmental Health Branch Fee Adjustments.</a></td></tr>
+<tr><td></td><td></td><td></td><td class='Comments' colspan='8'>Possible action: <br>	i.	Receive report from the Public Health Department relating to expanded data collection for MEHKO operators, options for reduced fees or fee relief, and the total program operating costs for the MEHKO Program.<br>	ii.	Adopt Resolution modifying existing fees, establishing new fees, and adopting fee schedules for permits and services related to food facilities and body art provided by the Environmental Health Branch of the Public Health Department, effective March 1, 2026.</td></tr>
+<tr><td></td><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='7'><a href='FileOpen.aspx?Type=30&ID=221040&MeetingID=17578'>Resolution Printout</a></td></tr>
+
+<tr><td></td><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='7'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265454&MeetingID=17578'>Attachment 1 Resolution relating to Fee Schedules for Permits and Services relating to Food Facilities and Body Art</a></td></tr>
+
+<tr><td></td><td></td><td></td><td class='Num'>b. </td><td class='Title' colspan='7'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265431&MeetingID=17578'>Attachment 2 Food Facility and Body Art Current and Proposed Fees With Difference</a></td></tr>
+
+<tr><td></td><td></td><td></td><td class='Num'>c. </td><td class='Title' colspan='7'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265432&MeetingID=17578'>Attachment 3 County Comparative Fee Categories</a></td></tr>
+
+<tr><td></td><td></td><td></td><td class='Num'>d. </td><td class='Title' colspan='7'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265433&MeetingID=17578'>Attachment 4 NBS Government Finance Group Fee Study</a></td></tr>
+
+<tr><td></td><td></td><td></td><td class='Num'>e. </td><td class='Title' colspan='7'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265434&MeetingID=17578'>Attachment 5 Controller Treasurer Review Checklist</a></td></tr>
+
+<tr><td></td><td></td><td></td><td class='Num'>f. </td><td class='Title' colspan='7'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265549&MeetingID=17578'>Public Comment</a><span class='ItemTag' title='Supplemental Information'><img src='images/Tag.png' alt='' />Supplemental Information</span></td></tr>
+
+<tr><td></td><td></td><td></td><td class='Num'>g. </td><td class='Title' colspan='7'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265708&MeetingID=17578'>Public Comment No. 2</a><span class='ItemTag' title='Supplemental Information'><img src='images/Tag.png' alt='' />Supplemental Information</span></td></tr>
+
+<tr><td></td><td></td><td class='Num'>c. </td><td class='Title' colspan='8'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127351&CssClass='>Adoption of Ordinance No. NS-517.99, an Ordinance of the Board of Supervisors of the County of Santa Clara amending Section B11-53 of Chapter III of Division B11 of the Santa Clara County Ordinance Code relating to Microenterprise Home Kitchen Operations.</a></td></tr>
+<tr><td></td><td></td><td></td><td class='Comments' colspan='8'><div><p style="margin:0pt; orphans:0; widows:0"><span style="font-family:'Times New Roman'; font-size:12pt">              </span><span style="font-family:'Times New Roman'; font-size:12pt">•</span><span style="font-family:'Times New Roman'; font-size:12pt">              </span><span style="font-family:'Times New Roman'; font-size:12pt">Introduce and preliminarily adopt on January 27, 2026.</span></p><p style="margin:0pt; orphans:0; widows:0"><span style="font-family:'Times New Roman'; font-size:12pt">              </span><span style="font-family:'Times New Roman'; font-size:12pt">•</span><span style="font-family:'Times New Roman'; font-size:12pt">              </span><span style="font-family:'Times New Roman'; font-size:12pt">Adopt (Final) on February 10, 2026.</span></p></div></td></tr>
+<tr><td></td><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='7'><a href='FileOpen.aspx?Type=30&ID=221041&MeetingID=17578'>Ordinance Printout</a></td></tr>
+
+<tr><td></td><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='7'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265267&MeetingID=17578'>Ordinance NS-517.99 re MEHKOs (redline)</a></td></tr>
+
+<tr><td></td><td></td><td></td><td class='Num'>b. </td><td class='Title' colspan='7'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265268&MeetingID=17578'>Ordinance NS-517.99 re MEHKOs</a></td></tr>
+
+<tr><td class='Num'><strong></strong></td><td class='Title' colspan='10'><a target='_top' class='Link'  href='Detail_Motion.aspx?Frame=&MeetingID=17578&MinutesID=11006&MediaPosition=&ID=437110&Type=70&CssClass= style='cursor: hand'><strong>Board of Supervisors and Board Appointees</strong></a></td></tr>
+
+<tr><td></td><td class='Num'>10. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_Motion.aspx?Frame=&MeetingID=17578&MinutesID=11006&MediaPosition=26835.776&ID=437111&Type=60&CssClass= style='cursor: hand'>Receive report from County Executive, including updates relating to State and Federal budget developments.</a></td></tr>
+
+<tr><td></td><td class='Num'>11. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_Motion.aspx?Frame=&MeetingID=17578&MinutesID=11006&MediaPosition=26835.776&ID=437112&Type=60&CssClass= style='cursor: hand'>Receive report from County Counsel relating to legal issues and Closed Session meeting of January 26, 2026.</a></td></tr>
+
+<tr><td class='Num'><strong></strong></td><td class='Title' colspan='10'><a target='_top' class='Link'  href='Detail_Motion.aspx?Frame=&MeetingID=17578&MinutesID=11006&MediaPosition=&ID=437113&Type=70&CssClass= style='cursor: hand'><strong>Regular Agenda - Items for Discussion</strong></a></td></tr>
+
+<tr><td></td><td class='Num'>12. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127334&CssClass='>Consider recommendations relating to the Valley Homeless Healthcare Program. (Santa Clara Valley Healthcare)</a></td></tr>
+<tr><td></td><td></td><td class='Comments' colspan='9'>Possible action:<br>	a.	Approve operational report from Health Resources and Services Administration Project Director.<br>	b.	Approve Calendar Year 2026 Quality Improvement Program Plan for People Experiencing Homelessness.</td></tr>
+<tr><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='8'><a href='FileOpen.aspx?Type=30&ID=220985&MeetingID=17578'>Report Printout</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265224&MeetingID=17578'>VHHP Quality Improvement Plan 2026 Attachment A</a></td></tr>
+
+<tr><td></td><td class='Num'>13. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127353&CssClass='>Receive monthly legislative report from the Office of Intergovernmental Relations.</a></td></tr>
+<tr><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='8'><a href='FileOpen.aspx?Type=30&ID=221051&MeetingID=17578'>Report Printout</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265383&MeetingID=17578'>Attachment A - January 2026 Bill Update</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>b. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265360&MeetingID=17578'>Attachment B - Presentation - January 2026 Monthly Legislative Update</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>c. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265361&MeetingID=17578'>Attachment C - CY2026 IGR Planned Activities</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>d. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265362&MeetingID=17578'>Attachment D - CY2026 IGR Workplan</a></td></tr>
+
+<tr><td></td><td class='Num'>14. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127412&CssClass='>Under advisement from January 28, 2025 (Item No. 9): Receive report from the Office of the County Executive relating to options for expanding home visitation services in the County, including an analysis of the FIRST 5 Santa Clara County Feasibility Study recommendations and opportunities to leverage CalAIM benefits.</a></td></tr>
+<tr><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='8'><a href='FileOpen.aspx?Type=30&ID=221050&MeetingID=17578'>Report Printout</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265659&MeetingID=17578'>Public Comment</a><span class='ItemTag' title='Supplemental Information'><img src='images/Tag.png' alt='' />Supplemental Information</span></td></tr>
+
+<tr><td></td><td></td><td class='Num'>b. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265671&MeetingID=17578'>Public Comment No. 2</a><span class='ItemTag' title='Supplemental Information'><img src='images/Tag.png' alt='' />Supplemental Information</span></td></tr>
+
+<tr><td></td><td></td><td class='Num'>c. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265709&MeetingID=17578'>Public Comment No. 3</a><span class='ItemTag' title='Supplemental Information'><img src='images/Tag.png' alt='' />Supplemental Information</span></td></tr>
+
+<tr><td></td><td class='Num'>15. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127374&CssClass='>Under advisement from September 30, 2025 (Item No. 8) and October 21, 2025 (Item No. 10): Consider recommendations relating to efforts to strengthen partnerships across the County to address and prevent homelessness.</a></td></tr>
+<tr><td></td><td></td><td class='Comments' colspan='9'>Possible action: <br>	a.	Receive report from the Office of Supportive Housing and the Behavioral Health Services Department relating to efforts to strengthen the County's partnership with cities, including expansion and alignment of services across various temporary housing programs serving unhoused populations. <br>	b.	Approve delegation of authority to the County Executive, or designee, to negotiate, execute, amend, or terminate Agreement with City of San Jose relating to investing in Homelessness Prevention Services and forgiving costs incurred for the City of San Jose's use of the Isolation and Quarantine Support Program in an amount not to exceed $19,000,000, and a contract term that begins no earlier than January 27, 2026 and ends no later than January 26, 2031, following approval by County Counsel as to form and legality, and approval by the Office of the County Executive. Delegation of authority shall expire on January 26, 2031.</td></tr>
+<tr><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='8'><a href='FileOpen.aspx?Type=30&ID=221059&MeetingID=17578'>Agreement/Amendment Printout</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265459&MeetingID=17578'>Attachment A - 2024 State of the Supportive Housing System Report</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>b. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265460&MeetingID=17578'>Attachment B - 2023 State of the Supportive Housing System Report</a></td></tr>
+
+<tr><td></td><td class='Num'>16. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127335&CssClass='>Under advisement from November 18, 2025 (Item No. 10): Receive report from Office of the County Executive relating to services and supplies budget, and information on the new budget management system and contract management system.</a></td></tr>
+<tr><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='8'><a href='FileOpen.aspx?Type=30&ID=221018&MeetingID=17578'>Report Printout</a></td></tr>
+
+<tr><td></td><td class='Num'>17. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127387&CssClass='>Consider recommendations relating to establishment of a 2025 Measure A Independent Citizens' Oversight Committee. (Office of the County Executive)</a></td></tr>
+<tr><td></td><td></td><td class='Comments' colspan='9'>Possible action: <br>	a.	Receive report relating to establishment of a 2025 Measure A Independent Citizens' Oversight Committee. <br>	b. 	Direct Administration and County Counsel to report to the Board with an ordinance to establish the 2025 Measure A Independent Citizens' Oversight Committee.</td></tr>
+<tr><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='8'><a href='FileOpen.aspx?Type=30&ID=221054&MeetingID=17578'>Report Printout</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265660&MeetingID=17578'>Public Comment</a><span class='ItemTag' title='Supplemental Information'><img src='images/Tag.png' alt='' />Supplemental Information</span></td></tr>
+
+<tr><td></td><td></td><td class='Num'>b. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265710&MeetingID=17578'>Public Comment No. 2</a><span class='ItemTag' title='Supplemental Information'><img src='images/Tag.png' alt='' />Supplemental Information</span></td></tr>
+
+<tr><td></td><td class='Num'>18. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_Motion.aspx?Frame=&MeetingID=17578&MinutesID=11006&MediaPosition=26835.776&ID=437129&Type=50&CssClass= style='cursor: hand'>Consider items previously removed from the Consent Calendar.</a></td></tr>
+
+<tr><td class='Num'><strong></strong></td><td class='Title' colspan='10'><a target='_top' class='Link'  href='Detail_Motion.aspx?Frame=&MeetingID=17578&MinutesID=11006&MediaPosition=&ID=437130&Type=70&CssClass= style='cursor: hand'><strong>Closing</strong></a></td></tr>
+
+<tr><td></td><td class='Num'>19. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_Motion.aspx?Frame=&MeetingID=17578&MinutesID=11006&MediaPosition=26835.776&ID=437131&Type=50&CssClass= style='cursor: hand'>Continued Public Comment.</a></td></tr>
+
+<tr><td></td><td class='Num'>20. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_Motion.aspx?Frame=&MeetingID=17578&MinutesID=11006&MediaPosition=26835.776&ID=437132&Type=60&CssClass= style='cursor: hand'>Adjourn. (See Item No. 4)</a></td></tr>
+
+<tr><td class='Num'><strong></strong></td><td class='Title' colspan='10'><a target='_top' class='Link'  href='Detail_Motion.aspx?Frame=&MeetingID=17578&MinutesID=11006&MediaPosition=&ID=437133&Type=70&CssClass= style='cursor: hand'><strong>Consent Calendar - Items will be considered under Item No. 7. Items removed from the Consent Calendar will be considered at the end of the regular agenda.</strong></a></td></tr>
+
+<tr><td></td><td class='Num'><strong>21. </strong></td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_Motion.aspx?Frame=&MeetingID=17578&MinutesID=11006&MediaPosition=&ID=437134&Type=70&CssClass= style='cursor: hand'><strong>Minutes Approval:</strong></a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='8'><a target='_top' class='Link'  href='Detail_Motion.aspx?Frame=&MeetingID=17578&MinutesID=11006&MediaPosition=26835.776&ID=437135&Type=30&AcceptMinutesID=10985&CssClass= style='cursor: hand'>Minutes of Jan 12, 2026 2:00 PM</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>b. </td><td class='Title' colspan='8'><a target='_top' class='Link'  href='Detail_Motion.aspx?Frame=&MeetingID=17578&MinutesID=11006&MediaPosition=26835.776&ID=437136&Type=30&AcceptMinutesID=10986&CssClass= style='cursor: hand'>Minutes of Jan 13, 2026 9:30 AM</a></td></tr>
+
+<tr><td class='Num'><strong></strong></td><td class='Title' colspan='10'><a target='_top' class='Link'  href='Detail_Motion.aspx?Frame=&MeetingID=17578&MinutesID=11006&MediaPosition=&ID=437137&Type=70&CssClass= style='cursor: hand'><strong>Social Services Agency</strong></a></td></tr>
+
+<tr><td></td><td class='Num'>22. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127237&CssClass='>Consider acceptance of donation of $10,000 from the Silicon Valley Community Foundation on behalf of the Social Services Agency.</a></td></tr>
+<tr><td></td><td></td><td class='Comments' colspan='9'>Possible action:<br>	a.	Accept gift.<br>	b.	Authorize President of the Board to forward letter of appreciation to the Silicon Valley Community Foundation.</td></tr>
+<tr><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='8'><a href='FileOpen.aspx?Type=30&ID=220983&MeetingID=17578'>Gift/Donation Printout</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=264968&MeetingID=17578'>Silicon Valley Community Foundation Award Letter 12-2025</a></td></tr>
+
+<tr><td></td><td class='Num'>23. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=126256&CssClass='>Approve retroactive Fifth Amendment to Agreement with Seneca Family of Agencies relating to providing Integrated Visitation Services Program services, increasing the maximum contract amount by $750,000 from $6,093,273 to $6,843,273, and extending the agreement for a 12-month period through June 30, 2026, that has been reviewed and approved by County Counsel as to form and legality. (LA)</a></td></tr>
+<tr><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='8'><a href='FileOpen.aspx?Type=30&ID=221043&MeetingID=17578'>Agreement/Amendment Printout</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=262502&MeetingID=17578'>Levine Act Form</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>b. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=263053&MeetingID=17578'>FY26 Amendment 5 Seneca IVSP</a></td></tr>
+
+<tr><td></td><td class='Num'>24. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=126832&CssClass='>Approve Ninth Amendment to Agreement with Sourcewise relating to providing Public Authority management services, increasing the maximum contract amount by $360,975 from $14,052,647 to $14,413,622, with no change to the term of the Agreement, that has been reviewed and approved by County Counsel as to form and legality. A single source exception to competitive procurement has been approved by the Office of Countywide Contracting Management pursuant to Board of Supervisors Policy 5.6.5.1(D)(2)(a). (LA)</a></td></tr>
+<tr><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='8'><a href='FileOpen.aspx?Type=30&ID=221044&MeetingID=17578'>Agreement/Amendment Printout</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265107&MeetingID=17578'>Levine Act Contractor Form-Sourcewise-PA Mgmt Svcs - signed</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>b. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265108&MeetingID=17578'>Levine Act Subcontractor-EHTC-PA Mgmt Svcs Amendment - signed</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>c. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265109&MeetingID=17578'>Levine Act Subcontractor-FUHSD-PA Mgmt Svcs Amendment - signed</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>d. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265122&MeetingID=17578'>Levine Act Subcontractor-Milpitas Adult Ed-PA Mgmt Svcs Amendment - signed</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>e. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265110&MeetingID=17578'>Levine Act Subcontractor-Morgan Hill Adult Sch-PA Mgmt Svcs Amendment - signed</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>f. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265112&MeetingID=17578'>FY23 AM01 Contract Sourcewise IHSS PA</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>g. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265113&MeetingID=17578'>FY23 AM02 Contract Sourcewise IHSS PA</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>h. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265114&MeetingID=17578'>FY23 AM03 Contract Sourcewise IHSS PA</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>i. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265115&MeetingID=17578'>FY24 AM04 Contract Sourcewise IHSS PA</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>j. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265378&MeetingID=17578'>FY24_AM05_Contract_Packet_Sourcewise_PA</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>k. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265376&MeetingID=17578'>FY25 AM06 Contract Packet Sourcewise PAMS</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>l. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265384&MeetingID=17578'>FY25 AM07 Contract Sourcewise IHSS PA</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>m. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265380&MeetingID=17578'>FY26_Amendment_8_Sourcewise_PAMS_FINAL</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>n. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265382&MeetingID=17578'>Single Source</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>o. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265385&MeetingID=17578'>FY26_AM09_Contract_Packet_Sourcewise_PAMS</a></td></tr>
+
+<tr><td></td><td class='Num'>25. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127253&CssClass='>Approve amended delegation of authority to the County Executive, or designee, to negotiate, execute, amend, or terminate agreements with Silicon Valley Independent Living Center relating to providing Home Safe Program services, increasing the maximum delegated amount by $2,341,006 from $4,216,550 to $6,557,556, and extending the delegated contract term limit through June 30, 2028, following approval by County Counsel as to form and legality, and approval by the Office of the County Executive. Delegation of authority shall expire on June 30, 2028. (LA)</a></td></tr>
+<tr><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='8'><a href='FileOpen.aspx?Type=30&ID=221057&MeetingID=17578'>Agreement/Amendment Printout</a></td></tr>
+
+<tr><td></td><td class='Num'>26. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=126793&CssClass='>Consider recommendations relating to the Transitional Housing Placement Plus (THP-Plus) Program. (LA)</a></td></tr>
+<tr><td></td><td></td><td class='Comments' colspan='9'>Possible action: <br>	a.	Approve retroactive First Amendment to Agreement with Bill Wilson Center relating to providing transitional housing and supportive services to THP-Plus participants, increasing the maximum contract amount by $3,699,101 from $7,272,846 to $10,971,947, and extending the agreement for a six-month period through June 30, 2026, that has been reviewed and approved by County Counsel as to form and legality.<br>	b.	Approve retroactive First Amendment to Agreement with First Place for Youth relating to providing transitional housing and supportive services to THP-Plus participants, increasing the maximum contract amount by $1,272,316 from $2,544,631 to $3,816,947, and extending the agreement for a six-month period through June 30, 2026, that has been reviewed and approved by County Counsel as to form and legality.</td></tr>
+<tr><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='8'><a href='FileOpen.aspx?Type=30&ID=221045&MeetingID=17578'>Agreement/Amendment Printout</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=263572&MeetingID=17578'>Levine Act Form - FPFY - THP Plus</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>b. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=263776&MeetingID=17578'>Levine Act Form - BWC - THP+</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>c. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=264865&MeetingID=17578'>FY26_AM01_Contract_Packet_BWC_THP_Plus</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>d. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=264866&MeetingID=17578'>FY26_AM01_Contract_Packet_FPFY_THP_Plus</a></td></tr>
+
+<tr><td></td><td class='Num'>27. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=125505&CssClass='>Adoption of Salary Ordinance No. NS-5.26.39, an Ordinance amending Santa Clara County Salary Ordinance No. NS-5.26 relating to compensation of employees deleting one Veteran Services Representative II or Veteran Services Representative I position and adding one Veteran Services Supervisor position in the Social Services Agency.</a></td></tr>
+<tr><td></td><td></td><td class='Comments' colspan='9'><div><p style="margin:0pt; orphans:0; widows:0"><span style="font-family:'Times New Roman'; font-size:12pt">              </span><span style="font-family:'Times New Roman'; font-size:12pt">•</span><span style="font-family:'Times New Roman'; font-size:12pt">              </span><span style="font-family:'Times New Roman'; font-size:12pt">Introduce and preliminarily adopt on January 27, 2026.</span></p><p style="margin:0pt"><span style="font-family:'Times New Roman'; font-size:12pt">              </span><span style="font-family:'Times New Roman'; font-size:12pt">•</span><span style="font-family:'Times New Roman'; font-size:12pt">              </span><span style="font-family:'Times New Roman'; font-size:12pt">Adopt (Final) on February 10, 2026.</span></p></div></td></tr>
+<tr><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='8'><a href='FileOpen.aspx?Type=30&ID=221052&MeetingID=17578'>Ordinance Printout</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265422&MeetingID=17578'>NS-5.26.39 - SSA - Deleting one Veteran Services Representative II-I and Adding one Veteran Services Supervisor</a></td></tr>
+
+<tr><td></td><td class='Num'>28. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127180&CssClass='>BOS-2026-15 : Adopt Resolution authorizing acceptance of the County of Santa Clara allocation awards under the State of California Bringing Families Home Program in the amount of $3,021,080 for period July 1, 2025 through June 30, 2028, and delegating authority to the County Executive, or designee, to enter into and execute any and all documents required or deemed necessary and appropriate to receive the allocation awards, and any and all amendments thereto, following approval by County Counsel as to form and legality, and approval by the Office of the County Executive. Delegation of authority shall expire on June 30, 2028.</a></td></tr>
+<tr><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='8'><a href='FileOpen.aspx?Type=30&ID=221046&MeetingID=17578'>Resolution Printout</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265455&MeetingID=17578'>Resolution Authorizing Acceptance of Allocation Award for Bringing Families Home Program</a></td></tr>
+
+<tr><td class='Num'><strong></strong></td><td class='Title' colspan='10'><a target='_top' class='Link'  href='Detail_Motion.aspx?Frame=&MeetingID=17578&MinutesID=11006&MediaPosition=&ID=437169&Type=70&CssClass= style='cursor: hand'><strong>Santa Clara Valley Healthcare</strong></a></td></tr>
+
+<tr><td></td><td class='Num'>29. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=83130.000&ID=127211&CssClass='>Approve retroactive Second Amendment to Agreement with Board of Trustees of Leland Stanford Junior University relating to providing cardiovascular and thoracic surgery physician services increasing the maximum contract amount by $6,077,849 from $6,611,134 to $12,688,983, and extending the agreement for a 36-month period through February 28, 2028, that has been reviewed and approved by County Counsel as to form and legality. An exception to Board of Supervisors Policy 5.4.5.4, Length of Term of Contracts, has been approved by the Office of Countywide Contracting Management. A single source exception to competitive procurement has been approved by the Office of Countywide Contracting Management pursuant to Board of Supervisors Policy 5.6.5.1(D)(2)(a). (LA)</a></td></tr>
+<tr><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='8'><a href='FileOpen.aspx?Type=30&ID=220997&MeetingID=17578'>Agreement/Amendment Printout</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=264878&MeetingID=17578'>SIN-SCVH-40040541-PhysicianContracts-StanfordUniv-CTS_SVCs</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>b. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=264881&MeetingID=17578'>Amend 2-Stanford CT Surgery</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>c. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265272&MeetingID=17578'>Amend 2-Stanford Cardiovascular  Thoracic-Levine Act</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>d. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265331&MeetingID=17578'>Approval Request for a Beyond 5 Year Contract Term 4.30.2025</a></td></tr>
+
+<tr><td></td><td class='Num'>30. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127265&CssClass='>Consider recommendations relating to medical staff and allied health professionals at Santa Clara Valley Medical Center, O'Connor Hospital, Regional Medical Center, and Saint Louise Regional Hospital. (LA)</a></td></tr>
+<tr><td></td><td></td><td class='Comments' colspan='9'>Possible action:<br>	a.	Approve appointments/reappointments and privilege actions of specified medical staff and allied health professionals at Santa Clara Valley Medical Center, O'Connor Hospital, Regional Medical Center, and Saint Louise Regional Hospital as outlined on the Credentials Report dated December 18, 2025.<br>	b. 	Approve Enterprise Process Protocols for Nurse Practitioners Santa Clara Valley Healthcare Family Baby Unit (Mother Baby Unit).<br>	c.	Approve Enterprise Process Protocols for Nurse Practitioners Radiation Oncology.</td></tr>
+<tr><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='8'><a href='FileOpen.aspx?Type=30&ID=220984&MeetingID=17578'>Report Printout</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265156&MeetingID=17578'>Enterprise Credentials Report December 18, 2025</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>b. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265023&MeetingID=17578'>Enterprise Process Protocols for Nurse Practitioners Santa Clara Valley Healthcare Family Baby Unit (FBU)(Mother Baby Unit)</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>c. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265024&MeetingID=17578'>Enterprise Process Protocols for Nurse Practitioners Radiation Oncology</a></td></tr>
+
+<tr><td class='Num'><strong></strong></td><td class='Title' colspan='10'><a target='_top' class='Link'  href='Detail_Motion.aspx?Frame=&MeetingID=17578&MinutesID=11006&MediaPosition=&ID=437179&Type=70&CssClass= style='cursor: hand'><strong>Employee Services Agency</strong></a></td></tr>
+
+<tr><td></td><td class='Num'>31. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127016&CssClass='>Adoption of Salary Ordinance No. NS-5.26.38, an Ordinance amending Santa Clara County Salary Ordinance No. NS-5.26 relating to compensation of employees making various technical corrections to code status of positions, footnotes, and assignment of salary ordinance numbers.</a></td></tr>
+<tr><td></td><td></td><td class='Comments' colspan='9'><div><p style="margin:0pt; orphans:0; widows:0"><span style="font-family:'Times New Roman'; font-size:12pt">              </span><span style="font-family:'Times New Roman'; font-size:12pt">•</span><span style="font-family:'Times New Roman'; font-size:12pt">              </span><span style="font-family:'Times New Roman'; font-size:12pt">Introduce and preliminarily adopt on January 27, 2026.</span></p><p style="margin:0pt"><span style="font-family:'Times New Roman'; font-size:12pt">              </span><span style="font-family:'Times New Roman'; font-size:12pt">•</span><span style="font-family:'Times New Roman'; font-size:12pt">              </span><span style="font-family:'Times New Roman'; font-size:12pt">Adopt (Final) on February 10, 2026.</span></p></div></td></tr>
+<tr><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='8'><a href='FileOpen.aspx?Type=30&ID=221031&MeetingID=17578'>Ordinance Printout</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265269&MeetingID=17578'>NS-5.26.38 - ESA - Technical corrections salary ordinance</a></td></tr>
+
+<tr><td></td><td class='Num'>32. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127196&CssClass='>Approve job specification and amend classification plan to add classification of Infant Feeding Technician.</a></td></tr>
+<tr><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='8'><a href='FileOpen.aspx?Type=30&ID=221032&MeetingID=17578'>Personnel Recommendation Printout</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=264812&MeetingID=17578'>Infant Feeding Technician - Classification Report</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>b. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265013&MeetingID=17578'>Infant Feeding Technician - Job Specification</a></td></tr>
+
+<tr><td></td><td class='Num'>33. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127220&CssClass='>Adoption of Salary Ordinance No. NS-5.26.36, an Ordinance amending Santa Clara County Salary Ordinance No. NS-5.26 relating to compensation of employees deleting one half-time Dietetic Assistant position and adding one half-time Infant Feeding Technician position in Santa Clara Valley Healthcare and amending the Salary Schedule to add the classification of Infant Feeding Technician and adding Footnote No. 279 to create a lead differential for the Infant Feeding Technician classification.</a></td></tr>
+<tr><td></td><td></td><td class='Comments' colspan='9'><div><p style="margin:0pt; orphans:0; widows:0"><span style="font-family:'Times New Roman'; font-size:12pt">              </span><span style="font-family:'Times New Roman'; font-size:12pt">•</span><span style="font-family:'Times New Roman'; font-size:12pt">              </span><span style="font-family:'Times New Roman'; font-size:12pt">Introduce and preliminarily adopt on January 27, 2026.</span></p><p style="margin:0pt"><span style="font-family:'Times New Roman'; font-size:12pt">              </span><span style="font-family:'Times New Roman'; font-size:12pt">•</span><span style="font-family:'Times New Roman'; font-size:12pt">              </span><span style="font-family:'Times New Roman'; font-size:12pt">Adopt (Final) on February 10, 2026.</span></p></div></td></tr>
+<tr><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='8'><a href='FileOpen.aspx?Type=30&ID=221033&MeetingID=17578'>Ordinance Printout</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265012&MeetingID=17578'>NS-5.26.36 - ESA - New classification of Infant Feeding Technician</a></td></tr>
+
+<tr><td></td><td class='Num'>34. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127217&CssClass='>Adoption of Salary Ordinance No. NS-5.26.37, an Ordinance amending Santa Clara County Salary Ordinance No. NS-5.26 relating to compensation of employees deleting one Psychiatric Social Worker II or Marriage & Family Therapist II or Marriage & Family Therapist I or Psychiatric Social Worker I or unclassified Rehabilitation Counselor position and adding one Quality Improvement Coordinator - Mental Health Services position in the Behavioral Health Services Department.</a></td></tr>
+<tr><td></td><td></td><td class='Comments' colspan='9'><div><p style="margin:0pt; orphans:0; widows:0"><span style="font-family:'Times New Roman'; font-size:12pt">              </span><span style="font-family:'Times New Roman'; font-size:12pt">•</span><span style="font-family:'Times New Roman'; font-size:12pt">              </span><span style="font-family:'Times New Roman'; font-size:12pt">Introduce and preliminarily adopt on January 27, 2026.</span></p><p style="margin:0pt"><span style="font-family:'Times New Roman'; font-size:12pt">              </span><span style="font-family:'Times New Roman'; font-size:12pt">•</span><span style="font-family:'Times New Roman'; font-size:12pt">              </span><span style="font-family:'Times New Roman'; font-size:12pt">Adopt (Final) on February 10, 2026.</span></p></div></td></tr>
+<tr><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='8'><a href='FileOpen.aspx?Type=30&ID=221034&MeetingID=17578'>Ordinance Printout</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265016&MeetingID=17578'>NS-5.26.37 - ESA - Deleting one Marriage & Family Therapist II and adding one QIC - Mental Health Services</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>b. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265326&MeetingID=17578'>Classification Report – Marriage Family Therapist II to Quality Improvement Coordinator</a></td></tr>
+
+<tr><td></td><td class='Num'>35. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=83763.000&ID=127358&CssClass='>Adoption of Ordinance No. NS-304.139, an Ordinance of the Board of Supervisors of the County of Santa Clara amending section A25-89 of Article 1 of Chapter III of Division A25 of the Santa Clara County Ordinance Code relating to Assumption by County of a non-municipal function.</a></td></tr>
+<tr><td></td><td></td><td class='Comments' colspan='9'><div><p style="margin:0pt; orphans:0; widows:0"><span style="font-family:'Times New Roman'; font-size:12pt">              </span><span style="font-family:'Times New Roman'; font-size:12pt">•</span><span style="font-family:'Times New Roman'; font-size:12pt">              </span><span style="font-family:'Times New Roman'; font-size:12pt">Introduce and preliminarily adopt on January 27, 2026.</span></p><p style="margin:0pt; orphans:0; widows:0"><span style="font-family:'Times New Roman'; font-size:12pt">              </span><span style="font-family:'Times New Roman'; font-size:12pt">•</span><span style="font-family:'Times New Roman'; font-size:12pt">              </span><span style="font-family:'Times New Roman'; font-size:12pt">Adopt (Final) on February 10, 2026.</span></p></div></td></tr>
+<tr><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='8'><a href='FileOpen.aspx?Type=30&ID=221047&MeetingID=17578'>Ordinance Printout</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265426&MeetingID=17578'>Ordinance NS-304.139 amending Section A25-89 (redlined)</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>b. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265427&MeetingID=17578'>Ordinance NS-304.139 amending Section A25-89</a></td></tr>
+
+<tr><td class='Num'><strong></strong></td><td class='Title' colspan='10'><a target='_top' class='Link'  href='Detail_Motion.aspx?Frame=&MeetingID=17578&MinutesID=11006&MediaPosition=&ID=437193&Type=70&CssClass= style='cursor: hand'><strong>Board of Supervisors</strong></a></td></tr>
+
+<tr><td></td><td class='Num'>36. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127427&CssClass='>Consider recommendations relating to sponsorship of UStar Productions. (Arenas)</a></td></tr>
+<tr><td></td><td></td><td class='Comments' colspan='9'>Possible action: <br>	a.	Approve waiver of Board of Supervisor's Policy 3.68.4.2 which requires approval of sponsorship at least 30 days before the event or activity.<br>	b.	Approve waiver of the requirement under Board of Supervisors Policy 3.68.2 that an "eligible organization" be a nonprofit organization defined by Section 501(c)(3) of the Internal Revenue Code or a government entity.<br>	c.	Approve County sponsorship of UStar Productions via their fiscal agent Vietnamese Voluntary Foundation in the amount of $1,000 from the Supervisorial District One allocation in the Office of the Clerk of the Board Fiscal Year 2025-2026, to support Hoi Tet San Jose - Lunar New Year Tet Festival San Jose 2026.</td></tr>
+<tr><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='8'><a href='FileOpen.aspx?Type=30&ID=221038&MeetingID=17578'>Fiscal/Budget Item Printout</a></td></tr>
+
+<tr><td></td><td class='Num'>37. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127403&CssClass='>Consider recommendations relating to funding to support Mission College's 50th Anniversary Celebration. (Duong)</a></td></tr>
+<tr><td></td><td></td><td class='Comments' colspan='9'>Possible action:<br>	a.	Rescind August 26, 2025 Board of Supervisors approval (Item No. 47) of County sponsorship of Mission College to support its 50th Anniversary Celebration in the amount of $500.<br>	b. 	Approve waiver of Board of Supervisor's Policy 3.68.4.2 which requires approval of sponsorship at least 30 days before the event or activity.<br>	c. 	Approve County sponsorship of West Valley-Mission Community College District Foundation in the amount of $500 from the Supervisorial District Two allocation in the Clerk of the Board Fiscal Year 2025-2026 budget to support Mission College's 50th Anniversary Celebration.</td></tr>
+<tr><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='8'><a href='FileOpen.aspx?Type=30&ID=221011&MeetingID=17578'>Fiscal/Budget Item Printout</a></td></tr>
+
+<tr><td></td><td class='Num'>38. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127417&CssClass='>Approve County sponsorship of FIRST 5 Santa Clara County in the amount of $1,000 from the Supervisorial District Two allocation in the Office of the Clerk of the Board Fiscal Year 2025-2026 budget, to support Potter the Otter Day. (Duong)</a></td></tr>
+<tr><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='8'><a href='FileOpen.aspx?Type=30&ID=221003&MeetingID=17578'>Fiscal/Budget Item Printout</a></td></tr>
+
+<tr><td></td><td class='Num'>39. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127418&CssClass='>Consider recommendations relating to sponsorship of City of San José Black History Month Flag Raising Ceremony. (Duong)</a></td></tr>
+<tr><td></td><td></td><td class='Comments' colspan='9'>Possible action: <br>	a.	Approve waiver of Board of Supervisor's Policy 3.68.4.2 which requires approval of sponsorship at least 30 days before the event or activity.<br>	b.	Approve County sponsorship of City of San Jose in the amount of $200 from the Supervisorial Two allocation in the Office of the Clerk of the Board Fiscal Year 2026-2026 budget, to support the Black History Month Flag Raising Ceremony in collaboration with NAACP.</td></tr>
+<tr><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='8'><a href='FileOpen.aspx?Type=30&ID=221004&MeetingID=17578'>Fiscal/Budget Item Printout</a></td></tr>
+
+<tr><td></td><td class='Num'>40. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_Motion.aspx?Frame=&MeetingID=17578&MinutesID=11006&MediaPosition=26835.776&ID=437198&Type=60&CssClass= style='cursor: hand'>Pursuant to Government Code Section 53232.3(d), no member of the Board of Supervisors attended a meeting, as defined in Government Code Section 54952.2(a), at the expense of the County of Santa Clara for period January 8, 2026 through January 21, 2026.</a></td></tr>
+
+<tr><td class='Num'><strong></strong></td><td class='Title' colspan='10'><a target='_top' class='Link'  href='Detail_Motion.aspx?Frame=&MeetingID=17578&MinutesID=11006&MediaPosition=&ID=437199&Type=70&CssClass= style='cursor: hand'><strong>County Executive</strong></a></td></tr>
+
+<tr><td></td><td class='Num'>41. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127355&CssClass='>Receive report relating to anticipated solicitations.</a></td></tr>
+<tr><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='8'><a href='FileOpen.aspx?Type=30&ID=220990&MeetingID=17578'>Report Printout</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265281&MeetingID=17578'>Upcoming Solicitations</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>b. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265282&MeetingID=17578'>Retroactive Solicitations</a></td></tr>
+
+<tr><td class='Num'><strong></strong></td><td class='Title' colspan='10'><a target='_top' class='Link'  href='Detail_Motion.aspx?Frame=&MeetingID=17578&MinutesID=11006&MediaPosition=&ID=437203&Type=70&CssClass= style='cursor: hand'><strong>Office of Supportive Housing</strong></a></td></tr>
+
+<tr><td></td><td class='Num'>42. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=126658&CssClass='>BOS-2026-16 : Adopt Resolution finding and declaring that real property located at 3590 Benton Street, Santa Clara, Assessor's Parcel No. 290-22-154, which is intended to be ground leased to LifeMoves of Santa Clara County, a California nonprofit public benefit corporation, or its affiliate, is exempt surplus land under the Surplus Land Act.</a></td></tr>
+<tr><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='8'><a href='FileOpen.aspx?Type=30&ID=221055&MeetingID=17578'>Resolution Printout</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265408&MeetingID=17578'>Attachment A - Board Resolution</a></td></tr>
+
+<tr><td></td><td class='Num'>43. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127102&CssClass='>Consider recommendations relating to the United States Department of Housing and Urban Development (HUD) Continuum of Care (CoC) program grants.</a></td></tr>
+<tr><td></td><td></td><td class='Comments' colspan='9'>Possible action:<br>	a.	Approve delegation of authority to the County Executive, or designee, to submit Grant Applications to HUD relating to grant funding for up to two CoC grants for supportive housing system infrastructure via the Notice of Funding Opportunity for the Fiscal Year 2024-2025 CoC Program Competition in an amount not to exceed $619,836, for one-year grants with varying grant periods that begin in 2026 and end in 2027. Delegation of authority shall expire on December 31, 2027.<br>	b.	Approve delegation of authority to the County Executive, or designee, to negotiate, execute, amend, or terminate up to 27 grant agreements with HUD relating to CoC program grant funding providing permanent supportive housing, rapid rehousing, and joint transitional housing-rapid rehousing programs for people experiencing homelessness, as well as supportive housing system infrastructure, in a total amount not to exceed $43,116,034, for one-year contract terms that begin on various dates in 2026 and 2027, following approval by County Counsel as to form and legality, and approval by the Office of the County Executive. Delegation of authority shall expire on December 31, 2028.</td></tr>
+<tr><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='8'><a href='FileOpen.aspx?Type=30&ID=221035&MeetingID=17578'>Agreement/Amendment Printout</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=264590&MeetingID=17578'>LF #127102 - Attachment A - 2024 HUD CoC Grant Award List</a></td></tr>
+
+<tr><td class='Num'><strong></strong></td><td class='Title' colspan='10'><a target='_top' class='Link'  href='Detail_Motion.aspx?Frame=&MeetingID=17578&MinutesID=11006&MediaPosition=&ID=437208&Type=70&CssClass= style='cursor: hand'><strong>Procurement Department</strong></a></td></tr>
+
+<tr><td></td><td class='Num'>44. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=126462&CssClass='>Consider recommendations relating to the Agreement with HF Tech Services, Inc., and Carahsoft Technology Corp., for an Enterprise Services Management solution. (LA)</a></td></tr>
+<tr><td></td><td></td><td class='Comments' colspan='9'>Possible action:<br>	a.	Approve Agreement No. CW2261032 with HF Tech Services, Inc., and Carahsoft Technology Corp., relating to providing an Enterprise Services Management solution in an amount not to exceed $16,616,002 for period February 2, 2026 through February 1, 2031, with one two-year extension option, that has been reviewed and approved by County Counsel as to form and legality. An exception to Board of Supervisors Policy 5.4.5.4, Length of Term of Contracts, has been approved by the Office of Countywide Contracting Management.<br>	b.	Approve Request for Appropriation Modification No. 100 - $6,179,328 increasing estimated revenue and expenditure appropriations in the Technology Services and Solutions Department budget. (4/5 Vote) </td></tr>
+<tr><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='8'><a href='FileOpen.aspx?Type=30&ID=221053&MeetingID=17578'>Agreement/Amendment Printout</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265264&MeetingID=17578'>Levine Act Contractor Form - HF Tech Services</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>b. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265265&MeetingID=17578'>Levine Act Contractor Form - Carahsoft Technology Corp</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>c. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265266&MeetingID=17578'>Levine Act Subontractor Form - ServiceNow</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>d. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265366&MeetingID=17578'>Levine Act Subcontractor Form - Beyond20</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>e. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265367&MeetingID=17578'>Beyond 5 Year Request - HF Tech 2026</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>f. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265372&MeetingID=17578'>#100 - Transfer funds ($6.2M) from IT Stability Fund to T-Code Project</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>h. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265559&MeetingID=17578'>SCC-HFTech-Carahsoft ServiceNow Contract FINAL (redacted)</a><span class='ItemTag' title='Supplemental Information'><img src='images/Tag.png' alt='' />Supplemental Information</span></td></tr>
+
+<tr><td class='Num'><strong></strong></td><td class='Title' colspan='10'><a target='_top' class='Link'  href='Detail_Motion.aspx?Frame=&MeetingID=17578&MinutesID=11006&MediaPosition=&ID=437218&Type=70&CssClass= style='cursor: hand'><strong>County Library</strong></a></td></tr>
+
+<tr><td></td><td class='Num'>45. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127371&CssClass='>Consider recommendations relating to the Santa Clara County Poet Laureate Program.</a></td></tr>
+<tr><td></td><td></td><td class='Comments' colspan='9'>Possible action:<br>	a.	Receive update relating to Poet Laureate program.<br>	b.	Approve adjustments to timeline and promotion of Poet Laureate nomination and selection process for 2027.</td></tr>
+<tr><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='8'><a href='FileOpen.aspx?Type=30&ID=220992&MeetingID=17578'>Report Printout</a></td></tr>
+
+<tr><td></td><td class='Num'>46. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127191&CssClass='>Adoption of Salary Ordinance No. NS-5.26.40, an Ordinance amending Santa Clara County Salary Ordinance No. NS-5.26 relating to compensation of employees deleting one Electronic Resources Librarian or Associate Electronic Resources Librarian position, one Messenger Driver position, and three Warehouse Materials Handler positions and adding four Materials Supply Specialist positions and one Supervising Librarian position in the County Library District.</a></td></tr>
+<tr><td></td><td></td><td class='Comments' colspan='9'><div><p style="margin:0pt; orphans:0; widows:0"><span style="font-family:'Times New Roman'; font-size:12pt">              </span><span style="font-family:'Times New Roman'; font-size:12pt">•</span><span style="font-family:'Times New Roman'; font-size:12pt">              </span><span style="font-family:'Times New Roman'; font-size:12pt">Introduce and preliminarily adopt on January 27, 2026.</span></p><p style="margin:0pt; orphans:0; widows:0"><span style="font-family:'Times New Roman'; font-size:12pt">              </span><span style="font-family:'Times New Roman'; font-size:12pt">•</span><span style="font-family:'Times New Roman'; font-size:12pt">              </span><span style="font-family:'Times New Roman'; font-size:12pt">Adopt (Final) on February 10, 2026.</span></p></div></td></tr>
+<tr><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='8'><a href='FileOpen.aspx?Type=30&ID=221036&MeetingID=17578'>Ordinance Printout</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265423&MeetingID=17578'>NS-5.26.40 - LIB - Deleting five positions and Adding five positions in Library District</a></td></tr>
+
+<tr><td class='Num'><strong></strong></td><td class='Title' colspan='10'><a target='_top' class='Link'  href='Detail_Motion.aspx?Frame=&MeetingID=17578&MinutesID=11006&MediaPosition=&ID=437222&Type=70&CssClass= style='cursor: hand'><strong>Clerk of the Board</strong></a></td></tr>
+
+<tr><td></td><td class='Num'>47. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127238&CssClass='>Consider recommendations relating to changes to Fiscal Year (FY) 2025-2026 Budget Inventory Item Nos. 17, 300, and 359.</a></td></tr>
+<tr><td></td><td></td><td class='Comments' colspan='9'>Possible action:<br>	a.	Approve revision to FY 2025-2026 Budget Inventory Item No. 17 for Catalino Tapia Scholarship Foundation, changing the purpose of the grant to support scholarship recipients with addresses in Santa Clara County, with necessities such as rental assistance and grocery help, with no change to the grant amount of $10,000.<br>	b. 	Approve delegation of authority to the Clerk of the Board of Supervisors, or designee, to negotiate, execute, amend, extend and/or terminate a grant agreement with Catalino Tapia Scholarship Foundation relating to revised FY 2025-2026 Budget Inventory Item No. 17 in an amount not to exceed $10,000 and a contract term that begins no earlier than January 27, 2026 and ends no later than June 30, 2026, and for any extensions thereto ending no later than June 30, 2027, following approval by County Counsel as to form and legality. Delegation of authority shall expire on June 30, 2027.<br>	c.	Approve revision to FY 2025-2026 Budget Inventory Item No. 300 for AINAK, changing the purpose of the grant to be acquiring two handheld vision screening devices to conduct mass vision screenings through the Free Eye Care and Eyeglasses Program, purchasing a blackout tent to conduct mass screenings, and paying for eye exams and eyeglasses for students from underserved families, with no change to the grant amount of $20,000.<br>	d. 	Approve delegation of authority to the Clerk of the Board of Supervisors, or designee, to negotiate, execute, amend, extend and/or terminate a grant agreement with AINAK relating to revised FY 2025-2026 Budget Inventory Item No. 300 in an amount not to exceed $20,000 and a contract term that begins no earlier than January 27, 2026 and ends no later than June 30, 2026, and for any extensions thereto ending no later than June 30, 2027, following approval by County Counsel as to form and legality. Delegation of authority shall expire on June 30, 2027.<br>	e.	Approve revision to FY 2025-2026 Budget Inventory Item No. 359, changing the recipient of grant funding to San Jose Evergreen Community College District Foundation, with no change to the grant amount of $50,000 and no change to the purpose of the grant.<br>	f. 	Approve delegation of authority to the Clerk of the Board of Supervisors, or designee, to negotiate, execute, amend, extend and/or terminate a grant agreement with San Jose Evergreen Community College District Foundation relating to revised FY 2025-2026 Budget Inventory Item No. 359 in an amount not to exceed $50,000 and a contract term that begins no earlier than January 27, 2026 and ends no later than June 30, 2026, and for any extensions thereto ending no later than June 30, 2027, following approval by County Counsel as to form and legality. Delegation of authority shall expire on June 30, 2027.</td></tr>
+<tr><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='8'><a href='FileOpen.aspx?Type=30&ID=221017&MeetingID=17578'>Agreement/Amendment Printout</a></td></tr>
+
+<tr><td class='Num'><strong></strong></td><td class='Title' colspan='10'><a target='_top' class='Link'  href='Detail_Motion.aspx?Frame=&MeetingID=17578&MinutesID=11006&MediaPosition=&ID=437224&Type=70&CssClass= style='cursor: hand'><strong>Boards and Commissions</strong></a></td></tr>
+
+<tr><td></td><td class='Num'>48. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127221&CssClass='>Receive report from Measure A (2016 Housing Bond) Independent Citizens' Oversight Committee relating to the Fiscal Year 2025-2026 First Quarter Report from the Independent Auditor.</a></td></tr>
+<tr><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='8'><a href='FileOpen.aspx?Type=30&ID=221016&MeetingID=17578'>Report Printout</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265223&MeetingID=17578'>Measure A (2016 Housing Bond) Fiscal Year 2025-2026 First Quarter</a></td></tr>
+
+<tr><td></td><td class='Num'>49. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127305&CssClass='>Receive report from Measure A (2016 Housing Bond) Independent Citizens' Oversight Committee relating to knowledge gained through oversight of Measure A (2016 Housing Bond) implementation.</a></td></tr>
+<tr><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='8'><a href='FileOpen.aspx?Type=30&ID=221015&MeetingID=17578'>Report Printout</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265127&MeetingID=17578'>2016 Measure A Affordable Housing Bond - Lessons Learned</a></td></tr>
+
+<tr><td></td><td class='Num'>50. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127202&CssClass='>Approve Bylaws for the Race and Health Disparities Community Board.</a></td></tr>
+<tr><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='8'><a href='FileOpen.aspx?Type=30&ID=220982&MeetingID=17578'>Report Printout</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=264849&MeetingID=17578'>Race and Health Disparities Community Board Bylaws</a></td></tr>
+
+<tr><td></td><td class='Num'>51. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127192&CssClass='>Approve Fiscal Year 2025-2026 Annual Work Plan for the Race and Health Disparities Community Board.</a></td></tr>
+<tr><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='8'><a href='FileOpen.aspx?Type=30&ID=220981&MeetingID=17578'>Report Printout</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=264842&MeetingID=17578'>Race and Health Disparities Community Board Fiscal Year 2025-2026 Work Plan</a></td></tr>
+
+<tr><td></td><td class='Num'>52. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127310&CssClass='>Approve revised Fiscal Year 2025-2026 Budget for the Ukraine Citizen Diplomacy Commission.</a></td></tr>
+<tr><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='8'><a href='FileOpen.aspx?Type=30&ID=221056&MeetingID=17578'>Report Printout</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265335&MeetingID=17578'>Revised Fiscal Year 2025-2026 Ukraine Citizen Diplomacy Commission Budget</a></td></tr>
+
+<tr><td></td><td class='Num'><strong>53. </strong></td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_Motion.aspx?Frame=&MeetingID=17578&MinutesID=11006&MediaPosition=&ID=437235&Type=70&CssClass= style='cursor: hand'><strong>Receive announcement of appointments and reappointments by individual Board members to various Boards and Commissions:</strong></a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='8'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127405&CssClass='>Supervisor Duong:</a></td></tr>
+<tr><td></td><td></td><td></td><td class='Comments' colspan='8'>	i.	Appoints Alyssa Wieting to the Commission on the Status of Women, seat number 4.</td></tr>
+<tr><td></td><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='7'><a href='FileOpen.aspx?Type=30&ID=221021&MeetingID=17578'>Board/Commission Appointment Printout</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>b. </td><td class='Title' colspan='8'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127424&CssClass='>Supervisor Ellenberg:</a></td></tr>
+<tr><td></td><td></td><td></td><td class='Comments' colspan='8'>	i.	Reappoints Jessica Blitchok to the Commission on the Status of Women, seat number 14.</td></tr>
+<tr><td></td><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='7'><a href='FileOpen.aspx?Type=30&ID=221012&MeetingID=17578'>Board/Commission Appointment Printout</a></td></tr>
+
+<tr><td></td><td class='Num'><strong>54. </strong></td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_Motion.aspx?Frame=&MeetingID=17578&MinutesID=11006&MediaPosition=&ID=437238&Type=70&CssClass= style='cursor: hand'><strong>Approve Board-As-a-Whole appointments and reappointments to various Boards and Commissions:</strong></a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='8'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127406&CssClass='>Supervisor Duong nominates:</a></td></tr>
+<tr><td></td><td></td><td></td><td class='Comments' colspan='8'>	i.	Douglas Radtke for appointment to the Assessment Appeals Board I, seat number 2.</td></tr>
+<tr><td></td><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='7'><a href='FileOpen.aspx?Type=30&ID=221058&MeetingID=17578'>Board/Commission Appointment Printout</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>b. </td><td class='Title' colspan='8'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127425&CssClass='>Supervisor Ellenberg nominates:</a></td></tr>
+<tr><td></td><td></td><td></td><td class='Comments' colspan='8'>	i.	Richard Labagh for reappointment to the Assessment Appeals Board III, seat number 3.</td></tr>
+<tr><td></td><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='7'><a href='FileOpen.aspx?Type=30&ID=221013&MeetingID=17578'>Board/Commission Appointment Printout</a></td></tr>
+
+<tr><td class='Num'><strong></strong></td><td class='Title' colspan='10'><a target='_top' class='Link'  href='Detail_Motion.aspx?Frame=&MeetingID=17578&MinutesID=11006&MediaPosition=&ID=437241&Type=70&CssClass= style='cursor: hand'><strong>Office of the District Attorney</strong></a></td></tr>
+
+<tr><td></td><td class='Num'>55. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=84009.000&ID=127354&CssClass='>Approve Request for Appropriation Modification No. 104 - $321,019 increasing estimated revenue and expenditure appropriations in the Office of the District Attorney budget, relating to receipt of insurance fraud grants. (4/5 Vote)</a></td></tr>
+<tr><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='8'><a href='FileOpen.aspx?Type=30&ID=220991&MeetingID=17578'>Fiscal/Budget Item Printout</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265333&MeetingID=17578'>F85 No. 104</a></td></tr>
+
+<tr><td class='Num'><strong></strong></td><td class='Title' colspan='10'><a target='_top' class='Link'  href='Detail_Motion.aspx?Frame=&MeetingID=17578&MinutesID=11006&MediaPosition=&ID=437244&Type=70&CssClass= style='cursor: hand'><strong>Office of the Sheriff</strong></a></td></tr>
+
+<tr><td></td><td class='Num'>56. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127331&CssClass='>Consider recommendations relating to the Surveillance Use Policy for the Automated License Plate Readers for the City of Saratoga, the City of Cupertino, and the Town of Los Altos Hills.</a></td></tr>
+<tr><td></td><td></td><td class='Comments' colspan='9'>Possible action:	<br>	a.	Adopt finding that the benefits of the surveillance technology outweigh the costs pursuant to Section A40-4 of the Santa Clara County Ordinance Code.<br>	b.	Approve Surveillance Use Policy for Automated License Plate Readers for the City of Saratoga, the City of Cupertino, and the Town of Los Altos Hills, that has been reviewed and approved by County Counsel as to form and legality.</td></tr>
+<tr><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='8'><a href='FileOpen.aspx?Type=30&ID=221060&MeetingID=17578'>Report Printout</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265473&MeetingID=17578'>Clean - Office of the Sheriff ALPR SUP Saratoga</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>b. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265419&MeetingID=17578'>Redlined - Office of the Sheriff ALPR SUP Saratoga</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>c. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265472&MeetingID=17578'>Clean - Office of the Sheriff ALPR SUP Cupertino</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>d. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265420&MeetingID=17578'>Redlined - Office of the Sheriff ALPR SUP Cupertino</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>e. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265474&MeetingID=17578'>Clean - Office of the Sheriff ALPR SUP Town of Los Altos Hills</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>f. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265421&MeetingID=17578'>Redlined - Office of the Sheriff ALPR SUP Town of Los Altos Hills</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>g. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265436&MeetingID=17578'>Surveillance Use Policy for Automated License Plate Readers for City of Saratoga, City of Cupertino, and Town of Los Altos Hills</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>h. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265661&MeetingID=17578'>Public Comment</a><span class='ItemTag' title='Supplemental Information'><img src='images/Tag.png' alt='' />Supplemental Information</span></td></tr>
+
+<tr><td></td><td></td><td class='Num'>i. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265711&MeetingID=17578'>Public Comment No. 2</a><span class='ItemTag' title='Supplemental Information'><img src='images/Tag.png' alt='' />Supplemental Information</span></td></tr>
+
+<tr><td></td><td class='Num'>57. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_Motion.aspx?Frame=&MeetingID=17578&MinutesID=11006&MediaPosition=26835.776&ID=437254&Type=60&CssClass= style='cursor: hand'>Held from January 13, 2026 (Item No. 48): Approve Second Amendment to Agreement with Santa Clara Valley Transportation Authority relating to providing supplemental law enforcement services, amending the scope of services and cost recovery in an amount equal to the County's cost of providing services with no change to the term of the Agreement, that has been reviewed and approved by County Counsel as to form and legality.</a></td></tr>
+
+<tr><td class='Num'><strong></strong></td><td class='Title' colspan='10'><a target='_top' class='Link'  href='Detail_Motion.aspx?Frame=&MeetingID=17578&MinutesID=11006&MediaPosition=&ID=437255&Type=70&CssClass= style='cursor: hand'><strong>Probation Department</strong></a></td></tr>
+
+<tr><td></td><td class='Num'>58. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=126378&CssClass='>Consider recommendations relating to providing a comprehensive employment services program for justice-involved adult clients. (LA)</a></td></tr>
+<tr><td></td><td></td><td class='Comments' colspan='9'>Possible action:<br>	a.	Approve Cooperative Agreement with the State of California Department of Transportation relating to funding for a transitional road work crew program for justice-involved adult clients in an amount not to exceed $7,241,567 for period February 24, 2026 through February 23, 2029, that has been reviewed and approved by County Counsel as to form and legality.<br>	b.	Approve Agreement with the Center for Employment Opportunities, Inc., relating to providing a comprehensive employment services program, including a transitional road work crew program, for justice-involved adult clients in an amount not to exceed $8,898,030 for period February 24, 2026 through February 23, 2029, that has been reviewed and approved by County Counsel as to form and legality.<br>	c.	Approve Request for Appropriation Modification No. 87 - $7,241,567 increasing estimated revenue and expenditure appropriations in the Probation Department budget. (4/5 Vote)</td></tr>
+<tr><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='8'><a href='FileOpen.aspx?Type=30&ID=221019&MeetingID=17578'>Agreement/Amendment Printout</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265018&MeetingID=17578'>F85 No. 87</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>b. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=264741&MeetingID=17578'>Cooperative Agreement with the State of California, Department of Transportation</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>c. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265397&MeetingID=17578'>Agreement with Center for Employment Opportunities, Inc.</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>d. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265712&MeetingID=17578'>Public Comment</a><span class='ItemTag' title='Supplemental Information'><img src='images/Tag.png' alt='' />Supplemental Information</span></td></tr>
+
+<tr><td class='Num'><strong></strong></td><td class='Title' colspan='10'><a target='_top' class='Link'  href='Detail_Motion.aspx?Frame=&MeetingID=17578&MinutesID=11006&MediaPosition=&ID=437260&Type=70&CssClass= style='cursor: hand'><strong>Commendations and Proclamations</strong></a></td></tr>
+
+<tr><td></td><td class='Num'><strong>59. </strong></td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_Motion.aspx?Frame=&MeetingID=17578&MinutesID=11006&MediaPosition=&ID=437261&Type=70&CssClass= style='cursor: hand'><strong>Commendations and Proclamations. (See Item No. 5)</strong></a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='8'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127426&CssClass='>Adopt Commendation for Sikh Gurdwara San Jose on the occasion of the groundbreaking of their expansion. (Arenas)</a></td></tr>
+<tr><td></td><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='7'><a href='FileOpen.aspx?Type=30&ID=221039&MeetingID=17578'>Commendation/Proclamation Printout</a></td></tr>
+
+<tr><td></td><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='7'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265550&MeetingID=17578'>Sikh Gurdwara San José Commendation</a><span class='ItemTag' title='Supplemental Information'><img src='images/Tag.png' alt='' />Supplemental Information</span></td></tr>
+
+<tr><td></td><td></td><td class='Num'>b. </td><td class='Title' colspan='8'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127423&CssClass='>Adopt Commendation for Plaza Jewelers on the occasion of the grand opening of their second location. (Arenas)</a></td></tr>
+<tr><td></td><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='7'><a href='FileOpen.aspx?Type=30&ID=221020&MeetingID=17578'>Commendation/Proclamation Printout</a></td></tr>
+
+<tr><td></td><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='7'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265611&MeetingID=17578'>Plaza Jewelers Commendation</a><span class='ItemTag' title='Supplemental Information'><img src='images/Tag.png' alt='' />Supplemental Information</span></td></tr>
+
+<tr><td></td><td></td><td class='Num'>c. </td><td class='Title' colspan='8'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=83255.000&ID=127391&CssClass='>Adopt Commendation for UStar Productions on the occasion of 11th Anniversary of Hoi Tet San Jose - Lunar New Year Tet Festival San Jose 2026 for celebrating and preserving Vietnamese heritage and culture. (Arenas)</a></td></tr>
+<tr><td></td><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='7'><a href='FileOpen.aspx?Type=30&ID=221014&MeetingID=17578'>Commendation/Proclamation Printout</a></td></tr>
+
+<tr><td></td><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='7'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265610&MeetingID=17578'>UStar Productions Commendation</a><span class='ItemTag' title='Supplemental Information'><img src='images/Tag.png' alt='' />Supplemental Information</span></td></tr>
+
+<tr><td></td><td></td><td class='Num'>d. </td><td class='Title' colspan='8'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127393&CssClass='>Adopt Commendation for Bay Area Association of Latino Elected and Appointed Officials for its enduring leadership, dedication to equity and representation, and its unwavering service to the Latino community and the entire Bay Area. (Arenas)</a></td></tr>
+<tr><td></td><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='7'><a href='FileOpen.aspx?Type=30&ID=221000&MeetingID=17578'>Commendation/Proclamation Printout</a></td></tr>
+
+<tr><td></td><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='7'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265531&MeetingID=17578'>Bay Area Association of Latino Elected and Appointed Officials Commendation</a><span class='ItemTag' title='Supplemental Information'><img src='images/Tag.png' alt='' />Supplemental Information</span></td></tr>
+
+<tr><td></td><td></td><td class='Num'>e. </td><td class='Title' colspan='8'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127394&CssClass='>Adopt Commendation for Arturo Vargas as the 2026 Bay Area Latino Elected and Appointed Officials Civic Excellence Awardee for his sustained dedication to advancing civic engagement and institutional leadership. (Arenas)</a></td></tr>
+<tr><td></td><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='7'><a href='FileOpen.aspx?Type=30&ID=221002&MeetingID=17578'>Commendation/Proclamation Printout</a></td></tr>
+
+<tr><td></td><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='7'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265532&MeetingID=17578'>Arturo Vargas Commendation</a><span class='ItemTag' title='Supplemental Information'><img src='images/Tag.png' alt='' />Supplemental Information</span></td></tr>
+
+<tr><td></td><td></td><td class='Num'>f. </td><td class='Title' colspan='8'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127415&CssClass='>Adopt Proclamation declaring February 2026 as "National Children's Dental Health Month" in Santa Clara County. (Duong)</a></td></tr>
+<tr><td></td><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='7'><a href='FileOpen.aspx?Type=30&ID=221001&MeetingID=17578'>Commendation/Proclamation Printout</a></td></tr>
+
+<tr><td></td><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='7'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265565&MeetingID=17578'>National Children's Dental Health Month Proclamation</a><span class='ItemTag' title='Supplemental Information'><img src='images/Tag.png' alt='' />Supplemental Information</span></td></tr>
+
+<tr><td></td><td></td><td class='Num'>g. </td><td class='Title' colspan='8'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127408&CssClass='>Adopt Proclamation declaring January 2026 as "Human Trafficking Prevention Month" in Santa Clara County, recognizing the County’s ongoing commitment to prevention, survivor support, and community awareness. (Duong/Arenas)</a></td></tr>
+<tr><td></td><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='7'><a href='FileOpen.aspx?Type=30&ID=221023&MeetingID=17578'>Commendation/Proclamation Printout</a></td></tr>
+
+<tr><td></td><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='7'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265530&MeetingID=17578'>Human Trafficking Prevention Month Proclamation</a><span class='ItemTag' title='Supplemental Information'><img src='images/Tag.png' alt='' />Supplemental Information</span></td></tr>
+
+<tr><td></td><td></td><td class='Num'>h. </td><td class='Title' colspan='8'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127409&CssClass='>Adopt Commendation for Social Services Agency Asian Pacific Islander Employee Committee for their leadership and continued work to promote inclusion, cultural awareness, and employee engagement within the County of Santa Clara Social Services Agency, on the occasion of the 2026 Lunar New Year of the Horse. (Duong)</a></td></tr>
+<tr><td></td><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='7'><a href='FileOpen.aspx?Type=30&ID=221025&MeetingID=17578'>Commendation/Proclamation Printout</a></td></tr>
+
+<tr><td></td><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='7'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265551&MeetingID=17578'>Social Services Agency Asian Pacific Islander Employee Committee Commendation</a><span class='ItemTag' title='Supplemental Information'><img src='images/Tag.png' alt='' />Supplemental Information</span></td></tr>
+
+<tr><td></td><td></td><td class='Num'>i. </td><td class='Title' colspan='8'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127410&CssClass='>Adopt Commendation for the Children’s Discovery Museum of San José for their continued work to support children and families through inclusive, educational programming, on the occasion of the 2026 Lunar New Year of the Horse. (Duong)</a></td></tr>
+<tr><td></td><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='7'><a href='FileOpen.aspx?Type=30&ID=221026&MeetingID=17578'>Commendation/Proclamation Printout</a></td></tr>
+
+<tr><td></td><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='7'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265552&MeetingID=17578'>Children's Discovery Museum of San José Commendation</a><span class='ItemTag' title='Supplemental Information'><img src='images/Tag.png' alt='' />Supplemental Information</span></td></tr>
+
+<tr><td></td><td></td><td class='Num'>j. </td><td class='Title' colspan='8'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127407&CssClass='>Adopt Commendation for the Vietnamese American Service Center for their continued work to support and promote the health and welfare of all county residents, on the occasion of the 2026 Lunar New Year of the Horse. (Duong/Lee)</a></td></tr>
+<tr><td></td><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='7'><a href='FileOpen.aspx?Type=30&ID=221022&MeetingID=17578'>Commendation/Proclamation Printout</a></td></tr>
+
+<tr><td></td><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='7'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265612&MeetingID=17578'>Vietnamese American Service Center commendation</a><span class='ItemTag' title='Supplemental Information'><img src='images/Tag.png' alt='' />Supplemental Information</span></td></tr>
+
+<tr><td></td><td></td><td class='Num'>k. </td><td class='Title' colspan='8'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127439&CssClass='>Adopt Commendation for Michelle Pelayo-Osorio for her 13 years of dedicated service to Santa Clara County. (Lee)</a></td></tr>
+<tr><td></td><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='7'><a href='FileOpen.aspx?Type=30&ID=221028&MeetingID=17578'>Commendation/Proclamation Printout</a></td></tr>
+
+<tr><td></td><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='7'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265498&MeetingID=17578'>Michelle Pelayo-Osorio Commendation</a><span class='ItemTag' title='Supplemental Information'><img src='images/Tag.png' alt='' />Supplemental Information</span></td></tr>
+
+<tr><td></td><td></td><td class='Num'>l. </td><td class='Title' colspan='8'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127392&CssClass='>Adopt Commendation for the Boys and Girls Clubs of Silicon Valley for improving the quality of life for young people in Santa Clara County. (Lee/Arenas)</a></td></tr>
+<tr><td></td><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='7'><a href='FileOpen.aspx?Type=30&ID=221027&MeetingID=17578'>Commendation/Proclamation Printout</a></td></tr>
+
+<tr><td></td><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='7'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265553&MeetingID=17578'>Boys and Girls Clubs of Silicon Valley Commendation</a><span class='ItemTag' title='Supplemental Information'><img src='images/Tag.png' alt='' />Supplemental Information</span></td></tr>
+
+<tr><td></td><td></td><td class='Num'>m. </td><td class='Title' colspan='8'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127332&CssClass='>Adopt Commendation for Dr. Fahd Khan for his outstanding contributions as 2025 President of the Santa Clara County Medical Association. (Lee)</a></td></tr>
+<tr><td></td><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='7'><a href='FileOpen.aspx?Type=30&ID=221006&MeetingID=17578'>Commendation/Proclamation Printout</a></td></tr>
+
+<tr><td></td><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='7'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265392&MeetingID=17578'>Dr. Fahd Khan Commendation</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>n. </td><td class='Title' colspan='8'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127397&CssClass='>Adopt Commendation for the Silicon Valley NAACP for its leadership and commitment in inspiring all residents to help build a more inclusive and equitable County, and in recognition and commemoration of Black History Month. (Lee)</a></td></tr>
+<tr><td></td><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='7'><a href='FileOpen.aspx?Type=30&ID=221007&MeetingID=17578'>Commendation/Proclamation Printout</a></td></tr>
+
+<tr><td></td><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='7'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265555&MeetingID=17578'>Silicon Valley NAACP Commendation</a><span class='ItemTag' title='Supplemental Information'><img src='images/Tag.png' alt='' />Supplemental Information</span></td></tr>
+
+<tr><td></td><td></td><td class='Num'>o. </td><td class='Title' colspan='8'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127422&CssClass='>Adopt Commendation for the Silicon Valley Lunar New Year Together and Night Market as they celebrate their fifth Anniversary. (Ellenberg)</a></td></tr>
+<tr><td></td><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='7'><a href='FileOpen.aspx?Type=30&ID=221010&MeetingID=17578'>Commendation/Proclamation Printout</a></td></tr>
+
+<tr><td></td><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='7'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265556&MeetingID=17578'>Silicon Valley Lunar New Year Together Commendation</a><span class='ItemTag' title='Supplemental Information'><img src='images/Tag.png' alt='' />Supplemental Information</span></td></tr>
+
+<tr><td></td><td></td><td class='Num'>p. </td><td class='Title' colspan='8'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127419&CssClass='>Adopt Commendation for Randi Kinman as she completes her term on the Metropolitan Transportation Commission's Policy Advisory Council. (Abe-Koga)</a></td></tr>
+<tr><td></td><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='7'><a href='FileOpen.aspx?Type=30&ID=221029&MeetingID=17578'>Commendation/Proclamation Printout</a></td></tr>
+
+<tr><td></td><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='7'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265609&MeetingID=17578'>Randi Kinman Commendation</a><span class='ItemTag' title='Supplemental Information'><img src='images/Tag.png' alt='' />Supplemental Information</span></td></tr>
+
+<tr><td></td><td></td><td class='Num'>q. </td><td class='Title' colspan='8'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127218&CssClass='>Adopt Commendation for Clarissa Hamilton as she retires after 25 years of service to the County of Santa Clara. (Office of the District Attorney)</a></td></tr>
+<tr><td></td><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='7'><a href='FileOpen.aspx?Type=30&ID=220986&MeetingID=17578'>Commendation/Proclamation Printout</a></td></tr>
+
+<tr><td></td><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='7'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=264921&MeetingID=17578'>Clarissa Hamilton</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>r. </td><td class='Title' colspan='8'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127181&CssClass='>Adopt Commendation for Marsha Maruyama as she retires after 46 years of service to the County of Santa Clara. (Public Health Department)</a></td></tr>
+<tr><td></td><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='7'><a href='FileOpen.aspx?Type=30&ID=220998&MeetingID=17578'>Commendation/Proclamation Printout</a></td></tr>
+
+<tr><td></td><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='7'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=264760&MeetingID=17578'>Retirement Commendation for Marsha Maruyama</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>s. </td><td class='Title' colspan='8'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127273&CssClass='>Adopt Commendation for Priscilla Mark as she retires after 24 years of service to the County of Santa Clara. (Public Health Department)</a></td></tr>
+<tr><td></td><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='7'><a href='FileOpen.aspx?Type=30&ID=220993&MeetingID=17578'>Commendation/Proclamation Printout</a></td></tr>
+
+<tr><td></td><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='7'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265020&MeetingID=17578'>Retirement Commendation for Priscilla Mark</a></td></tr>
+
+<tr><td class='Num'><strong></strong></td><td class='Title' colspan='10'><a target='_top' class='Link'  href='Detail_Motion.aspx?Frame=&MeetingID=17578&MinutesID=11006&MediaPosition=&ID=437300&Type=70&CssClass= style='cursor: hand'><strong>Parks and Recreation Department</strong></a></td></tr>
+
+<tr><td></td><td class='Num'>60. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127174&CssClass='>Consider recommendations relating to grant application to the California Volunteers Youth Service Corps Grant Program.</a></td></tr>
+<tr><td></td><td></td><td class='Comments' colspan='9'>Possible action:<br>	a.	Ratify Grant Application submitted by the Parks and Recreation Department to the California Volunteers Youth Services Corps Grant Program relating to grant funding to implement a workforce development initiative in the amount of $1,500,000 for State Fiscal Year 2025-2026. <br>	b.	Approve delegation of authority to the County Executive, or designee, to negotiate, execute, amend, or terminate grant agreements and associated documents relating to the California Volunteers Youth Services Corps Grant Program in an amount not to exceed $1,500,000, and contract terms that start no earlier than January 27, 2026 and end no later than December 31, 2027, following approval by County Counsel as to form and legality, and approval by the Office of the County Executive. Delegation of authority shall expire on December 31, 2027.</td></tr>
+<tr><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='8'><a href='FileOpen.aspx?Type=30&ID=220994&MeetingID=17578'>Report Printout</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=264924&MeetingID=17578'>Santa Clara County Parks Application - 2025-2026 Youth Service Corps - RFA # CV25-YSC04</a></td></tr>
+
+<tr><td class='Num'><strong></strong></td><td class='Title' colspan='10'><a target='_top' class='Link'  href='Detail_Motion.aspx?Frame=&MeetingID=17578&MinutesID=11006&MediaPosition=&ID=437303&Type=70&CssClass= style='cursor: hand'><strong>Consumer and Environmental Protection Agency</strong></a></td></tr>
+
+<tr><td></td><td class='Num'>61. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=83219.000&ID=127309&CssClass='>Approve Request for Appropriation Modification No. 101 - $1,000,000 increasing estimated revenue and expenditure appropriations in the Consumer and Environmental Protection Agency budget, relating to eradication of Glassy-winged Sharpshooter and Pierce's Disease control. (4/5 Vote)</a></td></tr>
+<tr><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='8'><a href='FileOpen.aspx?Type=30&ID=220987&MeetingID=17578'>Fiscal/Budget Item Printout</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265215&MeetingID=17578'>20251106_PEP_morgan-hill_PDCP</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>b. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265277&MeetingID=17578'>F-85 # 101 Glassy Winged Sharpshooter Response</a></td></tr>
+
+<tr><td class='Num'><strong></strong></td><td class='Title' colspan='10'><a target='_top' class='Link'  href='Detail_Motion.aspx?Frame=&MeetingID=17578&MinutesID=11006&MediaPosition=&ID=437307&Type=70&CssClass= style='cursor: hand'><strong>Facilities and Fleet Department</strong></a></td></tr>
+
+<tr><td></td><td class='Num'>62. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=126652&CssClass='>Accept Project as complete and authorize the Clerk of the Board to execute Notice of Completion of Contract and Acceptance of Work on Contract No. 23-14, VMC-O’Connor Hospital Infusion Center Remodel (Project No. 263-CP23021). Contractor - EVRA Construction, Inc.</a></td></tr>
+<tr><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='8'><a href='FileOpen.aspx?Type=30&ID=220988&MeetingID=17578'>Construction Document Printout</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=264970&MeetingID=17578'>Notice of Completion Infusion Center</a></td></tr>
+
+<tr><td></td><td class='Num'>63. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127010&CssClass='>Approve Second Amendment to Professional Services Agreement (PSA) with Kilowatt Engineering, Inc., dba KW Engineering, Inc., relating to providing consulting services for facility and energy planning and related services, with no change to the maximum contract amount, and extending the PSA for a 12-month period through March 8, 2027, that has been reviewed and approved by County Counsel as to form and legality. An exception to Board of Supervisors Policy 5.4.5.4, Length of Term of Contracts has been approved by the Office of Countywide Contracting Management. (LA)</a></td></tr>
+<tr><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='8'><a href='FileOpen.aspx?Type=30&ID=221024&MeetingID=17578'>Agreement/Amendment Printout</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=264758&MeetingID=17578'>Beyond Five Years Kilowatt Engineering, Inc.</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>b. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=264822&MeetingID=17578'>Second Amendment Killowatt Engineering, Inc.</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>c. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=264843&MeetingID=17578'>First Amendment Killowatt Engineering, Inc.</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>d. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=264844&MeetingID=17578'>Kilowatt Engineering Levine Form Contractor</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>e. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=264845&MeetingID=17578'>NV5 Consultants Levine Form Subcontractor</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>f. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=264846&MeetingID=17578'>Engineering 350 Levine Form Subcontractor</a></td></tr>
+
+<tr><td></td><td class='Num'>64. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=126308&CssClass='>Authorize the Clerk of the Board to execute Notice of Completion of Contract and Acceptance of Work on Contract No. 18-27, Santa Clara Valley Medical Center Emergency Department Expansion (Project No. 263-CP17006). Contractor - Layton Construction Company.</a></td></tr>
+<tr><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='8'><a href='FileOpen.aspx?Type=30&ID=221037&MeetingID=17578'>Construction Document Printout</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265394&MeetingID=17578'>Contract No. 18-27 Emergency Department Expansion NOC</a></td></tr>
+
+<tr><td></td><td class='Num'>65. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127045&CssClass='>Consider recommendations relating to Bids for construction of Santa Clara Valley Medical Center (SCVMC) Building M MRI 2 Upgrade (Project 263-CP23009).</a></td></tr>
+<tr><td></td><td></td><td class='Comments' colspan='9'>Possible action:<br>	a.	Approve Request for Appropriation Modification No. 103 - $1,889,520 transferring funds from Capital Project No. 263-CP17011 Vietnamese-American Service Center to Capital Project 263-23009 SCVMC Building, M MRI 2 Upgrade.<br>	b.	Award contract to SBAY Construction, Inc., in the amount of $3,119,000 with a construction time of 240 calendar days.<br>	c.	Authorize the County Executive, or designee, to be the Owner's Authorized Representative, to negotiate, execute, amend, terminate, and take all necessary and advisable actions relating to the Contract, including authority to issue Change Orders, as necessary, consistent with Public Contract Code section 20142.<br>	d.	Ratify Addendum to Bid Documents Nos. 1-5 which modified or clarified the Bid Documents in response to contractor questions.</td></tr>
+<tr><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='8'><a href='FileOpen.aspx?Type=30&ID=221048&MeetingID=17578'>Construction Document Printout</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=264397&MeetingID=17578'>00 50 50 - Notice of Intent to Award_Signed</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>b. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=264399&MeetingID=17578'>Addendum 1 - ITB-FAF-FY25_263-CP2009  - Site Visit (2)</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>c. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=264400&MeetingID=17578'>Addendum 2 - ITB-FAF-FY25_263-CP2009</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>d. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=264401&MeetingID=17578'>Addendum 3 - ITB-FAF-FY25_263-CP23009 - Bid Due Date</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>e. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=264402&MeetingID=17578'>Addendum 4 - ITB-FAF-FY25_263-CP23009.</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>f. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=264403&MeetingID=17578'>Addendum 5 - ITB-FAF-FY25_263-CP2009</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>g. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265428&MeetingID=17578'>#103 - Transfer funds ($1.9M) from CP17011 (VASC) to CP23009 (VMC-Bascom MRI Replacement)</a></td></tr>
+
+<tr><td></td><td class='Num'>66. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127264&CssClass='>Consider recommendations relating to the Santa Clara Valley Medical Center (SCVMC) Burn Unit Upgrade Project (Project No. 263-CP18009). (LA)</a></td></tr>
+<tr><td></td><td></td><td class='Comments' colspan='9'>Possible action: <br>	a.	Approve Contract Change Order No. 87 - Interim - SCVMC Burn Unit Upgrade Project (Project No. 263-CP18009). Contractor - SBAY Construction, Inc. Net increase of $969,458 and no change in contract time. <br>	b.	Approve an increase in the Supplemental Work Allowance for the SCVMC Burn Unit Upgrade Project Contract No. 21-13, awarded to SBAY Construction, Inc., increasing the Supplemental Work Allowance by $1,200,000 from $32,817,520, for a new total contract incumbrance of $34,017,520. <br>	c.	Authorize the County Executive, or designee, to be the Owner's Authorized Representative, to negotiate, execute, amend, terminate, and take all necessary and advisable actions relating to the Contract, including authority to issue Change Orders, as necessary, consistent with Public Contract Code section 20142. </td></tr>
+<tr><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='8'><a href='FileOpen.aspx?Type=30&ID=221049&MeetingID=17578'>Construction Document Printout</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265002&MeetingID=17578'>BUP - CO#87_part signed</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>b. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265033&MeetingID=17578'>BCM Levine Form</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>c. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265034&MeetingID=17578'>7M Levine Form</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>d. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265035&MeetingID=17578'>MGR Levine Form</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>e. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265036&MeetingID=17578'>MGM Levine Form</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>f. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265037&MeetingID=17578'>OCM Levine Form</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>g. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265038&MeetingID=17578'>Gino Levine Form</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>h. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265039&MeetingID=17578'>SBAY Levine Form</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>i. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265040&MeetingID=17578'>Yotta Levine Form</a></td></tr>
+
+<tr><td class='Num'><strong></strong></td><td class='Title' colspan='10'><a target='_top' class='Link'  href='Detail_Motion.aspx?Frame=&MeetingID=17578&MinutesID=11006&MediaPosition=&ID=437337&Type=70&CssClass= style='cursor: hand'><strong>Central Fire Protection District</strong></a></td></tr>
+
+<tr><td></td><td class='Num'>67. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=84110.000&ID=127286&CssClass='>Consider recommendations relating to the Santa Clara County Central Fire Protection District Fiscal Year 2024-2025 audit.</a></td></tr>
+<tr><td></td><td></td><td class='Comments' colspan='9'>Possible action:   <br>	a.	Receive 2025 Annual Comprehensive Financial Report.  <br>	b.	Receive 2025 Memorandum on Internal Control and Required Communications.</td></tr>
+<tr><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='8'><a href='FileOpen.aspx?Type=30&ID=220989&MeetingID=17578'>Report Printout</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265073&MeetingID=17578'>SCCFD Annual Comprehensive Financial Report FY25</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>b. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265074&MeetingID=17578'>SCCFD Memorandum of Internal Control FY25</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>c. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265075&MeetingID=17578'>SCCFD Required Communications FY25</a></td></tr>
+
+<tr><td></td><td class='Num'>68. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=84113.000&ID=127342&CssClass='>Approve delegation of authority to the Fire Chief, or designee, to negotiate, execute, amend, or terminate lease agreement with CDF Parkway, LLC, for a temporary fire station at 10031 Pacheco Pass Highway, Hollister, California, in an amount not to exceed $150,000 per year, with a lease term up to five years, including any options to extend, and to take any and all necessary or advisable actions relating to the lease agreement, following approval by County Counsel as to form and legality, and approval by the Office of the County Executive. Delegation of authority shall expire on January 31, 2031. (LA)</a></td></tr>
+<tr><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='8'><a href='FileOpen.aspx?Type=30&ID=220995&MeetingID=17578'>Agreement/Amendment Printout</a></td></tr>
+
+<tr><td class='Num'><strong></strong></td><td class='Title' colspan='10'><a target='_top' class='Link'  href='Detail_Motion.aspx?Frame=&MeetingID=17578&MinutesID=11006&MediaPosition=&ID=437343&Type=70&CssClass= style='cursor: hand'><strong>Mosquito and Vector Control District</strong></a></td></tr>
+
+<tr><td></td><td class='Num'>69. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=84127.000&ID=127303&CssClass='>Consider recommendations relating to Amendment to Agreement for Proposition 218 ballot proceeding and levy administration services. (LA)</a></td></tr>
+<tr><td></td><td></td><td class='Comments' colspan='9'>Possible action: <br>	a.	Approve First Amendment to Agreement with SCI Consulting Group relating to providing Proposition 218 ballot proceeding and levy administration services, increasing the maximum contract amount by $713,000 from $111,900 to $824,900, and extending the agreement for a 25-month period through June 30, 2028, that has been reviewed and approved by County Counsel as to form and legality.<br>	b.	Approve Request for Appropriation Modification No. 102 - $713,000 increasing estimated expenditure appropriations in the Mosquito and Vector Control District budget. (4/5 Vote)</td></tr>
+<tr><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='8'><a href='FileOpen.aspx?Type=30&ID=220999&MeetingID=17578'>Agreement/Amendment Printout</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265279&MeetingID=17578'>F-85 #102 BU 411 MVCD Assessment Services</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>b. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265375&MeetingID=17578'>SCI Consulting Group_Levine Act Form_1 14 2026</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>c. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265442&MeetingID=17578'>4400009012_SCI_Consulting_Grp_SA final</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>d. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=265373&MeetingID=17578'>SCI Consulting Group_Assessment Ballot Proceeding Services_Amendment 1_Final</a></td></tr>
+
+<tr><td class='Num'><strong></strong></td><td class='Title' colspan='10'><a target='_top' class='Link'  href='Detail_Motion.aspx?Frame=&MeetingID=17578&MinutesID=11006&MediaPosition=&ID=437349&Type=70&CssClass= style='cursor: hand'><strong>Final Adoption of Ordinances</strong></a></td></tr>
+
+<tr><td></td><td class='Num'>70. </td><td class='Title' colspan='9'><a target='_top' class='Link'  href='Detail_LegiFile.aspx?Frame=&MeetingID=17578&MediaPosition=26835.776&ID=127215&CssClass='>Adoption of Salary Ordinance No. NS-5.26.35, an Ordinance amending Santa Clara County Salary Ordinance No. NS-5.26 relating to compensation of employees deleting various Eligibility Worker and Eligibility Work Supervisor positions and adding various Social Services Benefits Specialist and Social Services Benefits Specialist Supervisor positions in the Social Services Agency, and amending the Salary Schedule to add the classifications of Social Services Benefits Specialist, unclassified Social Services Benefits Specialist, Social Services Benefits Specialist Supervisor, Social Services Benefits Specialist Trainee, and unclassified Social Services Benefits Specialist Trainee, and amending the Salary Schedule to delete the classifications of Eligibility Work Supervisor, Eligibility Worker I, unclassified Eligibility Worker I, Eligibility Worker II, unclassified Eligibility Worker II, Eligibility Worker III, and unclassified Eligibility Worker III, amending the language in Footnote Nos. 126 and 273 to replace the reference to Eligibility Worker II and I with the new classification titles of Social Services Benefits Specialist and Social Services Benefits Specialist Trainee, and deleting Footnote Nos. 11, 62, and 74.</a></td></tr>
+<tr><td></td><td></td><td class='Comments' colspan='9'><div><p style="margin:0pt; orphans:0; widows:0"><span style="font-family:'Times New Roman'; font-size:12pt">              </span><span style="font-family:'Times New Roman'; font-size:12pt">•</span><span style="font-family:'Times New Roman'; font-size:12pt">              </span><span style="font-family:'Times New Roman'; font-size:12pt">Introduce and preliminarily adopt on January 13, 2026.</span></p><p style="margin:0pt"><span style="font-family:'Times New Roman'; font-size:12pt">              </span><span style="font-family:'Times New Roman'; font-size:12pt">•</span><span style="font-family:'Times New Roman'; font-size:12pt">              </span><span style="font-family:'Times New Roman'; font-size:12pt">Adopt (Final) on January 27, 2026.</span></p></div></td></tr>
+<tr><td></td><td></td><td class='Num'><img src='/Citizens/images/DocumentIcon.gif' alt='document'></td><td class='Title' colspan='8'><a href='FileOpen.aspx?Type=30&ID=220996&MeetingID=17578'>Ordinance Printout</a></td></tr>
+
+<tr><td></td><td></td><td class='Num'>a. </td><td class='Title' colspan='8'><a target='_blank' class='Link'  href='FileOpen.aspx?Type=4&ID=264943&MeetingID=17578'>NS-5.26.35 - ESA - Eligibility Worker classification study</a></td></tr>
+
+</table>
+</span>
+                    </td>
+	</tr>
+	
+            </table>
+        
+</div>
+        
+        
+        <br />
+        <hr class="Dotted" />
+        <br />
+    </div>
+    
+    <!-- Dialog Definition (Do Not Display in Page) -->
+    <div style="display: none;">
+    
+        <div id="UserComment" class="UserComment">
+            <input type="hidden" id="ItemID" />
+            <input type="hidden" id="ItemType" />
+            <table><tr><td colspan="2" style="text-align: center;"><textarea rows="10" cols="10"></textarea></td></tr>
+            <tr>
+                <td class="Status"><img src='/Lib/Images/ui-anim_basic_16x16.gif' alt='Loading' />&nbsp;&nbsp;Loading - Please Wait...</td>
+                <td class="Help"><a href="#" onclick="javascript: ShowHelp(); return false;"><img src="images/Help.png" alt="Help" /></a></td>
+            </tr></table>            
+        </div>
+        
+        <div id="frmHelp">
+            <p><strong>Shortcut Keys:</strong></p>
+            <p><strong>Alt + S</strong> - Save</p>
+            <p><strong>Ctrl + S</strong> - Save (may not be compatible in all browsers)</p>
+            <p><strong>Alt + C</strong> - Save and Close</p>
+            <p><strong>Ctrl + Enter</strong> - Save and Close</p>
+            <p><strong>Escape</strong> - Closes the form (same as Cancel)</p>
+            <p><strong>Alt + Up Arrow</strong> - Previous Item (Saves if changed)</p>
+            <p><strong>Alt + Down Arrow</strong> - Next Item (Saves if changed)</p>
+        </div>
+    
+    </div>
+
+   
+    
+                            </div>
+                        </div>                                                           
+                    </td>
+                </tr>               
+            </table>                                
+        </div>
+        
+    <div id="Footer" role="contentinfo">
+        <br />
+        <span id="lblPoweredBy"><p>Some search results or links might direct users to external or archival web content.</p></span>
+    </div>
+
+    <!-- Analytics Stuff (Start) *********************************** -->
+<script async src='https://www.googletagmanager.com/gtag/js?id=UA-34017181-1'></script>
+  <script>
+   window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+  gtag('config', 'UA-34017181-1');</script>
+<!-- Analytics Stuff (End)   *********************************** -->
+    <!-- Analytics Stuff (Start) *********************************** -->
+<script async src='https://www.googletagmanager.com/gtag/js?id=UA-70364301-2'></script>
+  <script>
+   window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+  gtag('config', 'UA-70364301-2');</script>
+<!-- Analytics Stuff (End)   *********************************** -->
+    
+        <!-- Popup Menus -->
+        <div id="mnuBrowse" class="PopupMenu" dropdown="Browse">
+            <ul>
+                <li><a href="#">Legislative Files</a></li>
+                <li><a href="#">Legal Notices</a></li>
+                <li><a href="#">Some other Sort of Thing</a></li>
+            </ul>
+        </div>
+
+    
+
+<script type="text/javascript">
+//<![CDATA[
+$(document).ready(function(){woopra.identify({ email:"", name:"Anonymous User", agency:"SCCGov", userlogin:"Anonymous"}).push(); })//]]>
+</script>
+</form>
+</body>
+</html>
+
+
