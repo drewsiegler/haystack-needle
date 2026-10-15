@@ -55,7 +55,10 @@ class _Handler(socketserver.StreamRequestHandler):
                     self.reply(("250 " if i == len(lines) - 1 else "250-") + ext)
             elif verb == "STARTTLS" and fake.tls_context and not tls:
                 self.reply("220 go ahead")
-                self.request = fake.tls_context.wrap_socket(self.request, server_side=True)
+                try:
+                    self.request = fake.tls_context.wrap_socket(self.request, server_side=True)
+                except ssl.SSLError:
+                    return  # the client didn't trust the certificate and hung up, as it should
                 self.rfile = self.request.makefile("rb")
                 self.wfile = self.request.makefile("wb")
                 tls = True
