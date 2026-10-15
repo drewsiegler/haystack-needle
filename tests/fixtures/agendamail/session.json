@@ -1,0 +1,6 @@
+{
+  "apiUrl": "https://api.fastmail.com/jmap/api/",
+  "downloadUrl": "https://www.fastmailusercontent.com/jmap/download/{accountId}/{blobId}/{name}?type={type}",
+  "primaryAccounts": {"urn:ietf:params:jmap:core": "u1a2b3c4d", "urn:ietf:params:jmap:mail": "u1a2b3c4d"},
+  "username": "agendas@example.invalid"
+}

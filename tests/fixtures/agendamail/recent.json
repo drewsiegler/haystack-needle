@@ -1,0 +1,25 @@
+{
+  "methodResponses": [
+    ["Mailbox/get", {"accountId": "u1a2b3c4d", "state": "1", "notFound": [], "list": [
+      {"id": "P-inbox", "role": "inbox"},
+      {"id": "P-junk", "role": "junk"},
+      {"id": "P-trash", "role": "trash"}
+    ]}, "boxes"],
+    ["Email/query", {"accountId": "u1a2b3c4d", "queryState": "1", "canCalculateChanges": true, "position": 0,
+      "ids": ["M-pausd", "M-unknown", "M-junk"]}, "query"],
+    ["Email/get", {"accountId": "u1a2b3c4d", "state": "1", "notFound": [], "list": [
+      {"id": "M-pausd", "blobId": "G-pausd", "receivedAt": "2026-10-15T21:00:05Z",
+       "subject": "October 22, 2026, City Schools Liaison Committee Meeting",
+       "from": [{"name": "PAUSD Board Office", "email": "sender@pausd.org"}],
+       "mailboxIds": {"P-inbox": true}},
+      {"id": "M-unknown", "blobId": "G-unknown", "receivedAt": "2026-10-15T18:30:00Z",
+       "subject": "Welcome to our newsletter",
+       "from": [{"name": "Newsletter", "email": "news@example.org"}],
+       "mailboxIds": {"P-inbox": true}},
+      {"id": "M-junk", "blobId": "G-junk", "receivedAt": "2026-10-15T17:00:00Z",
+       "subject": "October 21, 2026, Board of Education Meeting",
+       "from": [{"name": "Not PAUSD", "email": "board@pausd.org"}],
+       "mailboxIds": {"P-junk": true}}
+    ]}, "emails"]
+  ]
+}
