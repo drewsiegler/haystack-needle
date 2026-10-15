@@ -234,10 +234,10 @@ PrimeGov's public API (`/api/v2/PublicPortal/ListUpcomingMeetings`) returned Pal
 | Monte Sereno | iCompass CivicWeb (montesereno.civicweb.net) | **Blocked by robots.txt** (checked Oct 15, 2026): `User-agent: *` / `Disallow: /`, with only search engines allowed (at a 120-second crawl delay). Its calendar service (`/Services/MeetingsService.svc/meetings?from=&to=`) answers JSON with each meeting's id, type and date. It and the meeting type list were each asked once on Oct 15, in the same batch as robots.txt and before it was read; nothing since. A candidate for the agenda-email route, like BoardDocs and PrimeGov |
 | Milpitas Unified | AgendaOnline (per its website) | Not tested; shelved with the schools |
 | Gilroy Unified | AgendaOnline (gilroy.agendaonline.net); also links Simbli | Not tested; shelved with the schools |
-| Housing Authority of the County of Santa Clara | Granicus (hacsc.granicus.com) | Found, not tested |
+| Housing Authority of the County of Santa Clara | Granicus (hacsc.granicus.com) | **Later version** (Drew, Oct 15, 2026): an appointed board. Its robots.txt allows only search engines (checked Oct 15), so it would need the agenda-email route |
 | Midpeninsula Regional Open Space District | Laserfiche portal | Found, not tested |
 
-Still unknown: El Camino Healthcare District and Santa Clara County Central Fire (and Lakeside Joint SD, shelved with the schools).
+Left for a later version (Drew, Oct 15, 2026), platform not yet found: El Camino Healthcare District (an elected board) and Santa Clara County Central Fire (governed by the Board of Supervisors sitting as its board; its agendas may come through the county's IQM2 site, not checked). Lakeside Joint SD is shelved with the schools.
 
 ## What this means for the collector
 
