@@ -1,3 +1,5 @@
+import json
+
 import httpx
 
 import pytest
@@ -81,3 +83,22 @@ def test_cache_answers_without_the_network(tmp_path):
     assert fetcher.get("https://a.example/f", {"q": 1}) == b"pdf"
     assert fetcher.get("https://a.example/f", {"q": 1}) == b"pdf"
     assert len(calls) == 1
+
+
+def test_post_json_sends_the_body_with_the_same_user_agent_rate_and_retries(tmp_path):
+    seen = []
+    answers = iter([httpx.Response(503), httpx.Response(200, json={"d": [1]}),
+                    httpx.Response(200, json={"d": [2]})])
+
+    def handler(request):
+        seen.append((request.method, request.headers["User-Agent"], json.loads(request.content)))
+        return next(answers)
+
+    fetcher, slept = make(handler, cache_dir=tmp_path)
+    url = "https://pub-campbell.escribemeetings.com/MeetingsCalendarView.aspx/GetCalendarMeetings"
+    assert fetcher.post_json(url, {"calendarStartDate": "2026-10-12"}) == {"d": [1]}
+    assert fetcher.post_json(url, {"calendarStartDate": "2026-10-12"}) == {"d": [1]}  # cached
+    assert fetcher.post_json(url, {"calendarStartDate": "2026-11-01"}) == {"d": [2]}  # another body isn't
+    assert seen == [("POST", USER_AGENT, {"calendarStartDate": "2026-10-12"})] * 2 + [
+        ("POST", USER_AGENT, {"calendarStartDate": "2026-11-01"})]
+    assert slept == [5, 1.0]  # the retry's back-off, then a second between requests to the host

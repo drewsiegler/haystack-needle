@@ -69,9 +69,18 @@ class Fetcher:
     def get(self, url: str, params: dict | None = None) -> bytes:
         # httpx.URL(url, params=None) would drop a query already in the URL.
         full = str(httpx.URL(url).copy_merge_params(params) if params else httpx.URL(url))
+        return self._fetch(full)
+
+    def post_json(self, url: str, body: dict):
+        """POST a JSON body and parse the JSON answer, for a platform whose read-only
+        calls are POSTs (eScribe's meeting calendar). Same user agent, rate and retries."""
+        return json.loads(self._fetch(url, body))
+
+    def _fetch(self, full: str, body: dict | None = None) -> bytes:
         cached = None
         if self.cache_dir is not None:
-            cached = self.cache_dir / hashlib.sha256(full.encode()).hexdigest()[:40]
+            cache_key = full if body is None else f"POST {full} {json.dumps(body, sort_keys=True)}"
+            cached = self.cache_dir / hashlib.sha256(cache_key.encode()).hexdigest()[:40]
             if cached.exists():
                 return cached.read_bytes()
         host = urlsplit(full).hostname or ""
@@ -79,7 +88,7 @@ class Fetcher:
             self._wait_turn(host)
             self.requests += 1
             try:
-                response = self.client.get(full)
+                response = self.client.get(full) if body is None else self.client.post(full, json=body)
             except httpx.TransportError:
                 if attempt == RETRIES:
                     raise
