@@ -107,8 +107,12 @@
   watchlist: surveillance
   source: {adapter: civicclerk, tenant: losaltoshillsca}
   phase: 4
-  first_appearance: 2026-01-15  # earliest found; "Ongoing Business" implies an earlier one
+  first_appearance: 2025-09-18
   stages:
+    - date: 2025-09-18
+      body: City Council
+      item: "External Access and Data Security Concerns re: Flock ALPR Data (Vice Mayor Bhateja)"
+      civicclerk_agenda_id: 4848
     - date: 2026-01-15
       body: City Council
       item: "Discussion and Possible Direction on Terminating Agreement with FLOCK Safety for the Town's Automatic License Plate Reader System"
@@ -116,8 +120,10 @@
   title_match: "yes"  # "Flock"
   confirmed: true
   notes: >
-    Listed under Ongoing Business, so it likely appeared on a late-2025 agenda first.
-    Search the CivicClerk API for earlier council or Technology Committee items.
+    The Jan 15 item was listed under Ongoing Business, and a 240-day sweep of every
+    body's agendas (titles and agenda notes) found its first appearance: item 11.A on
+    the Sept 18, 2025 regular council agenda (CivicClerk item 2025-606). Nothing else
+    matched between then and Jan 15.
 
 - id: mountain-view-flock-termination-2026
   summary: Mountain View cancels its Flock contract after outside agencies searched its data

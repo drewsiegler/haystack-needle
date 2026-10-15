@@ -55,7 +55,7 @@ All 8 are caught at their first appearance from the title, with the item text an
 
 ## CivicClerk replay, Oct 14, 2026
 
-The Los Altos Hills Flock case (`--case los-altos-hills-flock-2026`, found by agenda ID 4957 and the start of the item's title) is caught at its first appearance, Jan 15, 2026, City Council, item 6.A: by title ("Flock", "Flock Safety", "automatic license plate", "license plate reader") and in the attachments (the Flock staff report p. 1, a supplement p. 8 and the renewal agreement p. 24). The 60-day sweep read 43 meetings and found no earlier match; 51 network requests.
+The Los Altos Hills Flock case (`--case los-altos-hills-flock-2026`, found by agenda ID and the start of the item's title) is caught at both stages. Stage 2, Jan 15, 2026, City Council, item 6.A: by title ("Flock", "Flock Safety", "automatic license plate", "license plate reader") and in the attachments (the Flock staff report p. 1, a supplement p. 8 and the renewal agreement p. 24). A 60-day sweep before Jan 15 read 43 meetings and found nothing; a 240-day sweep (175 meetings, titles and agenda notes, 138 requests) found the real first appearance, now stage 1: Sept 18, 2025, City Council, item 11.A, "External Access and Data Security Concerns re: Flock ALPR Data (Vice Mayor Bhateja)", caught by title ("Flock", "ALPR") and its one attachment. With that stage added, the case's first appearance is Sept 18, 2025 and the 60-day sweep before it (45 meetings) finds nothing earlier.
 
 What else it turned up:
 
@@ -71,6 +71,6 @@ What else it turned up:
 
 - `sheriff` catches Saratoga at every stage but will also fire on most Board of Supervisors agendas. One fix is to limit that term to city bodies, which needs per-term body limits the watchlist format doesn't have yet. Decide after phase 3 shows how noisy it is.
 - Check whether the county's ALPR policy for contract cities was on a 2025 agenda (the IQM2 calendar read starts in Jan 2026).
-- Los Altos Hills Flock: a sweep of the 240 days before Jan 15 (175 meetings, titles and agenda notes) found an earlier item: Sept 18, 2025, City Council, "External Access and Data Security Concerns re: Flock ALPR Data (Vice Mayor Bhateja)" (item 2025-606). The case's `first_appearance` could move to that date. Nothing else matched in between.
+- Los Altos Hills Flock: first appearance found and added (Sept 18, 2025, item 11.A); Jan 15 was a later stage. Nothing earlier in the 60 days before it.
 - Confirm Saratoga's Oct 7, 2026 vote in the minutes.
 - Add a case for a vague title where only the attachment names Flock, if one turns up.
