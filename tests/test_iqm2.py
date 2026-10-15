@@ -68,6 +68,11 @@ def test_a_meeting_with_no_time_still_has_its_date():
     assert (row["date"], row["time"]) == (date(2026, 10, 13), "")
 
 
+def test_an_empty_calendar_is_not_an_error():
+    # VTA often has no meetings in the 3 days a near-meeting run looks at.
+    assert iqm2.parse_calendar(fixture("santaclaravta_calendar_2026-12-26_2026-12-27.html")) == []
+
+
 def test_the_portals_error_page_is_an_error_not_an_empty_calendar():
     with pytest.raises(iqm2.PortalError):
         iqm2.parse_calendar(iqm2._decode(fixture("sccgov_error_page.html").encode()))

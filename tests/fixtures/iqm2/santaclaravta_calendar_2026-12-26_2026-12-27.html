@@ -1,0 +1,710 @@
+
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"  xml:lang="en" lang="en">
+<head id="HeadMain"><title>
+	Meeting Calendar - Santa Clara Valley Transportation Authority
+</title><meta http-equiv="X-UA-Compatible" content="IE=9" />
+
+    <!-- this fixes a minor rendering issue with tables on the ipad -->
+    <meta content="width=device-width, initial-scale=1.0;" name="viewport" />
+
+    <!-- Agency specific meta tags -->
+    <meta name='google-site-verification' content='v8iNp5ToI5384_S9_Exw0F10KJ__b35Fs7jqvTvb0TY' />
+<meta name='msvalidate.01' content='8C654B10898A718CB62BCB19E52589CD' />
+
+
+    <!-- open search discovery -->
+    <link rel="search" type="application/opensearchdescription+xml" href="/Services/GetFederatedSearch.aspx" title="IQM2 search" />
+
+    <!-- Icon -->
+    <link href="/favicon.ico?v=2018" rel="icon" />
+
+    <!-- CSS Links -->
+    <link type="text/css" href="/App_Themes/Main.css?v=86" rel="Stylesheet" /><link type="text/css" href="/lib/jquery-ui.css" rel="stylesheet" />
+ 
+  <script>
+      !function () { var a, b, c, d = window, e = document, f = arguments, g = "script", h = ["config", "track", "trackForm", "trackClick", "identify", "visit", "push", "call"], i = function () { var a, b = this, c = function (a) { b[a] = function () { return b._e.push([a].concat(Array.prototype.slice.call(arguments, 0))), b } }; for (b._e = [], a = 0; a < h.length; a++) c(h[a]) }; for (d.__woo = d.__woo || {}, a = 0; a < f.length; a++) d.__woo[f[a]] = d[f[a]] = d[f[a]] || new i; b = e.createElement(g), b.async = 1, b.src = "//static.woopra.com/js/w.js", c = e.getElementsByTagName(g)[0], c.parentNode.insertBefore(b, c) }("woopra");
+
+      woopra.config({
+          domain: "iqm2.com",
+          cookie_name:"accelaTracker"
+      });
+      woopra.track("mp_pv", {
+          domain: window.location.hostname,
+          title: document.title,
+          url: window.location.href,
+          uri: window.location.pathname,
+          hash: window.location.hash,
+          error: null
+      });
+  </script>
+    <!-- IQM2 Scripts -->
+    <script type="text/javascript" src="/lib/jquery.js"></script>
+    <script type="text/javascript" language="javascript" src="/App_Themes/Global.js?v=8_10_48"></script>
+    <script type="text/javascript" src="/lib/MinuteTraq.PopupWindow.js"></script>
+    <script type="text/javascript" src="/lib/jquery-ui.js"></script>
+    <link href="https://unpkg.com/video.js@7.21.1/dist/video-js.css" rel="stylesheet" /><link href="/Scripts/videojs-live-dvr/videojs-dvrseekbar.css" rel="stylesheet" />
+    <script src="https://unpkg.com/video.js@7.21.1/dist/video.js"></script>
+    <script src='https://unpkg.com/videojs-flash@2.1.0/dist/videojs-flash.min.js'></script>
+    <script src="https://unpkg.com/videojs-contrib-hls/dist/videojs-contrib-hls.js"></script>
+    <script src="/Scripts/videojs-live-dvr/videojs-dvrseekbar.min.js"></script>
+    <script type='text/javascript' src='/Scripts/player.js'></script>
+    <script type="text/javascript" src="/Scripts/js.cookie-2.0.3.min.js"></script>
+    <!-- RSS Feeds (Site) -->
+    
+
+    <!-- Generated CSS Link -->
+    
+  
+    <!-- External CSS / Script Links -->
+    <link type='text/css' href='/Lib/GetCustomCSS.ashx?timestamp=639221368160000000' rel='Stylesheet' /><link type='text/css' href='/Citizens/GetImage.aspx?ID=1003' rel='Stylesheet' /><script type='text/javascript' src='/Citizens/GetImage.aspx?ID=1004'></script>
+    
+   
+    <!--[if IE 7]>
+	   <style type="text/css">
+        .Section H2 { display:inline;}
+        .RowTop div { display:inline;}
+   </style>
+	
+	<![endif]-->
+    
+    <script type="text/javascript" src="/Lib/MinuteTraq.Search.js?v=8_10_66"></script>
+    
+    <script type="text/javascript">
+        
+        // configure tracker
+        
+        $(function () {
+            
+            
+            FixFooterPosition();
+            $(window).on('resize', FixFooterPosition);
+
+            var h = $("#Banner").height();
+            //  var w = $("body").width();
+
+            var sCoords = "0,0,5000," + h;
+
+            $("#lnkBanner").attr("coords", sCoords);
+            var hideTopBanner = Cookies.get('hideTopBanner');
+            var appStyles = {display:'block'};
+            if (hideTopBanner) {
+                appStyles.display = 'none';
+            }
+            $('#topbarAppBanner').css(appStyles);
+            $('.close-topbar-app-banner').bind('click', function () {
+                $('#topbarAppBanner').css('display', 'none');
+                Cookies.set('hideTopBanner', true);
+            });
+            $('.link-wrapper-banner').bind('click', function () {
+                woopra.track('portal-wegovern-banner', {
+                    agency: Cookies.get('AgencyName'),
+                    username: Cookies.get('WebUserName')
+                });
+                return true;
+            });
+        });
+
+        function FixFooterPosition() {
+            //hack for the footer, display at bottom of screen if page is short
+            if ($("form").height() < $(window).height() - 100) {
+                $("#Footer").css("position", "absolute");
+                $("#Footer").css("bottom", "0");
+            }
+            else {
+                $("#Footer").css("position", "");
+            }
+        }
+
+    </script>
+    <style type="text/css" media="screen">
+        #topbarAppBanner {
+            min-height: 40px;
+            z-index: 1000;
+        }
+        .top-banner-app-inner{
+            margin-top: 10px;
+            margin-bottom: 10px;
+            width: 100%;
+            height: 40px;
+            border: 1px solid rgba(10,10,10,.5);
+            box-shadow: 0px 0px 16px 0px #303030;
+            background-color: #456ca7;
+        }
+        .close-topbar-app-banner {
+            position: absolute;
+            display: block;
+            top: 25px;
+            right: 5%;
+            font-size: 1em;
+            color: #e3e3e3
+        }
+        .app-link{
+            display: block;
+            margin: 0 auto;
+            width: 40%;
+        }
+        .wegovern-banner-logo {
+            left: 22px;
+            position: relative;
+            padding-top: 1px;
+        }
+
+        @media screen and (max-width: 981px ){
+            .inside-banner-link {
+                position: relative;
+                top: -15px;
+                left: 30px;
+                color: #e3e3e3;
+                white-space: nowrap;
+            }
+        }
+        @media screen and (min-width: 1595px){
+            .inside-banner-link {
+                position: relative;
+                top: -15px;
+                left: 30px;
+                color: #e3e3e3;
+                white-space: nowrap;
+            }
+        }
+        @media screen and (max-width: 1594px){
+            .inside-banner-link {
+                position: relative;
+                top: -30px;
+                left: 75px;
+                color: #e3e3e3;
+                white-space: nowrap;
+            }
+        }
+        @media screen and (min-width:1100px){
+            .app-link{
+                display: block;
+                margin: 0 auto;
+                width: 40%;
+            }
+            .close-topbar-app-banner {
+                right: 5%;
+            }
+        }
+        @media screen and (max-width:1099px){
+            .app-link {
+                display: block;
+                margin: 0 auto;
+                width: 65%;
+            }
+            .close-topbar-app-banner {
+                right: 5%;
+            }
+            .inside-banner-link {
+                position: relative;
+                top: -15px;
+                left: 30px;
+                color: #e3e3e3;
+                white-space: nowrap;
+            }
+        }
+    </style>
+    
+
+    <!-- Page Level Header Stuff -->
+    
+
+    <link rel='stylesheet' type='text/css' href='/Lib/fullcalendar/fullcalendar.css' />
+    
+    
+    
+    <script type='text/javascript' src='/Lib/fullcalendar/moment.min.js'></script>
+    <script type='text/javascript' src='/Lib/fullcalendar/fullcalendar.min.js'></script>
+
+    <script type="text/javascript">
+        $(function() {
+            if ($("#calendar").length == 0)
+                return;
+                
+            InitCalendar();
+        });
+
+        function GetFromDate() {
+
+            var sQueryDate = getParameterByName("From");
+
+            if (sQueryDate != undefined && sQueryDate.length > 0)
+                return new Date(sQueryDate);
+            else 
+                return new Date(new Date().getFullYear(), 0, 1);
+        }
+
+        function GetToDate() {
+
+            var sQueryDate = getParameterByName("To");
+
+            if (sQueryDate != undefined && sQueryDate.length > 0)
+                return new Date(sQueryDate);
+            else
+                return new Date(new Date().getFullYear(), 11, 31);                          
+        }
+        
+        function InitCalendar() {
+
+            var events = eval($("#ContentPlaceholder1_hfEventJSON").val());
+
+            var fIncludesWeekends = false;
+
+            for (var i = 0; i < events.length; i++) {
+                //safari does not support dashes in the date
+
+                var sDate = events[i].start.replace("-", "/").replace("-", "/").substring(0, events[i].start.indexOf(" "));
+                var eventDay = new Date(sDate).getDay();
+                if (eventDay == 6 || eventDay == 0)
+                    fIncludesWeekends = true;
+            }
+
+            var dSelectedDate = new Date();
+
+            //if a different year was chosen, start with the date specified in the FROM
+            //otherwise default to the current date
+
+            var dFromDate = GetFromDate();
+            var dToDate = GetToDate();
+
+            //if today's date does not fall between the From and To, then default to the From date
+            if (dSelectedDate < dFromDate || dSelectedDate > dToDate)
+                dSelectedDate = dFromDate;
+
+            var sMonth = getParameterByName("Month");
+            if (sMonth != undefined && sMonth.length > 0)
+                dSelectedDate.setMonth(parseInt(sMonth) - 1, 1);
+
+            $('#calendar').fullCalendar(
+                {
+                    header:
+                    {
+                        left: 'title',
+                        center: '',
+                        right: 'prev,next today'
+                    },
+                    editable: false,
+                    weekends: fIncludesWeekends,
+                    events: events,
+                    year: dSelectedDate.getFullYear(),
+                    month: dSelectedDate.getMonth(),
+                    eventRender: RenderEvent,
+                    viewDisplay: UpdateCalendarNavButtons,
+                    weekMode: "variable"
+                });
+
+
+            if (typeof FixFooterPosition == 'function')
+                FixFooterPosition();
+
+            // Trying to fix printing 
+            $(".fc-widget-header").each(function () {
+
+            });
+            $("#calendar").fullCalendar("gotoDate", dFromDate);
+        }
+
+        function UpdateCalendarNavButtons(view) {
+
+            var dDisplayedDate = view.calendar.getDate();
+
+            var dFromDate = GetFromDate();
+            var dToDate = GetToDate();
+            var dToday = new Date();
+
+            var fIsBeginning = (dDisplayedDate.getMonth() == dFromDate.getMonth() && dDisplayedDate.getFullYear() == dFromDate.getFullYear());
+            var fIsEnd = (dDisplayedDate.getMonth() == dToDate.getMonth() && dDisplayedDate.getFullYear() == dToDate.getFullYear());
+            var fIsCurrentYear = (dToday >= dFromDate && dToday <= dToDate);
+
+            if (fIsBeginning)
+                $(".fc-button-prev").click(GotoPrevYear);
+            else
+                $(".fc-button-prev").unbind("click", GotoPrevYear);
+
+            if (fIsEnd)
+                $(".fc-button-next").click(GotoNextYear);
+            else
+                $(".fc-button-next").unbind("click", GotoNextYear);
+
+
+            if (fIsCurrentYear)
+                $(".fc-button-today").css("display", "");
+            else
+                $(".fc-button-today").css("display", "none");
+
+        }
+
+        function GotoNextYear() { GotoNextPrevYear(true); }
+        function GotoPrevYear() { GotoNextPrevYear(false); }
+
+        function GotoNextPrevYear(fNext) {
+
+            if (fNext) {
+                var dFrom = new Date(GetFromDate().getFullYear() + 1, GetFromDate().getMonth(), GetFromDate().getDate());
+                var dTo = new Date(GetToDate().getFullYear() + 1, GetToDate().getMonth(), GetToDate().getDate());
+                var iStartMonth = 1;
+            }
+            else {
+                var dFrom = new Date(GetFromDate().getFullYear() - 1, GetFromDate().getMonth(), GetFromDate().getDate());
+                var dTo = new Date(GetToDate().getFullYear() - 1, GetToDate().getMonth(), GetToDate().getDate());
+                var iStartMonth = 12;
+            }
+
+            var sFrom = (dFrom.getMonth() + 1) + "/" + dFrom.getDate() + "/" + dFrom.getFullYear();
+            var sTo = (dTo.getMonth() + 1) + "/" + dTo.getDate() + "/" + dTo.getFullYear();
+
+            $('#calendar').html("<img src='/Lib/images/Loading_Snake_32x32.gif' alt='Please wait...'/>");
+            window.location = "Calendar.aspx?View=Calendar&From=" + sFrom + "&To=" + sTo + "&Month=" + iStartMonth;
+
+        }
+
+        var miNextID = 1
+
+        //thought we had this function somewhere else but i can't find it
+        //http://stackoverflow.com/questions/901115/get-query-string-values-in-javascript
+        function getParameterByName(name) {
+            name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+            var regexS = "[\\?&]" + name + "=([^&#]*)";
+            var regex = new RegExp(regexS);
+            var results = regex.exec(window.location.search);
+            if (results == null)
+                return "";
+            else
+                return decodeURIComponent(results[1].replace(/\+/g, " "));
+        }
+
+        function RenderEvent(event, element) {
+
+
+            var iHour = moment(event.start).format('h');
+            var sAMorPM = 'am';
+            if (iHour >= 12) sAMorPM = 'pm';
+
+            if (iHour > 12) {
+                iHour -= 12;
+            }
+            else if (iHour == 0) {
+                iHour = 12;
+            }
+
+            //var sTime = iHour + ":" + pad(moment(event.start).format('mm'), 2) + sAMorPM;
+            var sTime = moment(event.start).format("hh:mm a");
+
+            var sDownloads = DecodeFromServer(unescape(event.downloads));
+            var sDownloadsBtn = "";
+
+            if (sDownloads.length > 0)
+                sDownloadsBtn = "<br/><a id='lnkShowDownloads" + miNextID + "' href='javascript:ShowDownloads(" + miNextID + ");'>Show Downloads</a><div class='CalendarDownloads' id='divDownloads" + miNextID + "' style='display:none'>" + sDownloads + "</div>";
+
+            miNextID++;
+
+            //bit of a hack, title looks better with each part on a new line
+
+            //Code added to set the event alignment  on Calendar
+            var sTitle = DecodeFromServer(event.title).replace(" - ", "<br/>");
+            var sTitlefull = DecodeFromServer(event.title);
+            var part1 = DecodeFromServer(event.title).split(" - ")[0];
+            var part2 = DecodeFromServer(event.title).split(" - ")[1];
+            if (part1.length > 15) {
+                part1 = part1.substr(0, 15) + '...';
+            }
+            if (part2.length > 15) {
+                part2 = part2.substr(0, 12) + '...';
+            }
+            sTitle = part1 + '<br/>' + part2;
+
+            var sVideo = "";
+
+            if (event.video != undefined)
+                sVideo = "<br/>" + DecodeFromServer(unescape(event.video));
+
+            var sCancelled = "";
+
+            if (event.cancelled == 'True')
+                sCancelled = '<div class="MeetingCancelled">Cancelled</div>';
+
+            return "<div class='MeetingCalendarCell MainScreenText' title='" + sTitlefull + "'>" + sCancelled + "<a href='" + event.url + "'>" + sTime + "</a><br/>" + sTitle + sVideo + sDownloadsBtn + "</div>"
+        }
+
+        function ShowDownloads(id) {
+
+            //in case there are other boxes in the same cell, we need to make sure their z-index is lowered so the new box
+            //will always be in front
+            for (var i = 0; i < miNextID; i++)
+                $("#divDownloads" + i).parent().css("z-index", 999);
+
+            if ($("#divDownloads" + id).css("display") == "none") {
+                $("#lnkShowDownloads" + id).html("Hide Downloads");
+                $("#divDownloads" + id).slideDown("fast");
+                $("#divDownloads" + id).parent().css("z-index", 1000);
+            }
+            else {
+                $("#lnkShowDownloads" + id).html("Show Downloads");
+                $("#divDownloads" + id).slideUp("fast");
+            }
+        }
+
+        function pad(num, size) {
+            var s = num + "";
+            while (s.length < size) s = "0" + s;
+            return s;
+        }
+
+
+    </script>
+    
+    <style type="text/css">
+        .CalendarSettingsTable td
+        {
+        	padding-top:8px;
+        }
+    </style>
+    
+</head>
+
+<body id="MainLayout">
+    
+    <form method="post" action="./Calendar.aspx?From=12%2f26%2f2026&amp;To=12%2f27%2f2026" id="aspnetForm" enctype="multipart/form-data">
+<div class="aspNetHidden">
+<input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="" />
+<input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="" />
+<input type="hidden" name="__LASTFOCUS" id="__LASTFOCUS" value="" />
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="My2ulzXNRR6nxNsQbE1g7pqLwqTVCSzjX4vpeYJVjifUe8Zyj/FEGhkmeBCWX9wpzVip6E6Vcntui4zyGuMLbJWHI6KFFHJgz8g3Y0Ed7zP7fivkcsDUkYsVNxziyxyPM9Jc/kzG9Y2/6CQTAghCvwiw0LR+LHRHxiqeNUfIbBUyA6/sRBQ4C9R1oBO1XX2Xp8LQmGr9QaoWqmUSsoJ/1A==" />
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+var theForm = document.forms['aspnetForm'];
+if (!theForm) {
+    theForm = document.aspnetForm;
+}
+function __doPostBack(eventTarget, eventArgument) {
+    if (!theForm.onsubmit || (theForm.onsubmit() != false)) {
+        theForm.__EVENTTARGET.value = eventTarget;
+        theForm.__EVENTARGUMENT.value = eventArgument;
+        theForm.submit();
+    }
+}
+//]]>
+</script>
+
+
+<div class="aspNetHidden">
+
+	<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="6C54D0EC" />
+	<input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="nrpRRFkHoes1CgM1Kw9ZEfVs/M8HXo5llOmX7OEYoH3hP3a8hOxSM0Y74889NDknoS+UYNuGXdGqNddh0d6icRizrkCXDVO3hM92z6Ln67Z8n/0Bhew+C5XJD3kn763l5EV+czM2AageUfeTaMh58P+iu6CEO7jdGpp0XARQtlxDfdRU5+hClLMjxeVsP13vEsYX5lpDMAed5Po90/U02yEtFyJHwOW6cPcBUjOApFfO6d0fwB3XqFv0kEi4DUMX0HNyZTJ885F1G4/d8wSx9bbbrOoE+pfn2uRdbiEV2tHa6jIfMapYMgwfOik9TlxVqQce4ycrjuzHQ+6OzL5PYipY0E4RWrgS6eScJwf1kfGWAfA42KRc5Z0xhxc7IC730j5RUcNfG2S/0fHPr6+/HZqWPVNS3C/TNYUvCuY4Fn8pxJuqCuevyxnV+GKMzPcuK0NLdtk9QVWE/IvUwfQ1fxWAq3/6t5NzPhfl2Dgw1mO3WS6IkmiAVm+KMQPwrGptx/yyBq/DkDYn/6GG3zrY9oGHq12FBfYandg4s/82uMxH9SLwu+/Ua0djcHK6yelL31yrawRSCxDD1bioDKjq7gXhWOgIDvwr9zvOGRLkl/PjjSs49vQ1+o9p+BvbDLkNncoLxLDFJbpQmUzINDNxNdzUaJW3k43K6NF6KKTFuXTOJYqUM6sxkaTRZqgI/fMULLBLF5mlDGzCZ6G5bEN987+tQSttQUvVh4hAiAzPIiGiB1nN4umaqEP5Z39WK08fqPeX1z7pM/4e+MNEe3vYSM5tGSh10Zdc8OnMZW022nhvWOea5S4XyqK+tylju8MxA4HKuyHHefdZsSo3s+zs5Oh+n+ipYyY0vN6QE58VzceosBAJTbiDzcqRM14wNoHvVtuiTwMnF1aF8lKGvmgi2g==" />
+</div>
+        <div style="display: none">
+            <input type="submit" name="ctl00$btnRefreshPageAfterLogin" value="Button" id="btnRefreshPageAfterLogin" class="btnRefreshPage" />
+            <input name="ctl00$hfShowPopupOnLoad" type="hidden" id="hfShowPopupOnLoad" class="hfShowPopup" />
+        </div>
+        <span id="lblScript"></span>
+  
+    <div id="MainWindow">
+    
+            <div id="Banner" role="banner"  >
+                <img usemap="#bannerMap" src="/Citizens/GetImage.aspx?ID=1010&TimeStamp=639221368160000000" alt="IQM2 Meeting Portal" />
+                <map name="bannerMap">
+                    <area href="/Citizens/Default.aspx" id="lnkBanner" shape="rect" alt="Home" Target="_self" />
+                </map>
+
+                <div id="LogoHeaderTextHolder">
+                    
+                                                                       
+                </div>
+            </div>
+            
+            <div id="ToolStrip" role="navigation" aria-label="site">
+                <div id="Tabs">
+                    <div class="Shadow"></div>
+                    <a href="https://www.vta.org" id="lnkMainSite" class="Tab LeftTab"><div><span>&laquo;Back to Main Site</span></div></a>
+                    <a href="/Citizens/default.aspx" class="Tab NormalTab"><div><span id="tabWelcome">Welcome</span></div></a>
+                    <a href="/Citizens/calendar.aspx" class="Tab NormalTab"><div><span id="tabMeetings">Meetings</span></div></a>                
+                    <a href="/Citizens/" style="display:none" class="Tab NormalTab"><div dropdown="Browse"><span>Browse</span></div></a>
+                                        
+                    <a href="/Citizens/Media.aspx" id="lnkMedia" class="Tab NormalTab"><div><span id="tabMedia">Media</span></div></a>                    
+                    <a href="/Citizens/LegalNotice.aspx" id="lnkNotices" class="Tab NormalTab"><div id="tabNotices"><span>Notices</span></div></a>                                        
+                    <a href="/Citizens/Board" class="Tab NormalTab"><div><span id="tabContactUs">Boards+</span></div></a>                                                        
+                </div>
+                <div id="TopExtraBoxTransparentBG"></div>
+                <div id="TopExtraBox">  
+                    <div id="TopLine">
+                        
+                     <a href="../MasterPages/#" id="lnkLogin" onclick="javascript:return PopupWindowShow(&#39;/Citizens/Login.aspx&#39;);">Log in</a><span id="spnThatOneStupidBar"> | </span><a href="mailto:support@granicus.com" id="lnkHelp">Help</a>                                                  
+                    </div> 
+                    <div id="BottomLine">                       
+                          
+                    </div>                            
+                   <input name="ctl00$txtQuickSearch" type="text" id="txtQuickSearch" value="Search" title="Search" />
+                   <input type="image" name="ctl00$btnQuickSearch" id="btnQuickSearch" alt="Search" src="/Lib/images/search.png" style="cursor:pointer" />                   
+                </div>     
+            </div>
+                     
+            <table class="LayoutTable" role="presentation">
+                <tr>
+                    <td id="tdLeftPanel" class="LeftPanel">
+                        
+                        <div role="navigation" aria-label="Meeting Group">
+                            
+                        </div>
+                        
+                        <div class="DetailBox">
+                            <img src="/Citizens/images/Print.gif" border="0" alt="Print" />
+                            <a href="/Citizens/Calendar.aspx?From=12/26/2026&To=12/27/2026&Print=Yes" id="lnkPrint" class="PrintButton" target="_blank">Print This Page</a>                           
+                        </div>
+                        
+                        
+                                                
+                       <!-- <div class="QuickLink">
+                            <img src="/Lib/buttonexample.png" alt="Quick Link 1" />
+                            <a href="#">Quick Link #1</a>
+                        </div>
+                        <div class="QuickLink">
+                            <img src="/Lib/buttonexample.png" alt="Quick Link 2"  />
+                            <a href="#">Quick Link #2</a>
+                        </div>     -->
+                                      
+                    </td>
+
+                    <td id="MainContentHolder">
+                        <div style="width:100%;height:100%;position:relative;margin:0;padding:0;border:0;">
+                            <div id="MainContentLeftShadow">                           
+                            </div>   
+                          
+                            <div class="MainContentPlaceholder" role="main">
+                                
+                                
+    
+    <div id="ContentPlaceholder1_NativeView">
+	
+    <div style="display:none">
+        <img src='/Lib/images/Loading_Snake_32x32.gif' alt='Please wait...'/>    
+    </div>
+        
+    <div id="ContentPlaceholder1_pnlStart" style="width:100%;">
+		
+        <table border="0" width="100%" id="table1" cellpadding="5" role="presentation">
+            <tr>
+		        <td class="PageHeading">Meeting Calendar</td>
+		        <td align="right"><a class="RSSInline" href="/Services/RSS.aspx?Feed=Calendar" title="RSS Calendar"><img src="images/RSS_60x20.png" alt="RSS Calendar" /></a></td>
+            </tr>
+            <tr>
+		        <td colspan="2" align="left" valign="top" width="100%" role="presentation">
+                    <table cellspacing="3" class="CalendarSettingsTable">
+                        <tr><td colspan="2" style="color:#777777; font-style:italic; padding-bottom: 6px;"><span id="ContentPlaceholder1_lblFilterSummary">Displaying 0 meetings from 12/26/2026 to 12/27/2026 for All Meeting Groups</span></td></tr>
+                        <tr><td valign="top" ><strong>Date:</strong></td><td><span id="ContentPlaceholder1_lblCalendarRange"><a href='/Citizens/Calendar.aspx?From=1/1/2028&To=12/31/2028'>2028</a>, <a href='/Citizens/Calendar.aspx?From=1/1/2027&To=12/31/2027'>2027</a>, <a href='/Citizens/Calendar.aspx?From=1/1/2026&To=12/31/2026'>2026</a>, <a href='/Citizens/Calendar.aspx?From=1/1/2025&To=12/31/2025'>2025</a>, <a href='/Citizens/Calendar.aspx?From=1/1/2024&To=12/31/2024'>2024</a>, <a href='/Citizens/Calendar.aspx?From=1/1/2023&To=12/31/2023'>2023</a>, <a href='/Citizens/Calendar.aspx?From=1/1/2022&To=12/31/2022'>2022</a>, <a href='/Citizens/Calendar.aspx?From=1/1/2021&To=12/31/2021'>2021</a>, <a href='/Citizens/Calendar.aspx?From=1/1/2020&To=12/31/2020'>2020</a>, <a href='/Citizens/Calendar.aspx?From=1/1/2019&To=12/31/2019'>2019</a>, <a href='/Citizens/Calendar.aspx?From=1/1/2018&To=12/31/2018'>2018</a>, <a href='/Citizens/Calendar.aspx?From=1/1/2017&To=12/31/2017'>2017</a>, <a href='/Citizens/Calendar.aspx?From=1/1/2016&To=12/31/2016'>2016</a>, <a href='#' id='lnkSeeMoreYears' onclick='javascript:$("#divHiddenMeetings").show(); $("#lnkSeeMoreYears").css("display","none")'>See More...</a> <span style='display:none' id='divHiddenMeetings'><a href='/Citizens/Calendar.aspx?From=1/1/2015&To=12/31/2015'>2015</a>, <a href='/Citizens/Calendar.aspx?From=1/1/2014&To=12/31/2014'>2014</a>, <a href='/Citizens/Calendar.aspx?From=1/1/2013&To=12/31/2013'>2013</a>, <a href='/Citizens/Calendar.aspx?From=1/1/2012&To=12/31/2012'>2012</a>, <a href='/Citizens/Calendar.aspx?From=1/1/2011&To=12/31/2011'>2011</a>, <a href='/Citizens/Calendar.aspx?From=1/1/2010&To=12/31/2010'>2010</a>, <a href='/Citizens/Calendar.aspx?From=1/1/2009&To=12/31/2009'>2009</a>, <a href='/Citizens/Calendar.aspx?From=1/1/2008&To=12/31/2008'>2008</a>, <a href='/Citizens/Calendar.aspx?From=1/1/2007&To=12/31/2007'>2007</a>, <a href='/Citizens/Calendar.aspx?From=1/1/2006&To=12/31/2006'>2006</a>, <a href='/Citizens/Calendar.aspx?From=1/1/2005&To=12/31/2005'>2005</a>, <a href='/Citizens/Calendar.aspx?From=1/1/2004&To=12/31/2004'>2004</a>, <a href='/Citizens/Calendar.aspx?From=1/1/2003&To=12/31/2003'>2003</a>, <a href='/Citizens/Calendar.aspx?From=1/1/2002&To=12/31/2002'>2002</a>, <a href='/Citizens/Calendar.aspx?From=1/1/2001&To=12/31/2001'>2001</a>, <a href='/Citizens/Calendar.aspx?From=1/1/2000&To=12/31/2000'>2000</a>, <a href='/Citizens/Calendar.aspx?From=1/1/1999&To=12/31/1999'>1999</a>, <a href='/Citizens/Calendar.aspx?From=1/1/1998&To=12/31/1998'>1998</a>, <a href='/Citizens/Calendar.aspx?From=1/1/1997&To=12/31/1997'>1997</a>, <a href='/Citizens/Calendar.aspx?From=1/1/1996&To=12/31/1996'>1996</a>, <a href='/Citizens/Calendar.aspx?From=1/1/1995&To=12/31/1995'>1995</a>, <a href='/Citizens/Calendar.aspx?From=1/1/1900&To=12/31/9999'>All</a></span></td></tr>
+                        <tr><td valign="top" ><label for="ContentPlaceholder1_DepartmentID" style="font-weight: bold;">Group:</label></td><td><select name="ctl00$ContentPlaceholder1$DepartmentID" onchange="javascript:setTimeout(&#39;__doPostBack(\&#39;ctl00$ContentPlaceholder1$DepartmentID\&#39;,\&#39;\&#39;)&#39;, 0)" id="ContentPlaceholder1_DepartmentID" class="MeetingGroupDropdown">
+			<option selected="selected" value="0">All Meeting Groups</option>
+			<option value="1056">2000 Measure A Citizens Watchdog Committee (CWC)</option>
+			<option value="1100">2016 Measure B Citizens Oversight Committee</option>
+			<option value="1112">Ad Hoc Board Enhancement Committee</option>
+			<option value="1123">Ad Hoc Grade Separations Committee</option>
+			<option value="1004">Administration &amp; Finance Committee</option>
+			<option value="1007">Bicycle &amp; Pedestrian Advisory Committee (BPAC)</option>
+			<option value="1000">Board of Directors</option>
+			<option value="1108">Board of Pensions</option>
+			<option value="1109">Board of Pensions Investment Committee</option>
+			<option value="1127">Board of Pensions Pension Plan Policies Sub-Committee</option>
+			<option value="1095">Capital Program Committee (CPC)</option>
+			<option value="1009">Citizens Advisory Committee (CAC)</option>
+			<option value="1096">Committee for Transportation Mobility &amp; Accessibility (CTMA)</option>
+			<option value="1006">Congestion Management Program &amp; Planning Committee (CMPP)</option>
+			<option value="1110">Deferred Compensation Committee</option>
+			<option value="1074">Diridon Station Joint Policy Advisory Board</option>
+			<option value="1131">Diridon Station Steering Committee</option>
+			<option value="1099">Eastridge to BART Regional Connector Policy Advisory Board (EBRC)</option>
+			<option value="1133">Finance, Audit &amp; Administration</option>
+			<option value="1057">Governance and Audit Committee (G&amp;A)</option>
+			<option value="1103">Joint VTA/BART Working Committee</option>
+			<option value="1132">Mobility Management &amp; Capital Programs</option>
+			<option value="1107">Mobility Partnership</option>
+			<option value="1111">Other Post-Employment Benefits Committee</option>
+			<option value="1011">Policy Advisory Committee (PAC)</option>
+			<option value="1097">Safety, Security, and Transit Planning and Operations Committee (SSTPO)</option>
+			<option value="1093">State Route 85 Corridor Policy Advisory Board</option>
+			<option value="1012">Technical Advisory Committee (TAC)</option>
+			<option value="1129">Transit Security Advisory Committee (TSAC)</option>
+			<option value="1125">VTA&#39;s BART Silicon Valley Phase II Oversight Committee</option>
+
+		</select></td></tr>
+                        <tr><td valign="top" ><strong>View:</strong></td><td><a href="/Citizens/Calendar.aspx?From=12/26/2026&To=12/27/2026&View=List" id="ContentPlaceholder1_lnkListView" style="font-weight:bold;">List<span class="hidden-date">Selected</span></a>&nbsp;|&nbsp;<a href="/Citizens/Calendar.aspx?From=12/26/2026&To=12/27/2026&View=Calendar" id="ContentPlaceholder1_lnkCalendarView" style="font-weight:;">Calendar</a></td></tr>
+                    </table>
+                    
+                    <br />
+                
+                    <div id="ContentPlaceholder1_pnlMeetings" class="Section">
+                                                
+                        
+
+                    
+                    </div>     
+                    
+                                                    
+                </td>
+            </tr>
+        </table>
+    
+	</div>
+    
+    <br />
+
+    
+ 
+</div>
+    
+                            </div>
+                        </div>                                                           
+                    </td>
+                </tr>               
+            </table>                                
+        </div>
+        
+    <div id="Footer" role="contentinfo">
+        <br />
+        <span id="lblPoweredBy">
+            Powered by <a href="https://granicus.com/" target="_blank" >Granicus</a>
+        </span>
+    </div>
+
+    <!-- Analytics Stuff (Start) *********************************** -->
+<script async src='https://www.googletagmanager.com/gtag/js?id=UA-44426936-12'></script>
+  <script>
+   window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+  gtag('config', 'UA-44426936-12');</script>
+<!-- Analytics Stuff (End)   *********************************** -->
+    <!-- Analytics Stuff (Start) *********************************** -->
+<script async src='https://www.googletagmanager.com/gtag/js?id=UA-70364301-2'></script>
+  <script>
+   window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+  gtag('config', 'UA-70364301-2');</script>
+<!-- Analytics Stuff (End)   *********************************** -->
+    
+        <!-- Popup Menus -->
+        <div id="mnuBrowse" class="PopupMenu" dropdown="Browse">
+            <ul>
+                <li><a href="#">Legislative Files</a></li>
+                <li><a href="#">Legal Notices</a></li>
+                <li><a href="#">Some other Sort of Thing</a></li>
+            </ul>
+        </div>
+
+    
+
+<script type="text/javascript">
+//<![CDATA[
+$(document).ready(function(){woopra.identify({ email:"", name:"Anonymous User", agency:"SantaClaraVTA", userlogin:"Anonymous"}).push(); })//]]>
+</script>
+</form>
+</body>
+</html>
+
+
