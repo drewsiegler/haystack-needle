@@ -1,20 +1,22 @@
-"""Replay the Legistar, IQM2 and CivicClerk cases in backtest/cases.yaml through the matcher.
+"""Replay the Legistar, IQM2, CivicClerk and CivicPlus cases in backtest/cases.yaml through the matcher.
 
 For each case, every listed stage is looked up on the agenda for its date (by
 MatterId on Legistar; on IQM2, by the meeting's ID and the start of the item's
-title), and the item's title, item text and attachments are matched against
-today's watchlists.yaml. Attachments changed after the meeting are left out,
+title; on CivicPlus, by the agenda ID in the stage's URL, the agenda PDF being
+the only item), and the item's title, item text and attachments are matched
+against today's watchlists.yaml (or the file given with --watchlists). Attachments changed after the meeting are left out,
 since they couldn't have been read before it. The report says whether the case
 was caught at its first appearance, the earliest stage caught, and where the
 match landed. It also sweeps every agenda of the same agency in the weeks
 before the first appearance, by title and agenda note, for earlier items the
 case list may have missed. On IQM2, which asks for a minute between requests,
-the sweep covers only the first stage's board.
+the sweep covers only the first stage's board. On CivicPlus, where the agenda
+PDF is all there is, the sweep reads the PDFs.
 
 Uses the network. Responses and attachments are cached in .cache/backtest
 (gitignored), so a second run is fast and makes no requests.
 
-    python backtest/run.py [--case ID] [--lookback DAYS] [--no-attachments]
+    python backtest/run.py [--case ID] [--lookback DAYS] [--no-attachments] [--watchlists FILE]
 """
 
 from __future__ import annotations
@@ -23,6 +25,7 @@ import argparse
 import re
 import sys
 from datetime import date, timedelta
+from zoneinfo import ZoneInfo
 from pathlib import Path
 
 import yaml
@@ -30,11 +33,12 @@ import yaml
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from adapters import civicclerk, iqm2, legistar  # noqa: E402
+from adapters import civicclerk, civicplus, iqm2, legistar  # noqa: E402
 from needle.fetch import Fetcher  # noqa: E402
 from needle.matcher import flag_boilerplate, load_terms, match_item, match_meeting  # noqa: E402
 from needle.pdftext import pdf_pages  # noqa: E402
 
+PACIFIC = ZoneInfo("America/Los_Angeles")
 LOCATION_NAMES = {"title": "title", "item_text": "item text", "attachment": "attachment"}
 
 
@@ -92,9 +96,40 @@ def find_civicclerk_stage(fetcher, client, stage):
     return meeting, item_by_title(meeting, stage)
 
 
+def find_civicplus_stage(fetcher, client, stage):
+    """The stage's AgendaCenter meeting, found by the agenda ID at the end of its URL.
+    Its one item is the agenda, whose PDF is the attachment."""
+    agenda_id = re.search(r"-(\d+)$", stage["url"]).group(1)
+    row = next((r for r in civicplus.fetch_rows(fetcher, client, stage["date"], stage["date"])
+                if r["id"] == agenda_id), None)
+    if row is None:
+        return None, None
+    meeting = civicplus.build_meeting(client, row)
+    [agenda] = meeting.items[0].attachments
+    if day(agenda.modified) > meeting.date:
+        # Replaced after the meeting: read the version that was up on the day, if any.
+        versions = [v for v in civicplus.fetch_versions(fetcher, client, row["stamp"], row["id"])
+                    if v["modified"] and day(v["modified"]) <= meeting.date]
+        if versions:
+            latest = max(versions, key=lambda v: v["modified"])
+            agenda.url, agenda.modified = latest["url"], latest["modified"]
+    return meeting, meeting.items[0]
+
+
+def day(moment) -> date:
+    """The Pacific date of a time; a time with no zone is taken as Pacific already."""
+    return (moment.astimezone(PACIFIC) if moment.tzinfo else moment).date()
+
+
+def is_civicplus(stage) -> bool:
+    return "/AgendaCenter/ViewFile/Agenda/" in stage.get("url", "")
+
+
 def stage_label(stage) -> str:
     if "matter" in stage:
         return f'matter {stage["matter"]}'
+    if is_civicplus(stage):
+        return f'agenda {stage["url"].rsplit("-", 1)[1]}'
     return f'agenda {stage["civicclerk_agenda_id"]}' if "civicclerk_agenda_id" in stage else f'meeting {stage["iqm2_meeting_id"]}'
 
 
@@ -103,13 +138,15 @@ def replay_stage(fetcher, client, stage, terms, read_pages):
         meeting, item = find_iqm2_stage(fetcher, client, stage)
     elif "civicclerk_agenda_id" in stage:
         meeting, item = find_civicclerk_stage(fetcher, client, stage)
+    elif is_civicplus(stage):
+        meeting, item = find_civicplus_stage(fetcher, client, stage)
     else:
         meeting, item = find_stage(fetcher, client, stage["date"], stage["matter"])
     result = {"stage": stage, "meeting": meeting, "item": item, "matches": [], "late": 0}
     if item is None:
         return result
     # Leave out attachments last changed after the meeting day.
-    kept = [a for a in item.attachments if a.modified is None or a.modified.date() <= meeting.date]
+    kept = [a for a in item.attachments if a.modified is None or day(a.modified) <= meeting.date]
     result["late"] = len(item.attachments) - len(kept)
     item.attachments = kept
     result["matches"] = match_item(meeting, item, terms, read_pages, best_only=False)
@@ -151,6 +188,17 @@ def sweep_civicclerk(fetcher, client, first: date, days: int, terms):
     return meetings, matches
 
 
+def sweep_civicplus(fetcher, client, first: date, days: int, terms, read_pages):
+    """The same as sweep, for an AgendaCenter city: every body's agenda, PDF and all,
+    since the PDF is the only text there is."""
+    meetings = [civicplus.build_meeting(client, row)
+                for row in civicplus.fetch_rows(fetcher, client, first - timedelta(days=days),
+                                                first - timedelta(days=1))
+                if row["category_id"] not in civicplus.SKIP_CATEGORIES.get(client, set())]
+    matches = [m for meeting in meetings for m in match_meeting(meeting, terms, read_pages)]
+    return meetings, matches
+
+
 def where(matches) -> str:
     parts = []
     for location in ("title", "item_text", "attachment"):
@@ -166,6 +214,13 @@ def where(matches) -> str:
     return "; ".join(parts) or "nothing"
 
 
+def first_stage(result):
+    """The stage at the case's first appearance; the first stage listed if none is dated then
+    (a case can list an earlier mention, like a budget line, before the first agenda item)."""
+    stages = result["stages"]
+    return next((s for s in stages if s["stage"]["date"] == result["case"]["first_appearance"]), stages[0])
+
+
 def run_case(fetcher, case, all_terms, lookback, read_pages):
     source = case["source"]
     client = source.get("client") or source.get("tenant") or source["site"].split(".")[0]
@@ -176,15 +231,18 @@ def run_case(fetcher, case, all_terms, lookback, read_pages):
         swept, sweep_matches = sweep_iqm2(fetcher, client, case["stages"][0]["body"], first, lookback, terms)
     elif source["adapter"] == "civicclerk":
         swept, sweep_matches = sweep_civicclerk(fetcher, client, first, lookback, terms)
+    elif source["adapter"] == "civicplus":
+        swept, sweep_matches = sweep_civicplus(fetcher, client, first, lookback, terms, read_pages)
     else:
         swept, sweep_matches = sweep(fetcher, client, first, lookback, terms)
-    first_stage = stages[0]
-    if first_stage["matches"]:
-        flag_boilerplate(swept + [first_stage["meeting"]], sweep_matches + first_stage["matches"])
+    first_seen = first_stage({"case": case, "stages": stages})
+    if first_seen["matches"]:
+        flag_boilerplate(swept + [first_seen["meeting"]], sweep_matches + first_seen["matches"])
     matter = (legistar.fetch_matter(fetcher, client, case["stages"][0]["matter"])
               if source["adapter"] == "legistar" else {})
     return {"case": case, "stages": stages, "earlier": sweep_matches, "swept": len(swept),
-            "matter": matter}
+            "swept_what": "agenda PDFs" if source["adapter"] == "civicplus" and read_pages
+            else "titles and agenda notes", "matter": matter}
 
 
 def report(results, skipped, lookback, attachments: bool) -> str:
@@ -193,7 +251,7 @@ def report(results, skipped, lookback, attachments: bool) -> str:
     for r in results:
         stages = r["stages"]
         caught = [i for i, s in enumerate(stages) if s["matches"]]
-        first = stages[0]
+        first = first_stage(r)
         if first["item"] is None:
             there = "not found on that day's agenda"
         else:
@@ -238,7 +296,7 @@ def report(results, skipped, lookback, attachments: bool) -> str:
             which = f"matter {x.item.matter_id}" if x.item.matter_id else f"item {x.item.number}"
             lines.append(f'  - {x.meeting.date}, {x.meeting.body.name}, {which}: '
                          f'"{" ".join(x.item.title.split())[:120]}" ({LOCATION_NAMES[x.location]}: "{x.term}")')
-        out.append(f'- Earlier matches in the {lookback} days before (titles and agenda notes, '
+        out.append(f'- Earlier matches in the {lookback} days before ({r["swept_what"]}, '
                    f'{r["swept"]} meetings): {len(lines) or "none"}')
         out += lines[:10]
         if len(lines) > 10:
@@ -256,10 +314,12 @@ def main() -> None:
     parser.add_argument("--case", help="replay only this case id")
     parser.add_argument("--lookback", type=int, default=60, help="days swept before each first appearance")
     parser.add_argument("--no-attachments", action="store_true", help="skip downloading attachments")
+    parser.add_argument("--watchlists", type=Path, default=ROOT / "watchlists.yaml",
+                        help="watchlists to match with, to try term changes (default: %(default)s)")
     args = parser.parse_args()
 
     cases = yaml.safe_load((ROOT / "backtest" / "cases.yaml").read_text())
-    terms = load_terms(ROOT / "watchlists.yaml")
+    terms = load_terms(args.watchlists)
     fetcher = Fetcher(cache_dir=ROOT / ".cache" / "backtest")
     read_pages = None if args.no_attachments else page_reader(fetcher)
 
@@ -267,7 +327,7 @@ def main() -> None:
     for case in cases:
         if args.case and case["id"] != args.case:
             continue
-        if case["source"]["adapter"] not in ("legistar", "iqm2", "civicclerk"):
+        if case["source"]["adapter"] not in ("legistar", "iqm2", "civicclerk", "civicplus"):
             skipped.append(case["id"])
             continue
         print(f"Replaying {case['id']}…", file=sys.stderr)

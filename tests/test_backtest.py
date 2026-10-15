@@ -89,3 +89,35 @@ def test_replay_civicclerk_stage_is_not_found_when_no_meeting_has_that_agenda():
                               "losaltoshillsca", stage, TERMS, None)
 
     assert result["item"] is None and result["matches"] == []
+
+
+def test_replay_civicplus_stage_reads_the_agenda_pdf_found_by_its_id():
+    january = (Path(__file__).parent / "fixtures" / "civicplus" / "saratoga_search_2026-01-01_2026-01-31.html").read_bytes()
+    stage = {"date": date(2026, 1, 21), "body": "City Council",
+             "url": "https://www.saratoga.ca.us/AgendaCenter/ViewFile/Agenda/_01212026-1401"}
+    terms = compile_terms({"policing-contracts": {"terms": ["Sheriff's Office contract"]}})
+    pages = ["2.1 Multi-Jurisdictional Sheriff’s Office Contract Negotiations Ad Hoc Committee"]
+    result = run.replay_stage(PageFetcher({"/AgendaCenter/Search/": january.decode()}), "saratoga", stage, terms,
+                              lambda a: pages if a.url == stage["url"] else [])
+    assert result["meeting"].body.name == "City Council" and result["late"] == 0
+    assert run.stage_label(stage) == "agenda 1401"
+    assert run.where(result["matches"]) == 'attachment (Agenda p. 1): "Sheriff\'s Office contract"'
+
+
+def test_replay_civicplus_stage_is_not_found_when_that_day_has_no_such_agenda():
+    january = (Path(__file__).parent / "fixtures" / "civicplus" / "saratoga_search_2026-01-01_2026-01-31.html").read_text()
+    stage = {"date": date(2026, 1, 21), "url": "https://www.saratoga.ca.us/AgendaCenter/ViewFile/Agenda/_01212026-9999"}
+    result = run.replay_stage(PageFetcher({"/AgendaCenter/Search/": january}), "saratoga", stage, TERMS, None)
+    assert result["item"] is None
+
+
+def test_replay_civicplus_stage_reads_the_version_that_was_up_on_the_meeting_day():
+    # The Oct 7, 2026 agenda was amended on Oct 8; its Previous Versions page lists the
+    # current row too, so it stands in for the search page as well.
+    page = (Path(__file__).parent / "fixtures" / "civicplus" / "saratoga_previousversions_10072026-1482.html").read_text()
+    stage = {"date": date(2026, 10, 7), "url": "https://www.saratoga.ca.us/AgendaCenter/ViewFile/Agenda/_10072026-1482"}
+    fetcher = PageFetcher({"/AgendaCenter/Search/": page, "/AgendaCenter/PreviousVersions/_10072026-1482": page})
+    result = run.replay_stage(fetcher, "saratoga", stage, TERMS, None)
+    [agenda] = result["item"].attachments
+    assert agenda.url == "https://www.saratoga.ca.us/AgendaCenter/ViewFile/ArchivedAgenda/_10072026-1327"
+    assert result["late"] == 0

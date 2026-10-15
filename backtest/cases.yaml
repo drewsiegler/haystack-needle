@@ -24,8 +24,8 @@
 - id: saratoga-law-enforcement-2026
   summary: Saratoga weighs a 33% Sheriff contract increase against switching to Los Gatos-Monte Sereno Police
   watchlist: policing-contracts
-  source: {adapter: civicplus, site: www.saratoga.ca.us}
-  phase: 4  # or 2, if Saratoga is added early
+  source: {adapter: civicplus, client: saratoga, site: www.saratoga.ca.us}
+  phase: 4
   first_appearance: 2026-01-21
   stages:
     - date: 2025-11-17
@@ -61,9 +61,16 @@
       body: City Council
       item: "2.1 Law Enforcement Discussion and Agreement Determination"
       url: https://www.saratoga.ca.us/AgendaCenter/ViewFile/Agenda/_10072026-1482
-  title_match: "yes"  # "sheriff"
+  title_match: "no"  # "sheriff" was dropped from the watchlist on Oct 14; it matched before
   confirmed: true
   notes: >
+    Replayed Oct 14 with the CivicPlus adapter, which reads each agenda PDF (there
+    are no item titles to match). With today's terms the first catch is Apr 27
+    ("law enforcement service", p. 2), and Jan 21 matches nothing. Adding
+    "Sheriff's Office contract" and "Sheriff contract" catches Jan 21 (p. 3) and
+    Jan 27 (p. 2), and the Nov 17 finance packet on p. 15, scored 5: digest only.
+    Jun 3 to Oct 7 were amended after their meetings; the replay reads the version
+    that was up on the day, from the agenda's Previous Versions page.
     NBC Bay Area reported a 4-1 vote to stay with the Sheriff; the Oct 7 item is the
     likely vote (confirm in minutes). PDF text renders the department as
     "Los Gatos - Monte Sereno", "Los Gatos -Monte Sereno" and "Los Gatos Monte Sereno",

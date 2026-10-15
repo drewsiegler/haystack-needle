@@ -103,3 +103,13 @@ def test_collect_keeps_going_when_one_city_fails_and_drops_rows_outside_the_wind
                                            today=date(2026, 10, 14), days_back=0, days_ahead=3)
     assert failures == {"saratoga": "ConnectError: the site is down"}
     assert sorted(m.id for m in meetings) == ["3219", "3220"]  # Oct 12 and 13 are before the window
+
+
+def test_parse_versions_lists_the_current_pdf_and_the_ones_it_replaced():
+    page = (FIXTURES / "civicplus" / "saratoga_previousversions_10072026-1482.html").read_text()
+    versions = civicplus.parse_versions(page)
+    assert len(versions) == 5
+    assert versions[0] == {"path": "/AgendaCenter/ViewFile/Agenda/_10072026-1482",
+                           "modified": datetime(2026, 10, 8, 20, 25, tzinfo=timezone.utc)}
+    assert versions[1] == {"path": "/AgendaCenter/ViewFile/ArchivedAgenda/_10072026-1327",
+                           "modified": datetime(2026, 10, 7, 20, 11, tzinfo=timezone.utc)}

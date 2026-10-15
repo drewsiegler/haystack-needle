@@ -128,6 +128,24 @@ def parse_rows(page: str) -> list[dict]:
     return rows
 
 
+def parse_versions(page: str) -> list[dict]:
+    """An agenda's versions from its Previous Versions page: the current PDF and
+    each one it replaced (at /ViewFile/ArchivedAgenda/), with when each was posted."""
+    versions = []
+    for row in _ROW.finditer(page):
+        heading = _HEADING.search(row.group(1))
+        link = re.search(r'href="(/AgendaCenter/ViewFile/(?:Archived)?Agenda/_\d{8}-\d+)"', row.group(1))
+        if heading and link:
+            versions.append({"path": link.group(1), "modified": _stamp_time(heading.group(3))})
+    return versions
+
+
+def fetch_versions(fetcher: Fetcher, client: str, stamp: str, agenda_id: str) -> list[dict]:
+    """Used by the backtest, to read an agenda as it stood on the meeting day."""
+    page = fetcher.get(f"{_base(client)}/PreviousVersions/_{stamp}-{agenda_id}").decode("utf-8", errors="replace")
+    return [{"url": f"https://{HOSTS[client]}{v['path']}", "modified": v["modified"]} for v in parse_versions(page)]
+
+
 def fetch_rows(fetcher: Fetcher, client: str, start: date, end: date) -> list[dict]:
     """Every agenda dated start to end, inclusive."""
     page = fetcher.get(search_url(client, start, end)).decode("utf-8", errors="replace")
