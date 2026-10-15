@@ -192,3 +192,12 @@ def test_state_survives_a_round_trip(setup, tmp_path):
     statefile.save(state, tmp_path / "state.json")
     assert statefile.load(tmp_path / "state.json") == state
     assert b"%PDF" not in (tmp_path / "state.json").read_bytes()
+
+
+def test_meetings_past_the_time_budget_wait_for_the_next_run(setup):
+    adapter, fetcher, state, go = setup
+    adapter.meetings = [meeting(COUNCIL, date(2026, 10, 20), title="Flock contract"),
+                        meeting(COUNCIL, date(2026, 10, 27), title="Flock contract, part 2", matter="101", item_id="2")]
+    ticks = iter([0, 0, 100, 100])  # the second meeting comes after the budget runs out
+    assert len(go(budget=timedelta(seconds=50), clock=lambda: next(ticks))) == 1
+    assert len(go(NOW + timedelta(hours=2))) == 1

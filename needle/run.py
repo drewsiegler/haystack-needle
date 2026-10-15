@@ -4,9 +4,10 @@
     python -m needle.run --dry-run                 # print what would be sent; send and save nothing
     python -m needle.run --test-email              # send one sample alert to check the mail setup
 
-The workflow fires hourly. Every 2 hours the run reads every meeting from 2
-days back to 30 days ahead; in the hours between, it re-reads only meetings
-from 72 hours out through meeting day, to catch amended agendas and late memos.
+The workflow runs every 2 hours and reads every meeting from 2 days back to
+30 days ahead. A run that comes less than 110 minutes after the last full one
+(GitHub sometimes delays scheduled runs, or the cron is made hourly) re-reads
+only meetings from 72 hours out through meeting day.
 """
 
 from __future__ import annotations
@@ -15,6 +16,7 @@ import argparse
 import hashlib
 import os
 import sys
+import time
 from collections import defaultdict
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
@@ -36,11 +38,12 @@ WATCHLISTS = ROOT / "watchlists.yaml"
 DEFAULT_STATE = ROOT / ".state" / "state.json"
 PACIFIC = ZoneInfo("America/Los_Angeles")
 ADAPTERS = {"legistar": legistar}
-FULL_EVERY = timedelta(minutes=110)  # the cron fires hourly; a full run every 2 hours
+FULL_EVERY = timedelta(minutes=110)  # a full run every 2 hours
 NEAR_DAYS = 3  # between full runs, re-check meetings from 72 hours out through meeting day
 TEXT_TTL = timedelta(hours=24)  # re-read item text at least daily, in case it changed quietly
 DIGEST_HOUR = 7  # Pacific
 MAX_DOWNLOADS = 150  # PDFs per run; the rest wait for the next run, soonest meetings first
+BUDGET = timedelta(minutes=40)  # then stop reading meetings, well inside the job's 55-minute limit
 AGENDA_PAGES = 40  # how far into an agenda to look for the public comment notice
 MIN_AGENDAS = 4  # a body's agendas needed before a phrase can be judged boilerplate
 
@@ -262,7 +265,8 @@ class Outbox:
 
 def run(state: dict, fetcher, outbox: Outbox, now: datetime, adapters: dict = ADAPTERS,
         watchlists_path: Path = WATCHLISTS, full: bool | None = None,
-        max_downloads: int = MAX_DOWNLOADS) -> None:
+        max_downloads: int = MAX_DOWNLOADS, budget: timedelta = BUDGET, clock=time.monotonic) -> None:
+    deadline = clock() + budget.total_seconds()
     pacific = now.astimezone(PACIFIC)
     today = pacific.date()
     raw = Path(watchlists_path).read_text()
@@ -297,7 +301,11 @@ def run(state: dict, fetcher, outbox: Outbox, now: datetime, adapters: dict = AD
 
     by_item: dict[tuple[int, int], tuple[Meeting, Item, list[Match]]] = {}
     all_matches = []
+    left = 0
     for meeting in sorted(meetings, key=lambda m: (m.date < today, m.date)):  # soonest first
+        if clock() > deadline:
+            left += 1  # read next run; already-read items are cached, so it gets further
+            continue
         adapter = adapters[meeting.body.source.adapter]
         for item in meeting.items:
             reader.fill_text(adapter, meeting, item)
@@ -334,12 +342,13 @@ def run(state: dict, fetcher, outbox: Outbox, now: datetime, adapters: dict = AD
     print(f"{'Full' if full else 'Near-meeting'} run: {len(meetings)} meetings, "
           f"{len(all_matches)} matches, {reader.texts_read} item texts read, "
           f"{reader.downloads} downloads ({reader.deferred} left for the next run), "
+          f"{left} meetings left for the next run (time budget), "
           f"{len(outbox.sent)} emails, {len(state['digest'])} waiting for the digest.")
 
 
 def test_email() -> tuple[str, str, str]:
     """A sample alert, to check that mail goes out and how it looks."""
-    source = Source("legistar", "example", "Example City")
+    source = Source("legistar", "example", "Exampleville")
     meeting = Meeting(Body(source, "1", "City Council"), "1", datetime.now(PACIFIC).date(),
                       "6:00 PM", "https://github.com/drewsiegler/haystack-needle")
     item = Item("1", "Approve agreement with vendor for public safety technology", number="7")
