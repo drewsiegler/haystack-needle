@@ -272,7 +272,7 @@ Also on Oct 15 Drew added two towns on the same terms: Monte Sereno, whose Civic
 
 | Body | Platform | How to sign up |
 | --- | --- | --- |
-| Palo Alto City Council and committees | PrimeGov | Form: "Sign Up for City Council and Committee Agendas Mailing List" on paloalto.gov's City Council page (a Constant Contact list) |
+| Palo Alto City Council and committees | PrimeGov | Form: "Sign Up for City Council and Committee Agendas Mailing List" on paloalto.gov's City Council page (a Constant Contact list). **Subscribed Oct 15**: the agenda inbox is on the list |
 | Moreland SD | Diligent Community | Form: "Sign-up to receive notification of each Board Meeting" on its Board Meetings page (a Google Form) |
 | County Board of Education | BoardDocs | Written request; no sign-up found |
 | Palo Alto Unified | BoardDocs | Written request; no sign-up found |
