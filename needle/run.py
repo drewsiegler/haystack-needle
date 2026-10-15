@@ -141,15 +141,17 @@ class Reader:
         if entry and entry["modified"] == iso(attachment.modified):
             entry["seen"] = self.today
             return cached_pages(entry)
-        url = alerts.safe_url(attachment.download_url or attachment.url)
-        if not url:
-            return []
-        if self.downloads >= self.max_downloads:
-            self.deferred += 1
-            return cached_pages(entry) if entry else []
-        data = self._download(url, attachment.url)  # log the lasting link, not a signed one
+        data = attachment.data
         if data is None:
-            return cached_pages(entry) if entry else []
+            url = alerts.safe_url(attachment.download_url or attachment.url)
+            if not url:
+                return []
+            if self.downloads >= self.max_downloads:
+                self.deferred += 1
+                return cached_pages(entry) if entry else []
+            data = self._download(url, attachment.url)  # log the lasting link, not a signed one
+            if data is None:
+                return cached_pages(entry) if entry else []
         digest = sha(data)
         if entry and entry["sha256"] == digest:
             entry.update(seen=self.today, modified=iso(attachment.modified))

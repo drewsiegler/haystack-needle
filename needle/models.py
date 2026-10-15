@@ -33,6 +33,8 @@ class Attachment:
     # Where the run downloads the file, when that isn't url: Boardable hands out
     # S3 links that last 20 minutes, too short for an alert.
     download_url: str | None = None
+    # The file itself, when the adapter already has it: a PDF attached to an agenda email.
+    data: bytes | None = None
 
 
 @dataclass
