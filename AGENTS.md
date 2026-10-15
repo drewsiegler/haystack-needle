@@ -13,7 +13,7 @@ Layout: `adapters/` has one file per platform; `needle/` has the shared data mod
 ## Rules
 
 - **Identify honestly.** User agent: `Mozilla/5.0 (compatible; HaystackNeedle/<version>; +<repo URL>)`. BoardDocs rejects anything that doesn't start with `Mozilla/5.0`; never pretend to be a browser beyond that prefix.
-- **Rate.** At most one request a second per host, and slower where a host's robots.txt sets `Crawl-delay` (IQM2: 60 s; the `Crawl-delay: 20` in CivicPlus sites' robots.txt is for Siteimprove only): add the host to `CRAWL_DELAYS` in `needle/fetch.py`. Prefer feeds and APIs to pages.
+- **Rate.** At most one request a second per host, and slower where a host's robots.txt sets `Crawl-delay` (IQM2: 60 s; the `Crawl-delay: 20` in CivicPlus sites' robots.txt is for Siteimprove only), and slower where a host has pushed back (eScribe: 10 s, after its bot check refused files at one a second): add the host to `CRAWL_DELAYS` in `needle/fetch.py`. Prefer feeds and APIs to pages.
 - **Honor robots.txt.** BoardDocs and PrimeGov disallow all non-search-engine bots. Don't build or run an adapter for them until Drew decides how to handle that (options are in docs/sources.md).
 - **Take a bot check as a no.** When a host answers with a bot check (Cloudflare's `cf-mitigated: challenge`), `Fetcher` stops asking it for the rest of the run. Never try to get past one: no browser automation, no borrowed cookies, no solving the challenge.
 - **No test touches the network.** Adapters are tested against saved sample responses in `tests/fixtures/`.

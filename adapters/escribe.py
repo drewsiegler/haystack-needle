@@ -2,7 +2,8 @@
 
 Campbell moved its council agendas to eScribe in October 2025; its commissions
 stay on AgendaCenter (the CivicPlus adapter). The portal host has no robots.txt,
-so the usual one request a second applies.
+but requests to it are 10 seconds apart (CRAWL_DELAYS in needle/fetch.py)
+because of the bot check on its files, below.
 
 - POST /MeetingsCalendarView.aspx/GetCalendarMeetings with the JSON body
   {"calendarStartDate": "YYYY-MM-DD", "calendarEndDate": "YYYY-MM-DD"} lists the
@@ -18,8 +19,9 @@ so the usual one request a second applies.
 - /FileStream.ashx?DocumentId=N is an attachment or a posted PDF. A replaced file
   gets a new DocumentId, so a file is read once. These downloads sit behind a
   Cloudflare bot check: on Oct 14, 2026 it began refusing them after 15 files
-  at one a second, while the calendar and agenda pages still loaded. Fetcher
-  then leaves the host alone for the rest of the run (see docs/sources.md).
+  at one a second, while the calendar and agenda pages still loaded. If it
+  comes back, Fetcher leaves the host alone for the rest of the run (see
+  docs/sources.md).
 
 An item's text arrives with its agenda, so item_text has nothing left to read,
 and there's no matter history: "this moved forward" comes from past alerts.

@@ -19,9 +19,10 @@ USER_AGENT = (
     "+https://github.com/drewsiegler/haystack-needle)"
 )
 RETRIES = 3
-# Seconds between requests, from each host's robots.txt Crawl-delay. A key
+# Seconds between requests, from each host's robots.txt Crawl-delay or, for
+# eScribe, from its bot check: it refused files after 15 at one a second. A key
 # covers that host and everything under it. Hosts not listed get min_interval.
-CRAWL_DELAYS = {"iqm2.com": 60.0}
+CRAWL_DELAYS = {"iqm2.com": 60.0, "escribemeetings.com": 10.0}
 
 
 class Deferred(httpx.HTTPError):

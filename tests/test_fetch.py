@@ -101,7 +101,9 @@ def test_post_json_sends_the_body_with_the_same_user_agent_rate_and_retries(tmp_
     assert fetcher.post_json(url, {"calendarStartDate": "2026-11-01"}) == {"d": [2]}  # another body isn't
     assert seen == [("POST", USER_AGENT, {"calendarStartDate": "2026-10-12"})] * 2 + [
         ("POST", USER_AGENT, {"calendarStartDate": "2026-11-01"})]
-    assert slept == [5, 1.0]  # the retry's back-off, then a second between requests to the host
+    # The retry's back-off, the rest of the host's 10 seconds before the retry, then
+    # 10 seconds before the next request (the cached one sends nothing).
+    assert slept == [5, 5.0, 10.0]
 
 
 def test_leaves_a_host_alone_for_the_run_once_it_answers_with_a_bot_check():
@@ -122,3 +124,10 @@ def test_leaves_a_host_alone_for_the_run_once_it_answers_with_a_bot_check():
         fetcher.get(f"{portal}/Meeting.aspx?Id=2")
     assert fetcher.get("https://webapi.legistar.com/v1/x/events") == b"%PDF"  # other hosts carry on
     assert len(sent) == 3 and fetcher.requests == 3 and fetcher.deferred == 0
+
+
+def test_waits_ten_seconds_between_requests_to_an_escribe_portal():
+    fetcher, slept = make(lambda r: httpx.Response(200, content=b"x"))
+    fetcher.get("https://pub-campbell.escribemeetings.com/Meeting.aspx?Id=1")
+    fetcher.get("https://pub-campbell.escribemeetings.com/FileStream.ashx?DocumentId=2053")
+    assert slept == [10.0]

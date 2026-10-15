@@ -92,7 +92,7 @@ What the adapter relies on (checked Oct 14, 2026):
 
 Campbell's City Council has posted its agendas on eScribe since October 2025, at `https://pub-campbell.escribemeetings.com`. The city's AgendaCenter page shows that portal in a frame above the old category list, but the council's own page (`/189/City-Council`) still links its "Most Recent Agenda" to the AgendaCenter category, which gives the Oct 7, 2025 packet. That packet was made by eScribe and names the portal on its first page, which is how it was found. The commissions stay on AgendaCenter; the portal has only council meetings, starting with that same Oct 7, 2025 meeting.
 
-The host returns 404 for `/robots.txt`, so the usual one request a second applies. What the adapter relies on (checked Oct 14, 2026):
+The host returns 404 for `/robots.txt`, but requests to it are 10 seconds apart because of the bot check on its files (below). What the adapter relies on (checked Oct 14, 2026):
 
 - `POST /MeetingsCalendarView.aspx/GetCalendarMeetings` with the JSON body `{"calendarStartDate": "2025-09-01", "calendarEndDate": "2026-12-01"}` lists the meetings in that window as JSON (`{"d": [...]}`; 50 meetings and 225 KB for those 15 months). It's the call the portal's own calendar makes; `Fetcher.post_json` makes it. Each meeting has an `ID` (a GUID), `MeetingType` (regular session, executive session, study session or special meeting, all filed under the City Council), `StartDate` in local time (`2026/10/06 19:00:30`), `HasAgenda` and `MeetingDocumentLink`: the short agenda PDF, the full packet as PDF and as HTML, minutes and video. Nothing says when an agenda was posted, and a meeting isn't listed until its agenda is: on Oct 14 the window from Oct 12 to Nov 13 was empty, though the next regular meeting is Oct 20 (agendas go up the Friday before).
 - `/Meeting.aspx?Id={ID}&Agenda=Agenda&lang=English` is the full agenda as HTML, item by item: number, title, description, recommended action and attachments. The Oct 6, 2026 regular meeting has 24 items on the page; without the four headings that have items under them, that's 20 items with 26 attachments. That's real item text, unlike Campbell's AgendaCenter packets. An item keeps its ID when the agenda is revised.
@@ -101,11 +101,7 @@ The host returns 404 for `/robots.txt`, so the usual one request a second applie
 
 **A Cloudflare bot check guards the files.** On Oct 14, 2026 a test run read the calendar, three agenda pages and 15 attachment PDFs at one request a second. From the 16th file on, every download got a 403 "Verifying your browser" page (header `cf-mitigated: challenge`) that needs JavaScript and cookies, including one that had downloaded minutes earlier. Two minutes later the portal's pages loaded but its files were still refused. How long the check lasts, and whether GitHub Actions' addresses meet it sooner, isn't known. Haystack Needle doesn't try to get past a bot check: `Fetcher` leaves the host alone for the rest of the run and the files wait for the next one. Item titles, descriptions and recommended actions come from the agenda pages, so they're matched either way; the staff reports are what's at risk.
 
-**Open question for Drew.** As built, each run reads files until the check refuses one, so a new agenda's 25 or so files are spread over a few runs, and each of those runs meets the check once. Options:
-
-1. Ask Campbell's clerk (or eScribe) to let the project's user agent download the files.
-2. Ask the portal less often: a gap of 10 seconds between requests to this host (`CRAWL_DELAYS` in `needle/fetch.py`) would take about four minutes for a new agenda's files.
-3. Match the agenda pages only and stop downloading the files.
+**Decided Oct 14, 2026: ask the portal less often.** Requests to `escribemeetings.com` are 10 seconds apart (`CRAWL_DELAYS` in `needle/fetch.py`), so a new agenda's 25 or so files take about four minutes, well inside the run's 25 minutes for slow hosts. Whether that keeps the check away isn't known yet; if it doesn't, each run reads files until the check refuses one. Still open: asking Campbell's clerk (or eScribe) to let the project's user agent download the files, or matching the agenda pages only and not downloading the files.
 
 ### Simbli (phase 4)
 
