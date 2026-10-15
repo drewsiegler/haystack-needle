@@ -4,7 +4,7 @@ Phase 1 source check, done Oct 14, 2026. It replaces the platform table in [scop
 
 ## The short version
 
-Eight adapters cover about 52 bodies. Four of them read an official JSON API or a plain agenda page and need no scraping tricks. The hard part isn't the platforms, it's **robots.txt**: BoardDocs and PrimeGov tell every bot except search engines to stay out, and that covers 15 bodies, including the County Board of Education, all four community college districts and Palo Alto. That's a decision for phase 4 (see [Open question](#open-question-boarddocs-and-primegov)).
+Eight adapters cover about 52 bodies. Four of them read an official JSON API or a plain agenda page and need no scraping tricks. The hard part isn't the platforms, it's **robots.txt**: BoardDocs, Diligent Community and PrimeGov tell every bot except search engines to stay out. On Oct 15, 2026 that covered 11 bodies, including the County Board of Education, three community college districts and Palo Alto, and Drew decided to cover them through their own agenda emails instead of scraping (see [Agenda emails](#decided-agenda-emails-for-boarddocs-diligent-community-and-primegov)).
 
 | Adapter | Bodies | How it reads | robots.txt | Phase |
 | --- | --- | --- | --- | --- |
@@ -14,8 +14,10 @@ Eight adapters cover about 52 bodies. Four of them read an official JSON API or 
 | CivicPlus AgendaCenter | 3 | Agenda search page + PDFs | `Disallow: /Search`, `/RSS.aspx` (not `/AgendaCenter/`) | 4, built |
 | eScribe | 1 | Meeting calendar (JSON POST) + HTML agenda, PDFs | none (404); a Cloudflare bot check on files | 4, built |
 | Simbli (eBoardSolutions) | 21 (15 confirmed) | Meeting list (HTML) + agenda JSON, one request per item | none (the URL is an error page); **an Imperva bot check** | 4, stopped |
-| BoardDocs | 13 | — | **disallows all but search engines** | 4, blocked |
-| PrimeGov | 2 | Public API works, JSON | **`Disallow: /`** | 4, blocked |
+| BoardDocs | 6 | Their own agenda emails | **disallows all but search engines** | 4, by email (planned) |
+| Diligent Community | 3 | Their own agenda emails | **disallows all** | 4, by email (planned) |
+| PrimeGov | 2 | Their own agenda emails (the public API works, but robots.txt says no) | **`Disallow: /`** | 4, by email (planned) |
+| Boardable | 1 | Not checked yet | none: allows every bot | 4 |
 | One-offs | 7 | Municode Meetings, CivicWeb, iCompass, AgendaOnline, Granicus, Laserfiche | varies | later |
 
 ## By body
@@ -153,13 +155,29 @@ Options, for Drew:
 
 Whichever it is, `Fetcher` should first learn to recognize Imperva's page as a bot check (a page titled "Pardon Our Interruption", or Imperva's "Request unsuccessful" page). Otherwise an adapter would read the block page as a district with no meetings. The `_Incapsula_Resource` script alone isn't a sign: every normal page has it.
 
-### BoardDocs (phase 4, blocked by robots.txt)
+### BoardDocs (phase 4, by email)
 
-Cupertino Union, Evergreen, Moreland, Mount Pleasant, Oak Grove, East Side Union HSD, Campbell Union HSD, Palo Alto Unified, Santa Clara County Office of Education (County Board of Education), Foothill-De Anza CCD, West Valley-Mission CCD, San José-Evergreen CCD, Gavilan CCD.
+Checked again Oct 15, 2026 from each body's own website, six still post their agendas on BoardDocs: the Santa Clara County Office of Education (County Board of Education), Palo Alto Unified, Evergreen, West Valley-Mission CCD, San José-Evergreen CCD and Gavilan CCD. They're covered by their own agenda emails (see [Agenda emails](#decided-agenda-emails-for-boarddocs-diligent-community-and-primegov)).
+
+Seven of the 13 found in phase 1 have moved, and BoardDocs keeps their older meetings:
+
+- East Side Union HSD (since July 1, 2026), Campbell Union HSD (since Aug 21, 2025) and Moreland: Diligent Community, below.
+- Cupertino Union, Mount Pleasant and Oak Grove: Simbli, above.
+- Foothill-De Anza CCD: Boardable, at `site.boardable.com/foothill-de-anza-community-college-district`, where its Oct 5, 2026 board meeting is listed. Boardable's robots.txt allows every bot (`User-Agent: * / Disallow:`), so it may get an adapter; not checked further yet.
 
 `go.boarddocs.com/robots.txt` disallows every user agent (`User-agent: * / Disallow: /`) and allows only Googlebot, Bingbot, msnbot and Slurp. Separately, it returns 403 to any user agent that doesn't start with `Mozilla/5.0`.
 
-### PrimeGov (phase 4, blocked by robots.txt)
+### Diligent Community (phase 4, by email)
+
+| Body | Portal |
+| --- | --- |
+| East Side Union HSD | esuhsd.community.highbond.com |
+| Campbell Union HSD | cuhsd.community.highbond.com |
+| Moreland SD | moreland.community.highbond.com |
+
+Diligent makes BoardDocs too. The robots.txt on the East Side and Campbell portals (checked Oct 15, 2026) opens with `User-agent: * / Disallow: /` and then names scores of bots, so these boards are covered by their own agenda emails too.
+
+### PrimeGov (phase 4, by email)
 
 | Body | Portal |
 | --- | --- |
@@ -189,15 +207,30 @@ Still unknown: Lakeside Joint SD, El Camino Healthcare District, Santa Clara Cou
 - **A bot check is a no.** When a host answers with one (eScribe's files sit behind Cloudflare's, Simbli behind Imperva's), stop asking it for the rest of the run, and never try to get past it. Not every bot check says so in a header: Imperva's comes as an ordinary page with a 200 status.
 - **robots.txt is per host, not per platform.** Simbli's robots.txt URL redirects to an error page (the portal reads `robots.txt` as a district name), so it has none; Legistar's and CivicClerk's API hosts have none either.
 
-## Open question: BoardDocs and PrimeGov
+## Decided: agenda emails for BoardDocs, Diligent Community and PrimeGov
 
-The scope says to honor robots.txt. BoardDocs and PrimeGov both say no to every bot that isn't a search engine. Together that's 15 bodies:
+BoardDocs, Diligent Community and PrimeGov say no to every bot that isn't a search engine, and the scope says to honor robots.txt. On Oct 15, 2026 Drew decided to leave them out of the scraper and cover their bodies through the bodies' own agenda emails, matched like any agenda. It's slower and thinner (an email may only say that an agenda is up, with a link the app can't follow), but it's within the rules. The other options were asking each body for permission to fetch, or fetching anyway, which would break the scope's rule.
 
-- **BoardDocs (13):** the County Board of Education, all four community college districts, East Side and Campbell high school districts, Palo Alto Unified and five elementary districts.
-- **PrimeGov (2):** Palo Alto City Council and its commissions, and the Open Space Authority.
+**Where the emails go.** A new mailbox used only for these emails, at a provider that offers IMAP with an app password; each run reads it, with the app password kept in Actions secrets. The Proton alert address won't do: Proton offers IMAP only through its Bridge app, which runs on your own computer.
 
-Options, none needed before phase 4:
+**How to get on each list.** California's open meeting law lets anyone ask in writing to be sent a body's agendas, and since 2022 (SB 274) a body with a website has to email the agenda, or a link to it, when asked to (Gov. Code §54954.1). The request lasts for the calendar year and has to be renewed after January 1. A body may charge for mailing, no more than its cost. Two bodies also have a sign-up form. Found Oct 15, 2026:
 
-1. **Leave them out of the scraper** and cover them by subscribing the alert address to each body's own email notices, then matching those emails. Slower (it announces that an agenda exists, not what's inside it) but within the rules.
-2. **Ask.** Email PrimeGov/Palo Alto's clerk and the BoardDocs districts that matter most (County Board of Education first) for permission to fetch their agendas at a low rate. A yes in writing lets the adapter run.
-3. **Fetch anyway at a low rate**, treating robots.txt as aimed at crawlers rather than a scheduled reader of public agendas. That would break the scope's own rule, so it shouldn't happen without deciding to change that rule.
+| Body | Platform | How to sign up |
+| --- | --- | --- |
+| Palo Alto City Council and committees | PrimeGov | Form: "Sign Up for City Council and Committee Agendas Mailing List" on paloalto.gov's City Council page (a Constant Contact list) |
+| Moreland SD | Diligent Community | Form: "Sign-up to receive notification of each Board Meeting" on its Board Meetings page (a Google Form) |
+| County Board of Education | BoardDocs | Written request; no sign-up found |
+| Palo Alto Unified | BoardDocs | Written request; no sign-up found |
+| Evergreen SD | BoardDocs | Written request; no sign-up found |
+| West Valley-Mission CCD | BoardDocs | Written request to the Executive Assistant to the Board; no sign-up found |
+| San José-Evergreen CCD | BoardDocs | Written request to the Board Clerk; no sign-up found |
+| Gavilan CCD | BoardDocs | Written request; no sign-up found |
+| East Side Union HSD | Diligent Community | Written request; no sign-up found |
+| Campbell Union HSD | Diligent Community | Written request; no sign-up found |
+| Open Space Authority | PrimeGov | Written request to the Clerk of the Board; its newsletter is general news, not agendas |
+
+**Steps.**
+
+1. Drew sets up the mailbox.
+2. Sign up with the two forms, and send the other nine clerks a written request under §54954.1 to email each agenda to that address (a copy of the agenda rather than only a link, where they'll do it). Renew every January.
+3. Once a few emails from each body have arrived, build an email adapter against them: read new messages over IMAP, tell the body by its sender, and match the email's text and any attached agenda PDF. Not before: every list formats its emails differently, and the tests need real samples.

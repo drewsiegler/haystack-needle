@@ -245,7 +245,7 @@ All six are settled, and the Claude Code prompt above reflects them.
 - [x] **Name.** Haystack Needle (Agenda Watch was taken).
 - [x] **Who gets v1 alerts.** Just you for now; SURJ and partners later.
 - [x] **Hosting.** GitHub: a public repo with scheduled Actions, $0, with credentials in Actions secrets.
-- [x] **School boards in v1.** Yes, built in phase 4 with a BoardDocs adapter.
+- [x] **School boards in v1.** Yes, in phase 4. BoardDocs and Diligent Community boards are covered by their own agenda emails, since those platforms' robots.txt turns bots away (decided Oct 15, 2026; see [sources.md](sources.md)).
 - [x] **AI triage later.** Yes, after v1. It would summarize matches and drop false positives for a small per-run cost.
 - [x] **License.** AGPL-3.0, so anyone running a modified copy as a service has to share their changes.
 
