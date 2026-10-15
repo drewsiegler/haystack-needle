@@ -17,7 +17,7 @@ Eight adapters cover about 52 bodies. Four of them read an official JSON API or 
 | BoardDocs | 6 | Their own agenda emails | **disallows all but search engines** | 4, by email (planned) |
 | Diligent Community | 3 | Their own agenda emails | **disallows all** | 4, by email (planned) |
 | PrimeGov | 2 | Their own agenda emails (the public API works, but robots.txt says no) | **`Disallow: /`** | 4, by email (planned) |
-| Boardable | 1 | Not checked yet | none: allows every bot | 4 |
+| Boardable | 1 (4 of its groups) | Public site pages, which carry their data, + PDFs from S3 | the site allows every bot; **the app host and its JSON API disallow all** | 4, built |
 | One-offs | 7 | Municode Meetings, CivicWeb, iCompass, AgendaOnline, Granicus, Laserfiche | varies | later |
 
 ## By body
@@ -105,6 +105,34 @@ The host returns 404 for `/robots.txt`, but requests to it are 10 seconds apart 
 
 **Decided Oct 14, 2026: ask the portal less often.** Requests to `escribemeetings.com` are 10 seconds apart (`CRAWL_DELAYS` in `needle/fetch.py`), so a new agenda's 25 or so files take about four minutes, well inside the run's 25 minutes for slow hosts. Whether that keeps the check away isn't known yet; if it doesn't, each run reads files until the check refuses one. Still open: asking Campbell's clerk (or eScribe) to let the project's user agent download the files, or matching the agenda pages only and not downloading the files.
 
+### Boardable (phase 4, built)
+
+The Foothill-De Anza Community College District left BoardDocs for Boardable. Its public site is `https://site.boardable.com/foothill-de-anza-community-college-district`. Checked Oct 15, 2026 with the project's `Fetcher`, one request a second.
+
+**Two hosts, two answers.**
+
+- `site.boardable.com/robots.txt` is `User-Agent: * / Disallow:`, which allows every bot. The site runs on Vercel.
+- `app.boardable.com/robots.txt` is `User-agent: * / Disallow: /`, allowing only `/login` and `/start-trial`. That's where the public site's own JSON calls go (`/api/public-sites/meetings?count=&page=&upcoming=&group=`, `/api/public-sites/meetings/{slug}/agenda`, with a `SiteId: 277` header), and the site's links to documents (`/{organization}/public-site-data/meetings/{slug}/documents/{id}/view`). So the adapter never requests anything from that host. Alerts link to the document viewer there, for people to click.
+- `boardable-production.s3.amazonaws.com/robots.txt` answers 403, which means no rules. The attachments are there.
+
+**What the adapter relies on.** The site is a Nuxt app rendered on the server: each page carries the data it was built from in a `<script id="__NUXT_DATA__">` block, in Nuxt's flat "devalue" form (`unflatten` in the adapter unpacks it). That's the same data the JSON calls return, so nothing is scraped from the page's HTML.
+
+- `/{site}/meetings` lists the next 10 upcoming meetings, soonest first. Each one has its slug, its time as shown ("Thu, Oct 15, 2026 2:00 PM PDT") and its groups (Boardable's name for a board or committee). The paging details give the count of all upcoming meetings. The page ignores query strings, so later pages and the "Past" tab come only from the JSON call. On Oct 15 it listed one meeting, a student council meeting that day. Meetings seem to appear on the site when their materials are published: the Oct 5 board meeting's were published Oct 2.
+- `/{site}`, the home page, lists the 4 most recent past meetings, with their times in UTC but without their groups.
+- `/{site}/meetings/{slug}` is one meeting, about 430 KB. It has the meeting's groups, its time, whether its materials are published, and its whole agenda as a tree. The Oct 5, 2026 regular meeting has 15 sections, 34 items and 26 PDF attachments. Each item has its title and its text (recommended action, background, who submitted it, whether there's backup). Each item has an `id` that changes with each agenda version (that agenda was version 3) and a `logical_id` that doesn't, so the adapter uses `logical_id`. The page also names the meetings just before and after it (`previous_slug`, `next_slug`, of any group). The adapter uses those to reach upcoming meetings past the first 10, or past meetings older than the last 4. `/{site}/meetings/{slug}/agenda` loads its agenda in the browser, from the JSON call, so it isn't used.
+- Each attachment has a `preSignedUrl`: a link to a PDF of the file on S3, good for 20 minutes (`X-Amz-Expires=1200`). One was downloaded with `Fetcher` without trouble. The run downloads that link, and an alert links the attachment's viewer. The run reads every adapter's meetings before it downloads anything. If it gets to a Boardable file after the link has expired, S3 refuses it, and the next run tries again with a fresh link. An attachment keeps its stored file name (`file`) across agenda versions, so a file is read once.
+- There's no agenda PDF to link to (its download is on the app host), so an alert links the meeting's page instead. It also has no public comment line, which comes from the agenda PDF.
+
+A run asks for the two list pages, then one page per meeting in the window. That's each meeting of a group it reads, plus any past meeting in the window, because the home page doesn't name its groups. `Fetcher` takes Vercel's `x-vercel-mitigated` header (a challenge or a block) as a bot check and leaves the site alone for the rest of the run. None came up in the 23 requests made while building the adapter. On Oct 14, a dry run's window (Oct 12 to Nov 13) held no meeting of a group it reads, because the next regular board meeting, Nov 9, wasn't on the site yet. With the window reaching back 10 days, it read the Oct 5 board meeting's 34 items and 26 attachments in 7 requests.
+
+**Which groups.** The site has ten groups. The adapter reads four: the Board of Trustees (Boardable calls it "Main Governing Board"), its Audit and Finance Committee, the Citizens' Bond Oversight Committee (Measure G spending) and the Financing Corporation Board of Directors. It leaves out six:
+
+- The Foothill-De Anza Foundation Board of Directors, the colleges' fundraising nonprofit, which isn't a district body.
+- The Associated Students of Foothill College and De Anza Student Government.
+- The De Anza College Academic Senate, the Foothill College Academic Senate and the Foothill College Curriculum Committee.
+
+Those five meet about weekly during terms, and their business is mostly student events, club funding, courses and faculty matters. Anything that becomes district policy or a contract goes to the Board. To read one, add its name to `GROUPS` in `adapters/boardable.py`.
+
 ### Simbli (phase 4, stopped by a bot check)
 
 Simbli is eBoardSolutions' board portal, `https://simbli.eboardsolutions.com`, with one site per district, named by a site id (`?S=`). Checked Oct 14, 2026 with the project's `Fetcher`.
@@ -163,7 +191,7 @@ Seven of the 13 found in phase 1 have moved, and BoardDocs keeps their older mee
 
 - East Side Union HSD (since July 1, 2026), Campbell Union HSD (since Aug 21, 2025) and Moreland: Diligent Community, below.
 - Cupertino Union, Mount Pleasant and Oak Grove: Simbli, above.
-- Foothill-De Anza CCD: Boardable, at `site.boardable.com/foothill-de-anza-community-college-district`, where its Oct 5, 2026 board meeting is listed. Boardable's robots.txt allows every bot (`User-Agent: * / Disallow:`), so it may get an adapter; not checked further yet.
+- Foothill-De Anza CCD: Boardable, at `site.boardable.com/foothill-de-anza-community-college-district`, where its Oct 5, 2026 board meeting is listed. Read by the Boardable adapter, below.
 
 `go.boarddocs.com/robots.txt` disallows every user agent (`User-agent: * / Disallow: /`) and allows only Googlebot, Bingbot, msnbot and Slurp. Separately, it returns 403 to any user agent that doesn't start with `Mozilla/5.0`.
 
@@ -205,7 +233,7 @@ Still unknown: Lakeside Joint SD, El Camino Healthcare District, Santa Clara Cou
 - **User agent.** Use `Mozilla/5.0 (compatible; HaystackNeedle/<version>; +<repo URL>)`. It's the standard honest-bot format, it names the project and where to reach it, and BoardDocs rejects anything else outright.
 - **Rate.** One request a second is the floor, but honor each host's `Crawl-delay`: 60 s for IQM2. Feeds and APIs first, pages second.
 - **A bot check is a no.** When a host answers with one (eScribe's files sit behind Cloudflare's, Simbli behind Imperva's), stop asking it for the rest of the run, and never try to get past it. Not every bot check says so in a header: Imperva's comes as an ordinary page with a 200 status. `Fetcher` knows both (since Oct 14, 2026 for Imperva's, by the page's title or its "Incapsula incident ID" line).
-- **robots.txt is per host, not per platform.** Simbli's robots.txt URL redirects to an error page (the portal reads `robots.txt` as a district name), so it has none; Legistar's and CivicClerk's API hosts have none either.
+- **robots.txt is per host, not per platform.** Simbli's robots.txt URL redirects to an error page (the portal reads `robots.txt` as a district name), so it has none; Legistar's and CivicClerk's API hosts have none either. Boardable's public site allows every bot while its app host, where the site's own JSON calls go, allows none, so the adapter reads the site's pages instead.
 
 ## Decided: agenda emails for BoardDocs, Diligent Community and PrimeGov
 
