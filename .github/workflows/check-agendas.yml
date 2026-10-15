@@ -61,6 +61,7 @@ jobs:
           SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
           ALERT_TO: ${{ secrets.ALERT_TO }}
           HEALTHCHECKS_URL: ${{ secrets.HEALTHCHECKS_URL }}
+          FASTMAIL_API_TOKEN: ${{ secrets.FASTMAIL_API_TOKEN }}  # read-only: the agenda inbox
         run: python -m needle.run --state data/state.json
 
       # The data branch holds a single commit, replaced each run, so the repo
