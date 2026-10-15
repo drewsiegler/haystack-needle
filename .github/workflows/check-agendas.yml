@@ -2,9 +2,10 @@ name: Check agendas
 
 on:
   schedule:
-    # Every 2 hours at 17 past the odd UTC hours. 15:17 UTC is 7:17 a.m. Pacific
-    # in winter (8:17 in summer), when the run sends the morning digest.
-    - cron: "17 1-23/2 * * *"
+    # Hourly at 17 past. Every other run reads every meeting; the ones between
+    # re-check only meetings from 72 hours out through meeting day. The run at
+    # 7:17 a.m. Pacific sends the morning digest.
+    - cron: "17 * * * *"
   workflow_dispatch:
     inputs:
       test_email:

@@ -28,7 +28,7 @@ The tests never touch the network. `needle.run --dry-run` reads the live agendas
 
 ## How it runs
 
-[A GitHub Actions workflow](.github/workflows/check-agendas.yml) checks every source every 2 hours. It identifies itself by name in every request, keeps to each site's rate limits and honors robots.txt. What it has seen and sent is kept in `state.json` on the `data` branch: dates, hashes and short snippets, never PDFs. Alerts go by email; nothing tracks who opens or clicks them, and the useful/noise links open an email you choose to send.
+[A GitHub Actions workflow](.github/workflows/check-agendas.yml) checks every source every 2 hours, and hourly from 72 hours before a meeting through meeting day. It identifies itself by name in every request, keeps to each site's rate limits and honors robots.txt. What it has seen and sent is kept in `state.json` on the `data` branch: dates, hashes and short snippets, never PDFs. Alerts go by email; nothing tracks who opens or clicks them, and the useful/noise links open an email you choose to send.
 
 It needs four Actions secrets (Settings → Secrets and variables → Actions), which never go in this repo:
 

@@ -4,10 +4,9 @@
     python -m needle.run --dry-run                 # print what would be sent; send and save nothing
     python -m needle.run --test-email              # send one sample alert to check the mail setup
 
-The workflow runs every 2 hours and reads every meeting from 2 days back to
-30 days ahead. A run that comes less than 110 minutes after the last full one
-(GitHub sometimes delays scheduled runs, or the cron is made hourly) re-reads
-only meetings from 72 hours out through meeting day.
+The workflow runs hourly. Every 2 hours the run reads every meeting from 2
+days back to 30 days ahead; in the hours between, it re-reads only meetings
+from 72 hours out through meeting day, to catch amended agendas and late memos.
 """
 
 from __future__ import annotations
