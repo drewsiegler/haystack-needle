@@ -13,7 +13,7 @@ Eight adapters cover about 52 bodies. Four of them read an official JSON API or 
 | CivicClerk | 5 | Public OData API, JSON (agenda items and attachments) | none (404) | 4, built |
 | CivicPlus AgendaCenter | 3 | Agenda search page + PDFs | `Disallow: /Search`, `/RSS.aspx` (not `/AgendaCenter/`) | 4, built |
 | eScribe | 1 | Meeting calendar (JSON POST) + HTML agenda, PDFs | none (404); a Cloudflare bot check on files | 4, built |
-| Simbli (eBoardSolutions) | 18 (12 confirmed) | Meeting list (HTML) + agenda JSON, one request per item | none (the URL is an error page); **an Imperva bot check** | 4, stopped |
+| Simbli (eBoardSolutions) | 21 (15 confirmed) | Meeting list (HTML) + agenda JSON, one request per item | none (the URL is an error page); **an Imperva bot check** | 4, stopped |
 | BoardDocs | 13 | — | **disallows all but search engines** | 4, blocked |
 | PrimeGov | 2 | Public API works, JSON | **`Disallow: /`** | 4, blocked |
 | One-offs | 7 | Municode Meetings, CivicWeb, iCompass, AgendaOnline, Granicus, Laserfiche | varies | later |
@@ -138,8 +138,11 @@ So a new agenda takes about 3 requests plus one per item before any file: about 
 | Morgan Hill Unified | 36030336 | Bot check |
 | Loma Prieta Joint Union | 36030511 | Bot check |
 | Saratoga Union | 36030439 | Bot check |
+| Cupertino Union | 36031664 | Not read on Simbli. On Oct 15 the district's board page linked its "GAMUT Meetings" to `index.aspx?S=36031664` |
+| Mount Pleasant | 36031934 | Not read on Simbli. On Oct 15 the district's "Access Agendas Here" linked to `simbli.eboardsolutions.com/csba/mountpleasant/`; its Aug 12, 2026 minutes are there |
+| Oak Grove | 36030929 | Not read on Simbli. On Oct 15 the district said it's "transitioning from BoardDocs to GAMUT Meetings", and `ogsd.cc/boardmeetings` redirected to `SB_MeetingListing.aspx?S=36030929` |
 
-The other six each have a Simbli site, but whether they post meetings there is still **not confirmed**: the check came before their meeting lists were read. Cambrian 36031579, Campbell Union SD 36030716, Franklin-McKinley 36030745, Orchard 36030181, San José Unified 36030421, Santa Clara Unified 36030433. Other county districts with Simbli sites, not checked (probably board policies only; most post meetings elsewhere, per this page): Campbell Union HSD 36031021, Cupertino Union 36031664, Evergreen 36031535, Mount Pleasant 36031934, Oak Grove 36030929, Fremont Union HSD 36030747, Gilroy Unified 36030249, Milpitas Unified 36030333, Mountain View-Los Altos HSD 36030803 and Lakeside Joint 36030711.
+The other six each have a Simbli site, but whether they post meetings there is still **not confirmed**: the check came before their meeting lists were read. Cambrian 36031579, Campbell Union SD 36030716, Franklin-McKinley 36030745, Orchard 36030181, San José Unified 36030421, Santa Clara Unified 36030433. GAMUT Meetings, which Cupertino Union and Oak Grove link to, is the California School Boards Association's meetings service, which runs on Simbli. The last three rows were found from the districts' own sites, with no requests to Simbli. Other county districts with Simbli sites, not checked: Campbell Union HSD 36031021, Evergreen 36031535, Fremont Union HSD 36030747, Gilroy Unified 36030249, Milpitas Unified 36030333, Mountain View-Los Altos HSD 36030803 and Lakeside Joint 36030711. Most of them post meetings elsewhere (per this page), so their sites may hold only board policies. But Cupertino Union, Mount Pleasant and Oak Grove looked that way too, so each is worth checking from the district's own site.
 
 Options, for Drew:
 
