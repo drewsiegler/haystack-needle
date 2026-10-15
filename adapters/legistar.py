@@ -43,6 +43,11 @@ SOURCES = {
 }
 
 
+def calendar_url(client: str) -> str:
+    """The client's public meeting calendar, for people checking on a problem."""
+    return f"https://{client}.legistar.com/Calendar.aspx"
+
+
 def _base(client: str) -> str:
     return API.format(client=client)
 
@@ -102,6 +107,27 @@ def fetch_matter_text(fetcher: Fetcher, client: str, matter_id: int) -> str:
     latest = max(versions, key=lambda v: int(v["Value"]) if str(v["Value"]).isdigit() else 0)
     text = fetcher.get_json(f"{_base(client)}/matters/{matter_id}/texts/{latest['Key']}")
     return _clean(text.get("MatterTextPlain"))
+
+
+def fetch_matter_histories(fetcher: Fetcher, client: str, matter_id: int) -> list[dict]:
+    return fetcher.get_json(f"{_base(client)}/matters/{matter_id}/histories",
+                            {"AgendaNote": 0, "MinutesNote": 0})
+
+
+def item_text(fetcher: Fetcher, client: str, item: Item) -> str:
+    """The text of the item's matter, for a meeting collected with_text=False."""
+    return fetch_matter_text(fetcher, client, int(item.matter_id)) if item.matter_id else ""
+
+
+def matter_history(fetcher: Fetcher, client: str, matter_id: str) -> list[tuple[date, str, str]]:
+    """Where a matter has been: (date, body, action), oldest first, one row per body and day."""
+    seen = {}
+    for row in fetch_matter_histories(fetcher, client, int(matter_id)):
+        if not row.get("MatterHistoryActionDate"):
+            continue
+        key = (_date(row["MatterHistoryActionDate"]), _clean(row.get("MatterHistoryActionBodyName")))
+        seen.setdefault(key, _clean(row.get("MatterHistoryActionName")))
+    return [(day, body, action) for (day, body), action in sorted(seen.items())]
 
 
 def is_placeholder(event: dict) -> bool:
@@ -165,14 +191,15 @@ def read_meeting(fetcher: Fetcher, client: str, event: dict, with_text: bool = T
 
 
 def collect(fetcher: Fetcher, clients=tuple(SOURCES), today: date | None = None,
-            with_text: bool = True) -> tuple[list[Meeting], dict[str, str]]:
-    """Meetings from DAYS_BACK days ago to DAYS_AHEAD days ahead for each client.
+            with_text: bool = True, days_back: int = DAYS_BACK,
+            days_ahead: int = DAYS_AHEAD) -> tuple[list[Meeting], dict[str, str]]:
+    """Meetings from days_back days ago to days_ahead days ahead for each client.
 
     Returns the meetings and, for any client that failed, what went wrong, so one
     client being down doesn't stop the others.
     """
     today = today or datetime.now(PACIFIC).date()
-    start, end = today - timedelta(days=DAYS_BACK), today + timedelta(days=DAYS_AHEAD)
+    start, end = today - timedelta(days=days_back), today + timedelta(days=days_ahead)
     meetings: list[Meeting] = []
     failures: dict[str, str] = {}
     for client in clients:

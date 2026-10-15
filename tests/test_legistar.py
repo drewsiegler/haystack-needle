@@ -112,3 +112,22 @@ def test_collect_reports_a_failing_client_and_keeps_going():
     meetings, failures = legistar.collect(fetcher, ["sanjose", "cupertino"], today=date(2026, 10, 14))
     assert meetings == []
     assert list(failures) == ["sanjose"]
+
+
+def test_matter_history_one_row_per_body_and_day():
+    fetcher = FakeFetcher({"/matters/10357/histories": load("legistar/mountainview_matter_10357_histories.json")})
+    history = legistar.matter_history(fetcher, "mountainview", "10357")
+
+    assert history == [
+        (date(2026, 2, 10), "Council Policy and Procedures Committee", "recommended for approval"),
+        (date(2026, 2, 24), "City Council", "approved"),
+    ]
+
+
+def test_collect_window_can_be_narrowed():
+    fetcher = FakeFetcher({"/events": []})
+    legistar.collect(fetcher, clients=["mountainview"], today=date(2026, 10, 14),
+                     with_text=False, days_back=0, days_ahead=3)
+
+    query = fetcher.calls[0][1]["$filter"]
+    assert "datetime'2026-10-14'" in query and "datetime'2026-10-18'" in query

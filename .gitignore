@@ -10,3 +10,6 @@ __pycache__/
 
 # Cached API responses and downloads from backtest/run.py.
 .cache/
+
+# Local state from python -m needle.run; the workflow keeps it on the data branch.
+.state/

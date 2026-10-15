@@ -1,0 +1,5 @@
+[
+  {"MatterHistoryId": 97101, "MatterHistoryEventId": 3301, "MatterHistoryAgendaSequence": 4, "MatterHistoryActionDate": "2026-02-10T00:00:00", "MatterHistoryActionName": "recommended for approval", "MatterHistoryActionBodyName": "Council Policy and Procedures Committee", "MatterHistoryPassedFlagName": "Pass"},
+  {"MatterHistoryId": 97263, "MatterHistoryEventId": 3354, "MatterHistoryAgendaSequence": 19, "MatterHistoryActionDate": "2026-02-24T00:00:00", "MatterHistoryActionName": "approved", "MatterHistoryActionBodyName": "City Council", "MatterHistoryPassedFlagName": "Pass"},
+  {"MatterHistoryId": 97520, "MatterHistoryEventId": 3354, "MatterHistoryAgendaSequence": null, "MatterHistoryActionDate": "2026-02-24T00:00:00", "MatterHistoryActionName": "approved", "MatterHistoryActionBodyName": "City Council", "MatterHistoryPassedFlagName": "Pass"}
+]
