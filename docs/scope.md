@@ -59,7 +59,7 @@ With the project now called Haystack Needle, the names no longer clash. It's sti
 
 ## v1 scope
 
-v1 runs through phase 4: the Legistar and IQM2 bodies, school boards, and the other long-tail platforms. It reads every item title and attached staff report and emails matches to you. Everything else waits until v1 has caught a real item.
+v1 runs through phase 4: the Legistar and IQM2 bodies and the other long-tail platforms, but not school boards, which wait for a later release (decided Oct 15, 2026). It reads every item title and attached staff report and emails matches to you. Everything else waits until v1 has caught a real item.
 
 **v1 does**
 
@@ -76,6 +76,7 @@ v1 runs through phase 4: the Legistar and IQM2 bodies, school boards, and the ot
 - Read minutes, video or transcripts.
 - Offer public sign-up, accounts or a web dashboard.
 - Use AI triage (planned for after v1).
+- Read school boards: K-12 districts, the County Board of Education and the community college districts. So many sit behind robots.txt or bot checks (BoardDocs, Diligent Community, Simbli) that they're shelved for a later release; the two adapters already built for them (Boardable, ElectronicSchoolBoard) are kept but not run.
 
 ## Matching
 
@@ -179,7 +180,7 @@ Start with a backtest, not code: a list of past items the app should have caught
 1. **Backtest set and source check.** List 5 to 10 past items (the Saratoga policing proposal, local Flock contracts, rent items) with the body and date each first appeared. Finish the platform table above, Saratoga first.
 2. **Legistar + email.** One adapter for the six Legistar bodies, the watchlist file, the matcher, and email alerts. If Saratoga's platform turns out to be simple, add it here.
 3. **IQM2.** Board of Supervisors, its committees and VTA, plus per-source health checks.
-4. **Long tail.** BoardDocs (school boards), CivicClerk (Milpitas), CivicPlus (Los Gatos and others), PrimeGov (Palo Alto). This completes v1.
+4. **Long tail.** CivicClerk (Milpitas and others), CivicPlus (Saratoga and others), eScribe (Campbell), and agenda emails for the bodies whose sites turn bots away (Palo Alto, Los Gatos and others). This completes v1. School boards (BoardDocs, Diligent Community, Simbli and others) wait for a later release.
 5. **Reach.** RSS feeds, a simple public page of recent matches, District Lookup tagging, Signal.
 6. **Open it up.** Let partner groups bring their own watchlists.
 
@@ -245,7 +246,7 @@ All six are settled, and the Claude Code prompt above reflects them.
 - [x] **Name.** Haystack Needle (Agenda Watch was taken).
 - [x] **Who gets v1 alerts.** Just you for now; SURJ and partners later.
 - [x] **Hosting.** GitHub: a public repo with scheduled Actions, $0, with credentials in Actions secrets.
-- [x] **School boards in v1.** Yes, in phase 4. BoardDocs and Diligent Community boards are covered by their own agenda emails, since those platforms' robots.txt turns bots away (decided Oct 15, 2026; see [sources.md](sources.md)).
+- [x] **School boards in v1.** No: shelved for a later release (decided Oct 15, 2026), since so many sit behind robots.txt or bot checks. Earlier that day the answer was yes, with BoardDocs and Diligent Community boards covered by their own agenda emails; those requests have gone out, and the emails are kept for the later release (see [sources.md](sources.md)).
 - [x] **AI triage later.** Yes, after v1. It would summarize matches and drop false positives for a small per-run cost.
 - [x] **License.** AGPL-3.0, so anyone running a modified copy as a service has to share their changes.
 
