@@ -15,7 +15,7 @@ Seven adapters cover about 51 bodies. Four of them read an official JSON API or 
 | Simbli (eBoardSolutions) | 18 (12 confirmed) | Meeting pages | none found | 4 |
 | BoardDocs | 13 | — | **disallows all but search engines** | 4, blocked |
 | PrimeGov | 2 | Public API works, JSON | **`Disallow: /`** | 4, blocked |
-| One-offs | 7 | Municode Meetings, CivicWeb, iCompass, AgendaOnline, Granicus, Laserfiche | varies | later |
+| One-offs | 8 | Municode Meetings, CivicWeb, iCompass, AgendaOnline, Granicus, Laserfiche, eScribe | varies | later |
 
 ## By body
 
@@ -83,7 +83,7 @@ What the adapter relies on (checked Oct 14, 2026):
 | Body | Agenda list | Notes |
 | --- | --- | --- |
 | Saratoga (council and commissions) | saratoga.ca.us/AgendaCenter | |
-| Campbell commissions | campbellca.gov/AgendaCenter | The City Council category stops at Oct 7, 2025; where the council posts now is still to be found |
+| Campbell commissions | campbellca.gov/AgendaCenter | The City Council category stops at Oct 7, 2025 because the council moved to eScribe (see [One-offs](#one-offs)) |
 | Los Altos Hills committees | losaltoshills.ca.gov/AgendaCenter | The City Council category (id 15) is skipped: CivicClerk reads that council item by item |
 | Los Gatos commissions | losgatosca.gov/AgendaCenter | **Not read**: nothing posted after October 2024. The commissions probably moved to Municode Meetings with the Town Council (not checked) |
 
@@ -121,8 +121,20 @@ PrimeGov's public API (`/api/v2/PublicPortal/ListUpcomingMeetings`) returned Pal
 | Gilroy Unified | AgendaOnline (gilroy.agendaonline.net); also links Simbli | Confirm which is current |
 | Housing Authority of the County of Santa Clara | Granicus (hacsc.granicus.com) | Found, not tested |
 | Midpeninsula Regional Open Space District | Laserfiche portal | Found, not tested |
+| Campbell City Council | eScribe (pub-campbell.escribemeetings.com) | Found and tested Oct 14, 2026; no adapter yet. Details below |
 
 Still unknown: Lakeside Joint SD, El Camino Healthcare District, Santa Clara County Central Fire.
+
+#### Campbell City Council on eScribe
+
+Campbell's council agendas have been on eScribe since October 2025, at `https://pub-campbell.escribemeetings.com`. The city's AgendaCenter page shows that portal in a frame above the old category list, but the council's own page (`/189/City-Council`) still links its "Most Recent Agenda" to the AgendaCenter category, which gives the Oct 7, 2025 packet. That packet was made by eScribe and names the portal on its first page, which is how it was found. The commissions stay on AgendaCenter; the portal has only council meetings.
+
+The host returns 404 for `/robots.txt`, so the usual one request a second applies. What an adapter could rely on (checked Oct 14, 2026):
+
+- `POST /MeetingsCalendarView.aspx/GetCalendarMeetings` with the JSON body `{"calendarStartDate": "2025-09-01", "calendarEndDate": "2026-12-01"}` lists the meetings in that window as JSON (`{"d": [...]}`; 50 meetings and 225 KB for those 15 months). It's the call the portal's own calendar makes. Each meeting has an `ID` (a GUID), `MeetingName` (regular session, executive session, study session or special meeting), `StartDate` in local time (`2026/10/06 19:00:30`), `Location`, `HasAgenda` and `MeetingDocumentLink`: the agenda PDF, the full packet as PDF and as HTML, minutes and video. `Fetcher` only does GET, so an adapter needs a small POST helper there.
+- `/Meeting.aspx?Id={ID}&Agenda=Agenda&lang=English` is the full agenda as HTML, item by item: number, title, attachments and recommended action. The Oct 6, 2026 regular meeting had 24 items and 52 attachment links in 205 KB. That's real item text, unlike Campbell's AgendaCenter packets.
+- Attachments and agenda PDFs are at `/FileStream.ashx?DocumentId=`.
+- The first meeting listed is Oct 7, 2025, the same meeting as the last one in the AgendaCenter category. The latest is Oct 6, 2026. The next regular meeting is Oct 20, 2026, and agendas go up the Friday before.
 
 ## What this means for the collector
 
