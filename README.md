@@ -6,14 +6,14 @@ It's built for catching an item at its first public appearance, often a committe
 
 ## Status
 
-**Phase 3 of 6 is built, and phase 4 has begun: the Legistar, IQM2 and CivicClerk adapters, the matcher, the backtest, email alerts and health checks. The rest of the long tail (school boards and the other smaller cities) is next.**
+**Phase 3 of 6 is built, and phase 4 has begun: the Legistar, IQM2, CivicClerk and CivicPlus adapters, the matcher, the backtest, email alerts and health checks. The rest of the long tail (school boards and the other smaller cities) is next.**
 
 - [docs/scope.md](docs/scope.md): what the app does, v1 scope and build phases.
 - [docs/sources.md](docs/sources.md): which platform each body posts its agendas on, and what each host's robots.txt allows.
 - [backtest/cases.yaml](backtest/cases.yaml): 11 past items the app should have caught, with every agenda they appeared on. [backtest/README.md](backtest/README.md) has what a first titles-only check found.
 - [watchlists.yaml](watchlists.yaml): the starting watchlists.
 
-It covers the six agencies on Legistar (San José, Sunnyvale, Mountain View, Santa Clara, Cupertino, Valley Water) and the two on IQM2: Santa Clara County (the Board of Supervisors, its committees, boards and commissions) and VTA, and the five cities on CivicClerk (Milpitas, Morgan Hill, Gilroy, Los Altos Hills and Los Altos). High-priority matches are emailed right away; the rest go in a 7 a.m. digest.
+It covers the six agencies on Legistar (San José, Sunnyvale, Mountain View, Santa Clara, Cupertino, Valley Water) and the two on IQM2: Santa Clara County (the Board of Supervisors, its committees, boards and commissions) and VTA, the five cities on CivicClerk (Milpitas, Morgan Hill, Gilroy, Los Altos Hills and Los Altos), and the three on CivicPlus AgendaCenter: Saratoga (council and commissions), Campbell's commissions and Los Altos Hills' committees. On CivicPlus the agenda is a PDF with no item list, so the whole agenda is matched, and an alert points to the page where the match is. High-priority matches are emailed right away; the rest go in a 7 a.m. digest.
 
 IQM2 asks for a minute between requests, so a new county agenda is read over several runs: item titles and notes first, then staff reports and attachments, soonest meetings first. A Board of Supervisors agenda with 80 items and 150 attachments takes most of a day to read in full.
 
@@ -27,7 +27,7 @@ python3 -m venv .venv && .venv/bin/pip install -r requirements-dev.txt
 .venv/bin/python -m needle.run --dry-run --only iqm2 --cache .cache/dry
 ```
 
-The tests never touch the network. `needle.run --dry-run` reads the live agendas and prints the emails it would send, without sending anything or saving state. `--only` runs one adapter; `--cache` keeps what a dry run downloads, so the next one picks up where it stopped (a dry run saves no state, and IQM2's minute between requests makes a first county read take about 25 minutes). `backtest/run.py` replays the past cases against the live Legistar API (one request a second) and IQM2 (one a minute), and caches what it downloads in `.cache/` so a second run is quick.
+The tests never touch the network. `needle.run --dry-run` reads the live agendas and prints the emails it would send, without sending anything or saving state. `--only` runs one adapter; `--cache` keeps what a dry run downloads, so the next one picks up where it stopped (a dry run saves no state, and IQM2's minute between requests makes a first county read take about 25 minutes). `backtest/run.py` replays the past cases against the live Legistar API, CivicClerk and CivicPlus (one request a second) and IQM2 (one a minute), and `--watchlists` tries term changes on a copy of the watchlists, and caches what it downloads in `.cache/` so a second run is quick.
 
 ## How it runs
 

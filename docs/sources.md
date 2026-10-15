@@ -11,7 +11,7 @@ Seven adapters cover about 51 bodies. Four of them read an official JSON API or 
 | Legistar | 6 | Official Web API, JSON | none (404) | 2 |
 | Granicus IQM2 | 3 | HTML calendar + RSS feed, PDFs | `Crawl-delay: 60` | 3 |
 | CivicClerk | 5 | Public OData API, JSON (agenda items and attachments) | none (404) | 4, built |
-| CivicPlus AgendaCenter | 4 | Agenda list + PDFs | `Disallow: /RSS.aspx`, Campbell adds `Crawl-delay: 20` | 4 (or 2) |
+| CivicPlus AgendaCenter | 3 | Agenda search page + PDFs | `Disallow: /Search`, `/RSS.aspx` (not `/AgendaCenter/`) | 4, built |
 | Simbli (eBoardSolutions) | 18 (12 confirmed) | Meeting pages | none found | 4 |
 | BoardDocs | 13 | — | **disallows all but search engines** | 4, blocked |
 | PrimeGov | 2 | Public API works, JSON | **`Disallow: /`** | 4, blocked |
@@ -69,18 +69,23 @@ All five API hosts return 404 for `/robots.txt`, so the usual one request a seco
 | Los Altos Hills City Council (commissions use AgendaCenter) | `losaltoshillsca` |
 | Los Altos City Council and commissions | `losaltosca` |
 
-### CivicPlus AgendaCenter (phase 4, or phase 2 for Saratoga)
+### CivicPlus AgendaCenter (phase 4, built)
 
-| Body | Agenda list |
-| --- | --- |
-| Saratoga (council and commissions) | saratoga.ca.us/AgendaCenter |
-| Campbell | campbellca.gov/AgendaCenter |
-| Los Gatos commissions (Town Council is on Municode Meetings) | losgatosca.gov/AgendaCenter |
-| Los Altos Hills commissions | losaltoshills.ca.gov/AgendaCenter |
+**Saratoga answered normally** to an honest user agent: agenda list, search and PDFs. The refusal noted in the scope was probably aimed at a generic fetcher. All the AgendaCenter hosts serve the same CivicPlus robots.txt: it disallows `/Search`, `/RSS.aspx` and a few admin paths, but not `/AgendaCenter/`. Its `Crawl-delay: 20` sits under the Siteimprove user agents only (phase 1 read it as Campbell's), so the usual one request a second applies.
 
-**Saratoga answered normally** to an honest user agent: agenda list, search and PDFs. The refusal noted in the scope was probably aimed at a generic fetcher. Saratoga's council agendas are short PDFs (2 to 6 pages) that list each staff report and attachment by name, so title matching works well there. Its robots.txt disallows `/RSS.aspx` and `/Search`; AgendaCenter's own pages (`/AgendaCenter/...`) are allowed. Campbell asks for 20 seconds between requests.
+What the adapter relies on (checked Oct 14, 2026):
 
-Saratoga is simple enough to add in phase 2 if you want the policing-contract fight covered early.
+- `/AgendaCenter/Search/?term=&CIDs=all&startDate=MM/DD/YYYY&endDate=MM/DD/YYYY` lists every category's agendas in a date window, on one page, so a run makes one request per city and a December window crosses into January without trouble. The main `/AgendaCenter` page shows only each category's current year, and other years load by POST.
+- Each row has the meeting date, the agenda's title and ID, and "Posted" or "Amended" with a Pacific date and time. The adapter uses that time to know when to read the PDF again. No time of day for the meeting itself.
+- `/AgendaCenter/ViewFile/Agenda/_MMDDYYYY-NNNN` is the agenda PDF, and the only text there is: no item list, no HTML agenda, no separate packet link on any of the four sites. So each meeting is one item whose attachment is the PDF. Saratoga's council agendas are 2 to 6 pages that name each staff report (the names are links to the reports, which the adapter doesn't follow yet). Campbell's "agenda" is the whole packet: the Oct 13, 2026 Planning Commission file was 138 MB and over 500 pages. A match past page 10 scores low and waits for the digest.
+- `/AgendaCenter/{Category-Name}-{id}/?#_MMDDYYYY-NNNN` opens the body's agenda list at that row; it's the alert's meeting page link.
+
+| Body | Agenda list | Notes |
+| --- | --- | --- |
+| Saratoga (council and commissions) | saratoga.ca.us/AgendaCenter | |
+| Campbell commissions | campbellca.gov/AgendaCenter | The City Council category stops at Oct 7, 2025; where the council posts now is still to be found |
+| Los Altos Hills committees | losaltoshills.ca.gov/AgendaCenter | The City Council category (id 15) is skipped: CivicClerk reads that council item by item |
+| Los Gatos commissions | losgatosca.gov/AgendaCenter | **Not read**: nothing posted after October 2024. The commissions probably moved to Municode Meetings with the Town Council (not checked) |
 
 ### Simbli (phase 4)
 
@@ -122,7 +127,7 @@ Still unknown: Lakeside Joint SD, El Camino Healthcare District, Santa Clara Cou
 ## What this means for the collector
 
 - **User agent.** Use `Mozilla/5.0 (compatible; HaystackNeedle/<version>; +<repo URL>)`. It's the standard honest-bot format, it names the project and where to reach it, and BoardDocs rejects anything else outright.
-- **Rate.** One request a second is the floor, but honor each host's `Crawl-delay`: 60 s for IQM2, 20 s for Campbell. Feeds and APIs first, pages second.
+- **Rate.** One request a second is the floor, but honor each host's `Crawl-delay`: 60 s for IQM2. Feeds and APIs first, pages second.
 - **robots.txt is per host, not per platform.** Simbli's robots.txt URL redirects to an error page; Legistar's and CivicClerk's API hosts have none.
 
 ## Open question: BoardDocs and PrimeGov
