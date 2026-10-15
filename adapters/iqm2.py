@@ -107,16 +107,19 @@ def parse_calendar(page: str) -> list[dict]:
         if not link:
             continue
         tip = html.unescape(link.group(2))
-        when = datetime.strptime(" ".join(tip.split("\r", 1)[0].split()), "%A, %B %d, %Y %I:%M %p")
+        first_line = " ".join(tip.split("\r", 1)[0].split())  # "TUESDAY, OCTOBER 13, 2026 10:00 AM"
+        day = datetime.strptime(re.match(r"\w+, \w+ \d+, \d{4}", first_line).group(0), "%A, %B %d, %Y")
+        clock = re.search(r"\d{1,2}:\d{2} [AP]M", first_line)
+        when = datetime.strptime(clock.group(0), "%I:%M %p") if clock else None
         field = {k: v.strip() for k, v in re.findall(r"(Board|Type|Status):\t([^\r]*)", tip)}
         links = re.findall(r"<a href='FileOpen\.aspx\?Type=(\d+)&(?:amp;)?ID=(\d+)", chunk)
         agenda = next((file_id for kind, file_id in links if kind == "14"), None)
         rows.append({
-            "id": link.group(1), "date": when.date(), "time": when.strftime("%-I:%M %p"),
+            "id": link.group(1), "date": day.date(), "time": when.strftime("%-I:%M %p") if when else "",
             "board": field.get("Board", ""), "type": field.get("Type", ""),
             "status": field.get("Status", ""), "agenda": agenda,
             # When the calendar's links or the time change, read the agenda page again.
-            "sig": f"{when:%Y-%m-%d %H:%M}|{field.get('Status', '')}|"
+            "sig": f"{first_line}|{field.get('Status', '')}|"
                    + ",".join(f"{kind}:{file_id}" for kind, file_id in links),
         })
     return rows
@@ -245,7 +248,7 @@ def read_pages(fetcher: Fetcher, due: dict[str, list[dict]], cache: dict, now: d
             except Deferred:
                 queues.pop(client, None)  # this portal's time is up; the rest wait for the next run
                 continue
-            except (httpx.HTTPError, PortalError) as error:
+            except (httpx.HTTPError, PortalError, ValueError) as error:
                 print(f"IQM2 {client}: couldn't read meeting {row['id']}: {type(error).__name__}: {error}",
                       file=sys.stderr)
                 continue
@@ -271,7 +274,8 @@ def collect(fetcher: Fetcher, clients=tuple(SOURCES), today: date | None = None,
     for client in clients:
         try:
             rows = parse_calendar(_decode(fetcher.get(calendar_page(client, start, end))))
-        except (httpx.HTTPError, PortalError) as error:
+        except (httpx.HTTPError, PortalError, ValueError, AttributeError) as error:
+            # ValueError, AttributeError: the calendar's layout changed under the parser.
             failures[client] = f"{type(error).__name__}: {error}"
             print(f"IQM2 {client}: {failures[client]}", file=sys.stderr)
             continue

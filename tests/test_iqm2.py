@@ -55,9 +55,17 @@ def test_calendar_lists_meetings_with_their_board_status_and_agenda():
     assert rows[2] == {
         "id": "17855", "date": date(2026, 10, 13), "time": "2:00 PM",
         "board": "Finance and Government Operations Committee", "type": "Regular Meeting",
-        "status": "Scheduled", "agenda": "16009", "sig": "2026-10-13 14:00|Scheduled|14:16009,1:16009"}
+        "status": "Scheduled", "agenda": "16009",
+        "sig": "TUESDAY, OCTOBER 13, 2026 2:00 PM|Scheduled|14:16009,1:16009"}
     vta = iqm2.parse_calendar(fixture("santaclaravta_calendar_2026-10-12_2026-11-13.html"))
     assert [r["board"] for r in vta if r["id"] == "4678"] == ["Board of Directors"]
+
+
+def test_a_meeting_with_no_time_still_has_its_date():
+    page = fixture("sccgov_calendar_2026-10-12_2026-11-13.html").replace(
+        "TUESDAY, OCTOBER 13, 2026  2:00 PM", "TUESDAY, OCTOBER 13, 2026  TBD")
+    row = next(r for r in iqm2.parse_calendar(page) if r["id"] == "17855")
+    assert (row["date"], row["time"]) == (date(2026, 10, 13), "")
 
 
 def test_the_portals_error_page_is_an_error_not_an_empty_calendar():
