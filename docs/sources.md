@@ -239,6 +239,8 @@ Still unknown: Lakeside Joint SD, El Camino Healthcare District, Santa Clara Cou
 
 BoardDocs, Diligent Community and PrimeGov say no to every bot that isn't a search engine, and the scope says to honor robots.txt. On Oct 15, 2026 Drew decided to leave them out of the scraper and cover their bodies through the bodies' own agenda emails, matched like any agenda. It's slower and thinner (an email may only say that an agenda is up, with a link the app can't follow), but it's within the rules. The other options were asking each body for permission to fetch, or fetching anyway, which would break the scope's rule.
 
+Later on Oct 15 Drew added two towns on the same terms: Monte Sereno, whose CivicWeb robots.txt also says no, and Los Gatos, whose Municode portal refuses scripts (see [One-offs](#one-offs)). A Los Gatos agenda email should carry the meeting's Municode id, and with it the app can read the agenda itself from meetings.municode.com, which allows scripts.
+
 **Where the emails go.** A new mailbox used only for these emails, at a provider that offers IMAP with an app password; each run reads it, with the app password kept in Actions secrets. The Proton alert address won't do: Proton offers IMAP only through its Bridge app, which runs on your own computer.
 
 **How to get on each list.** California's open meeting law lets anyone ask in writing to be sent a body's agendas, and since 2022 (SB 274) a body with a website has to email the agenda, or a link to it, when asked to (Gov. Code §54954.1). The request lasts for the calendar year and has to be renewed after January 1. A body may charge for mailing, no more than its cost. Two bodies also have a sign-up form. Found Oct 15, 2026:
@@ -256,9 +258,11 @@ BoardDocs, Diligent Community and PrimeGov say no to every bot that isn't a sear
 | East Side Union HSD | Diligent Community | Written request; no sign-up found |
 | Campbell Union HSD | Diligent Community | Written request; no sign-up found |
 | Open Space Authority | PrimeGov | Written request to the Clerk of the Board; its newsletter is general news, not agendas |
+| Los Gatos Town Council and commissions | Municode Meetings (the portal refuses scripts) | Written request to the Town Clerk; no sign-up checked |
+| Monte Sereno City Council and commissions | iCompass CivicWeb | Written request to the City Clerk; no sign-up checked |
 
 **Steps.**
 
 1. Drew sets up the mailbox.
-2. Sign up with the two forms, and send the other nine clerks a written request under §54954.1 to email each agenda to that address (a copy of the agenda rather than only a link, where they'll do it). Renew every January.
+2. Sign up with the two forms, and send the other eleven clerks a written request under §54954.1 to email each agenda to that address (a copy of the agenda rather than only a link, where they'll do it). Renew every January.
 3. Once a few emails from each body have arrived, build an email adapter against them: read new messages over IMAP, tell the body by its sender, and match the email's text and any attached agenda PDF. Not before: every list formats its emails differently, and the tests need real samples.
