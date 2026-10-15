@@ -6,9 +6,9 @@ Guidance for AI coding agents working in this repo. [docs/scope.md](docs/scope.m
 
 A scheduled job that reads public meeting agendas across Santa Clara County, matches item titles, item text and attached PDFs against [watchlists.yaml](watchlists.yaml), and emails alerts. Each agenda platform gets one small adapter; everything after the adapter (matching, state, alerts) is shared, so adding a body means adding one file.
 
-Status: phase 1 (research) is done. The first half of phase 2 is built: the Legistar adapter, the matcher and the backtest. Next (phase 2b): email alerts, the 7 a.m. digest, the state file on the `data` branch, the Actions workflow and health checks. The phase 2 and 3 build prompt is at the end of the scope.
+Status: phase 1 (research) and phase 2 are built: the Legistar adapter, the matcher, the backtest, email alerts with the 7 a.m. digest, the state file on the `data` branch, the Actions workflow and health checks. Next is phase 3, the IQM2 adapter. The phase 2 and 3 build prompt is at the end of the scope.
 
-Layout: `adapters/` has one file per platform; `needle/` has the shared data model (`models.py`), polite fetching (`fetch.py`), PDF text (`pdftext.py`) and the matcher (`matcher.py`). Run the tests with `python -m pytest`; they never touch the network.
+Layout: `adapters/` has one file per platform; `needle/` has the shared data model (`models.py`), polite fetching (`fetch.py`), PDF text (`pdftext.py`), the matcher (`matcher.py`), the state file (`state.py`), alert emails (`alerts.py` and `templates/`), sending (`mailer.py`), health checks (`health.py`) and the run itself (`run.py`). An adapter module provides `SOURCES`, `collect`, `item_text`, `calendar_url` and optionally `matter_history`; add it to `ADAPTERS` in `run.py`. Run the tests with `python -m pytest`; they never touch the network.
 
 ## Rules
 
