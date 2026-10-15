@@ -50,8 +50,8 @@ mobile-crisis-response:
   priority: normal
   terms: [mobile crisis, crisis response, crisis intervention, co-responder, alternative response,
           community responder, unarmed response, non-police response, behavioral health response,
-          PERT, MCRT, CAHOOTS, TRUST, Trusted Response Urgent Support Team]
-  case_sensitive: [PERT, MCRT, TRUST]
+          PERT, MCRT, CAHOOTS, Trusted Response Urgent Support Team]
+  case_sensitive: [PERT, MCRT]
 housing-and-homelessness:
   priority: normal
   terms: [homeless, homelessness, unhoused, encampment, safe parking, safe sleeping,
