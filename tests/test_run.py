@@ -169,6 +169,14 @@ def test_a_regular_body_gone_quiet_warns_once(setup):
     assert go(NOW + timedelta(hours=2)) == []
 
 
+def test_a_body_the_run_no_longer_reads_is_not_called_quiet(setup):
+    adapter, fetcher, state, go = setup
+    # A school board read before schools were shelved: its source isn't run any more.
+    state["bodies"]["boardable/fhda/body/1"] = {"name": "Foothill-De Anza CCD Board of Trustees", "warned": False,
+                                                "agendas": {}, "dates": ["2026-09-03", "2026-09-10", "2026-09-17", "2026-09-24"]}
+    assert go() == []
+
+
 def test_between_full_runs_only_near_meetings_are_read(setup):
     adapter, fetcher, state, go = setup
     go()

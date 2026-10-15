@@ -25,7 +25,7 @@ from zoneinfo import ZoneInfo
 import httpx
 import yaml
 
-from adapters import boardable, civicclerk, civicplus, escribe, icboard, iqm2, legistar
+from adapters import civicclerk, civicplus, escribe, iqm2, legistar
 from needle import alerts, health, mailer
 from needle import state as statefile
 from needle.fetch import Deferred, Fetcher
@@ -37,8 +37,11 @@ ROOT = Path(__file__).resolve().parents[1]
 WATCHLISTS = ROOT / "watchlists.yaml"
 DEFAULT_STATE = ROOT / ".state" / "state.json"
 PACIFIC = ZoneInfo("America/Los_Angeles")
+# School boards are shelved for a later release (docs/scope.md): adapters/boardable.py
+# (Foothill-De Anza CCD) and adapters/icboard.py (Mountain View-Los Altos HSD) are
+# kept and tested, but not run.
 ADAPTERS = {"legistar": legistar, "iqm2": iqm2, "civicclerk": civicclerk, "civicplus": civicplus,
-            "escribe": escribe, "boardable": boardable, "icboard": icboard}
+            "escribe": escribe}
 FULL_EVERY = timedelta(minutes=110)  # a full run every 2 hours
 NEAR_DAYS = 3  # between full runs, re-check meetings from 72 hours out through meeting day
 TEXT_TTL = timedelta(hours=24)  # re-read item text at least daily, in case it changed quietly
@@ -347,7 +350,9 @@ def run(state: dict, fetcher, outbox: Outbox, now: datetime, adapters: dict = AD
 
     if full:
         calendars = {f"{n}/{c}": a.calendar_url(c) for n, a in adapters.items() for c in a.SOURCES}
-        notices += health.quiet_bodies(state, today, failed, calendars)
+        # A body the run no longer reads (a shelved school board) isn't quiet, just not asked.
+        not_read = {k.rsplit("/body/", 1)[0] for k in state["bodies"]} - set(calendars)
+        notices += health.quiet_bodies(state, today, failed | not_read, calendars)
         state["last_full_run"] = iso(now)
     for subject, text in notices:
         outbox.send(subject, text)
