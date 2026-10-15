@@ -10,7 +10,7 @@ Seven adapters cover about 51 bodies. Four of them read an official JSON API or 
 | --- | --- | --- | --- | --- |
 | Legistar | 6 | Official Web API, JSON | none (404) | 2 |
 | Granicus IQM2 | 3 | HTML calendar + RSS feed, PDFs | `Crawl-delay: 60` | 3 |
-| CivicClerk | 5 | Public OData API, JSON (agenda items and attachments) | none (404) | 4 |
+| CivicClerk | 5 | Public OData API, JSON (agenda items and attachments) | none (404) | 4, built |
 | CivicPlus AgendaCenter | 4 | Agenda list + PDFs | `Disallow: /RSS.aspx`, Campbell adds `Crawl-delay: 20` | 4 (or 2) |
 | Simbli (eBoardSolutions) | 18 (12 confirmed) | Meeting pages | none found | 4 |
 | BoardDocs | 13 | — | **disallows all but search engines** | 4, blocked |
@@ -48,9 +48,18 @@ A run is one thread, so every minute waiting on IQM2 holds up the rest. A run ma
 
 Gilroy's site still links an old `gilroyca.iqm2.com` portal; it has moved to CivicClerk.
 
-### CivicClerk (phase 4, easy)
+### CivicClerk (phase 4, built)
 
 Los Altos moved its current meetings to CivicClerk (found by hand on Oct 14; losaltosca.gov itself returns 403 to scripts). Its older agendas stay in a CivicPlus AgendaCenter archive with RSS and Notify Me, which the app doesn't need. Each city has an open OData API at `https://{tenant}.api.civicclerk.com/v1/`. `Events` lists meetings; `Meetings/{agendaId}` returns the agenda as nested items with their attachments. Tested on the Los Altos Hills Jan 15, 2026 council agenda, which listed the Flock termination item by title.
+
+All five API hosts return 404 for `/robots.txt`, so the usual one request a second applies. What the adapter relies on (checked Oct 14, 2026):
+
+- `Events?$filter=startDateTime ge ... and startDateTime lt ...` lists meetings. The answer is paged: Los Altos Hills gave 15 rows and an `@odata.nextLink` for a 32-day window, and the adapter follows it (only to the same host). Times are local, written with a `Z`.
+- `Meetings/{agendaId}` is the whole agenda in one request (130 to 300 KB for a council): items nested under their section headings, each with a description (the only item text beyond the title) and attachments. An agenda that isn't published yet answers with no items (`agendaIsPublish: false`), so the adapter lists the meeting and reads the items on a later run. An item's `modifiedDate` is the time of the request, so it can't tell what changed; the agenda's posting time stands in.
+- Agenda PDFs are at `Meetings/GetMeetingFileStream(fileId=,plainText=false)` and attachments at `Meetings/GetAttachmentFile(fileId=)`. Both answer with the PDF and no key. The attachment records also carry a signed blob link (`pdfVersionFullPath`) that expires in a week; the adapter doesn't use it, and the saved fixtures have its signature removed.
+- Titles can hold HTML, tables and `&nbsp;`; the adapter reduces them to plain text and cuts a title over 300 characters, keeping the whole of it in the item's text. Some attachments are Word files, which are left out.
+- No matter history: an item's number (like `2025-876`) is its matter ID, so "moved forward" comes from past alerts, as on IQM2.
+- The meeting page link is `https://{tenant}.portal.civicclerk.com/event/{eventId}/overview`; it opened that meeting's page in a browser on Oct 14, 2026.
 
 | Body | Tenant |
 | --- | --- |

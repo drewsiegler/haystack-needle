@@ -6,14 +6,14 @@ It's built for catching an item at its first public appearance, often a committe
 
 ## Status
 
-**Phase 3 of 6: the Legistar and IQM2 adapters, the matcher, the backtest, email alerts and health checks are built. The long tail (school boards and the smaller cities) is next.**
+**Phase 3 of 6 is built, and phase 4 has begun: the Legistar, IQM2 and CivicClerk adapters, the matcher, the backtest, email alerts and health checks. The rest of the long tail (school boards and the other smaller cities) is next.**
 
 - [docs/scope.md](docs/scope.md): what the app does, v1 scope and build phases.
 - [docs/sources.md](docs/sources.md): which platform each body posts its agendas on, and what each host's robots.txt allows.
 - [backtest/cases.yaml](backtest/cases.yaml): 11 past items the app should have caught, with every agenda they appeared on. [backtest/README.md](backtest/README.md) has what a first titles-only check found.
 - [watchlists.yaml](watchlists.yaml): the starting watchlists.
 
-It covers the six agencies on Legistar (San José, Sunnyvale, Mountain View, Santa Clara, Cupertino, Valley Water) and the two on IQM2: Santa Clara County (the Board of Supervisors, its committees, boards and commissions) and VTA. High-priority matches are emailed right away; the rest go in a 7 a.m. digest.
+It covers the six agencies on Legistar (San José, Sunnyvale, Mountain View, Santa Clara, Cupertino, Valley Water) and the two on IQM2: Santa Clara County (the Board of Supervisors, its committees, boards and commissions) and VTA, and the five cities on CivicClerk (Milpitas, Morgan Hill, Gilroy, Los Altos Hills and Los Altos). High-priority matches are emailed right away; the rest go in a 7 a.m. digest.
 
 IQM2 asks for a minute between requests, so a new county agenda is read over several runs: item titles and notes first, then staff reports and attachments, soonest meetings first. A Board of Supervisors agenda with 80 items and 150 attachments takes most of a day to read in full.
 

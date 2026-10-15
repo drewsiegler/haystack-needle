@@ -51,7 +51,11 @@ Two items still match nothing by title: Saratoga's "Law Enforcement Town Hall" a
 | Sunnyvale tenant protections | Apr 13, 2026, Planning Commission | Yes | title, item text, attachments |
 | Mountain View tenant anti-harassment | Mar 27, 2025, Rental Housing Committee | Yes | title, item text, staff report |
 
-All 8 are caught at their first appearance from the title, with the item text and attachments as backup, and every later stage found matched too. The other 3 cases (Saratoga, the county, Los Altos Hills) wait for their adapters.
+All 8 are caught at their first appearance from the title, with the item text and attachments as backup, and every later stage found matched too. The other 3 cases (Saratoga, the county, Los Altos Hills) waited for their adapters; the county and Los Altos Hills are replayed in the next sections, Saratoga is not yet.
+
+## CivicClerk replay, Oct 14, 2026
+
+The Los Altos Hills Flock case (`--case los-altos-hills-flock-2026`, found by agenda ID 4957 and the start of the item's title) is caught at its first appearance, Jan 15, 2026, City Council, item 6.A: by title ("Flock", "Flock Safety", "automatic license plate", "license plate reader") and in the attachments (the Flock staff report p. 1, a supplement p. 8 and the renewal agreement p. 24). The 60-day sweep read 43 meetings and found no earlier match; 51 network requests.
 
 What else it turned up:
 
@@ -67,6 +71,6 @@ What else it turned up:
 
 - `sheriff` catches Saratoga at every stage but will also fire on most Board of Supervisors agendas. One fix is to limit that term to city bodies, which needs per-term body limits the watchlist format doesn't have yet. Decide after phase 3 shows how noisy it is.
 - Check whether the county's ALPR policy for contract cities was on a 2025 agenda (the IQM2 calendar read starts in Jan 2026).
-- Look for an earlier Los Altos Hills Flock item (Jan 15 was listed under Ongoing Business).
+- Los Altos Hills Flock: a sweep of the 240 days before Jan 15 (175 meetings, titles and agenda notes) found an earlier item: Sept 18, 2025, City Council, "External Access and Data Security Concerns re: Flock ALPR Data (Vice Mayor Bhateja)" (item 2025-606). The case's `first_appearance` could move to that date. Nothing else matched in between.
 - Confirm Saratoga's Oct 7, 2026 vote in the minutes.
 - Add a case for a vague title where only the attachment names Flock, if one turns up.
