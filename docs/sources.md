@@ -13,7 +13,7 @@ Eight adapters cover about 52 bodies. Four of them read an official JSON API or 
 | CivicClerk | 5 | Public OData API, JSON (agenda items and attachments) | none (404) | 4, built |
 | CivicPlus AgendaCenter | 3 | Agenda search page + PDFs | `Disallow: /Search`, `/RSS.aspx` (not `/AgendaCenter/`) | 4, built |
 | eScribe | 1 | Meeting calendar (JSON POST) + HTML agenda, PDFs | none (404); a Cloudflare bot check on files | 4, built |
-| Simbli (eBoardSolutions) | 18 (12 confirmed) | Meeting pages | none found | 4 |
+| Simbli (eBoardSolutions) | 18 (12 confirmed) | Meeting list (HTML) + agenda JSON, one request per item | none (the URL is an error page); **an Imperva bot check** | 4, stopped |
 | BoardDocs | 13 | — | **disallows all but search engines** | 4, blocked |
 | PrimeGov | 2 | Public API works, JSON | **`Disallow: /`** | 4, blocked |
 | One-offs | 7 | Municode Meetings, CivicWeb, iCompass, AgendaOnline, Granicus, Laserfiche | varies | later |
@@ -103,13 +103,52 @@ The host returns 404 for `/robots.txt`, but requests to it are 10 seconds apart 
 
 **Decided Oct 14, 2026: ask the portal less often.** Requests to `escribemeetings.com` are 10 seconds apart (`CRAWL_DELAYS` in `needle/fetch.py`), so a new agenda's 25 or so files take about four minutes, well inside the run's 25 minutes for slow hosts. Whether that keeps the check away isn't known yet; if it doesn't, each run reads files until the check refuses one. Still open: asking Campbell's clerk (or eScribe) to let the project's user agent download the files, or matching the agenda pages only and not downloading the files.
 
-### Simbli (phase 4)
+### Simbli (phase 4, stopped by a bot check)
 
-Meeting pages seen at `simbli.eboardsolutions.com/SB_Meetings/...?S={district id}`:
+Simbli is eBoardSolutions' board portal, `https://simbli.eboardsolutions.com`, with one site per district, named by a site id (`?S=`). Checked Oct 14, 2026 with the project's `Fetcher`.
 
-Alum Rock Union, Los Altos SD, Los Gatos Union, Luther Burbank, Mountain View Whisman (older agendas on NovusAgenda), Sunnyvale SD, Union SD, Los Gatos-Saratoga Joint Union HSD, Morgan Hill Unified, Loma Prieta, Saratoga Union, Berryessa Union.
+**There's no robots.txt.** `/robots.txt` redirects (302) to `/Pages/ErrorPage.aspx?msg=District robots.txt not found in state GS`: the portal reads the path as a district's short name, finds none, and shows its error page with a 200. The page has no rules in it, so nothing is disallowed. The same happens on `assistive.eboardsolutions.com` (the portal's accessible copy). `app1.eboardsolutions.com`, its document service, answers 404. The company's own site, `www.eboardsolutions.com/robots.txt`, allows every bot but seven SEO crawlers.
 
-Only board **policies** seen on Simbli, so the meetings platform still needs a look: Cambrian, Campbell Union SD, Franklin-McKinley, Orchard, San José Unified, Santa Clara Unified.
+**An Imperva bot check guards the portal, and it said no.** Every page carries Imperva's scripts (`/_Incapsula_Resource?SWJIYLWA=...` and a script at a path of random words). On Oct 14, 2026 the Fetcher made about 36 requests to the portal over about ten minutes, one a second or slower, and one meeting page was opened in a browser. Then, reading the 12 districts' meeting lists one a second, the 4th through the 12th all came back as Imperva's "Pardon Our Interruption" page: "something about your browser made us think you were a bot", with a request to turn on JavaScript and cookies. It came with an ordinary 200 status and no `cf-mitigated` header, so `Fetcher` didn't see a bot check. That's why 8 more requests went out before the survey was stopped by hand. Nothing was sent to the host after that. Haystack Needle doesn't try to get past a bot check, so no adapter was built. How long the block lasts, and how many requests Imperva allows a reader that runs no JavaScript, isn't known.
+
+What an adapter would read. All of it worked before the check, with the project's user agent and no sign-in:
+
+- `/SB_Meetings/SB_MeetingListing.aspx?S={site id}` is the district's meeting list as HTML: the newest 50 meetings, each with date and time, title, meeting type and its meeting id (`MID`, in the title's `ViewMeeting("{S}","{MID}","1",...)` link). Berryessa's 50 go back to June 2023, and a meeting is listed only once the district creates it (its Nov 18 meeting wasn't there yet). The list's "load more" call, `POST /Services/api/GetMeetingListing`, needs a bearer token from a cookie and an encrypted connection string from the page. 50 rows already cover the app's window, so the HTML is the simpler read.
+- `/SB_Meetings/ViewMeeting.aspx?S={S}&MID={MID}` is the meeting page. An Angular app draws the agenda in the browser from JSON calls, and the page holds the encrypted ids those calls need (`sToken`, `enDID`, `enMeetingID`, `encrTZ`). They were the same in every session.
+- `/Services/api/MeetingView/GetItemsTreeDTO/?sct=&endid=&enmid=&enuid=&v=` is the agenda outline as JSON: each item's number (`bulletLabel`), title, numeric `AgendaID`, encrypted `ID`, whether it has attachments, and its sub-items. Berryessa's Oct 14, 2026 regular meeting has 92 items, 64 with attachments.
+- `/Services/api/GetMeeting/?endid=&enmid=&entz=` gives the meeting's title, date, place and `IsPublished`.
+- `/Services/api/GetItemContents/?sct=&endid=&enmid=&enaid={item's encrypted ID}&enuid=&entz=&view=` is one item's text as JSON fields (Recommended Motion, Rationale, Financial Impact, Quick Summary / Abstract) and its attachments (`AttachmentID`, file name, type). It takes one request per item. The portal's own page also loads items one at a time (`GetMeetingItemDetailsModel`). No call returned a whole agenda's contents: the packet builder on app1 (`GetMeetingPacketTree`) answers `null` without a sign-in, and Print Agenda builds a PDF.
+- `/Meetings/Attachment.aspx?S={S}&AID={AttachmentID}&MID={MID}` is the file itself, a PDF, with no session needed. The `ViewAgendaMinuteDocument.aspx?aid=` link in the app's code answered "File not found."
+
+So a new agenda takes about 3 requests plus one per item before any file: about 95 for Berryessa's Oct 14 meeting. That's more than the portal allowed in total before the check.
+
+**Site ids.** `POST /CoreServices/api/Search/GetSitesByStateAbbrs?sid=36030528` with the body `["CA"]` lists Simbli's 806 California sites (Berryessa isn't among them). The ids for the districts seen with meetings:
+
+| District | Site id | Meetings checked Oct 14 |
+| --- | --- | --- |
+| Alum Rock Union | 36030683 | Yes: 47 listed, newest Oct 15, 2026 |
+| Berryessa Union | 36030528 | Yes: 50 listed, newest Oct 14, 2026 |
+| Los Altos SD | 36030305 | Yes: 50 listed, newest Sept 28, 2026 |
+| Los Gatos Union | 36030309 | Bot check |
+| Luther Burbank | 36030816 | Bot check |
+| Mountain View Whisman (older agendas on NovusAgenda) | 36031895 | Bot check |
+| Sunnyvale SD | 36030203 | Bot check |
+| Union SD | 36030252 | Bot check |
+| Los Gatos-Saratoga Joint Union HSD | 36030307 | Bot check |
+| Morgan Hill Unified | 36030336 | Bot check |
+| Loma Prieta Joint Union | 36030511 | Bot check |
+| Saratoga Union | 36030439 | Bot check |
+
+The other six each have a Simbli site, but whether they post meetings there is still **not confirmed**: the check came before their meeting lists were read. Cambrian 36031579, Campbell Union SD 36030716, Franklin-McKinley 36030745, Orchard 36030181, San José Unified 36030421, Santa Clara Unified 36030433. Other county districts with Simbli sites, not checked (probably board policies only; most post meetings elsewhere, per this page): Campbell Union HSD 36031021, Cupertino Union 36031664, Evergreen 36031535, Mount Pleasant 36031934, Oak Grove 36030929, Fremont Union HSD 36030747, Gilroy Unified 36030249, Milpitas Unified 36030333, Mountain View-Los Altos HSD 36030803 and Lakeside Joint 36030711.
+
+Options, for Drew:
+
+1. **Ask.** Email eBoardSolutions (or a district that matters most) to let the project's user agent through Imperva at a low rate. Without that, the hourly run can't count on reading Simbli at all.
+2. **Read much less, much slower.** A long crawl delay for the host, item contents read once per item and kept in the state (as IQM2's outlines are), and a cap on requests per run. Whether Imperva counts requests per minute or per day isn't known, and finding out means meeting the check again.
+3. **Titles only.** The meeting list and agenda outline, about 3 requests per meeting, with no item text and no files. It may still meet the check.
+4. **Leave Simbli out**, as with BoardDocs, and cover these boards another way (their notification emails).
+
+Whichever it is, `Fetcher` should first learn to recognize Imperva's page as a bot check (a page titled "Pardon Our Interruption", or Imperva's "Request unsuccessful" page). Otherwise an adapter would read the block page as a district with no meetings. The `_Incapsula_Resource` script alone isn't a sign: every normal page has it.
 
 ### BoardDocs (phase 4, blocked by robots.txt)
 
@@ -144,8 +183,8 @@ Still unknown: Lakeside Joint SD, El Camino Healthcare District, Santa Clara Cou
 
 - **User agent.** Use `Mozilla/5.0 (compatible; HaystackNeedle/<version>; +<repo URL>)`. It's the standard honest-bot format, it names the project and where to reach it, and BoardDocs rejects anything else outright.
 - **Rate.** One request a second is the floor, but honor each host's `Crawl-delay`: 60 s for IQM2. Feeds and APIs first, pages second.
-- **A bot check is a no.** When a host answers with one (eScribe's files sit behind Cloudflare's), stop asking it for the rest of the run, and never try to get past it.
-- **robots.txt is per host, not per platform.** Simbli's robots.txt URL redirects to an error page; Legistar's and CivicClerk's API hosts have none.
+- **A bot check is a no.** When a host answers with one (eScribe's files sit behind Cloudflare's, Simbli behind Imperva's), stop asking it for the rest of the run, and never try to get past it. Not every bot check says so in a header: Imperva's comes as an ordinary page with a 200 status.
+- **robots.txt is per host, not per platform.** Simbli's robots.txt URL redirects to an error page (the portal reads `robots.txt` as a district name), so it has none; Legistar's and CivicClerk's API hosts have none either.
 
 ## Open question: BoardDocs and PrimeGov
 
