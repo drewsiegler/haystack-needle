@@ -4,7 +4,7 @@ Phase 1 source check, done Oct 14, 2026. It replaces the platform table in [scop
 
 ## The short version
 
-Eight adapters cover about 52 bodies. Four of them read an official JSON API or a plain agenda page and need no scraping tricks. The hard part isn't the platforms, it's **robots.txt**: BoardDocs, Diligent Community and PrimeGov tell every bot except search engines to stay out. On Oct 15, 2026 that covered 11 bodies, including the County Board of Education, three community college districts and Palo Alto, and Drew decided to cover them through their own agenda emails instead of scraping (see [Agenda emails](#decided-agenda-emails-for-boarddocs-diligent-community-and-primegov)).
+Nine adapters cover about 52 bodies. Four of them read an official JSON API or a plain agenda page and need no scraping tricks. The hard part isn't the platforms, it's **robots.txt**: BoardDocs, Diligent Community and PrimeGov tell every bot except search engines to stay out. On Oct 15, 2026 that covered 11 bodies, including the County Board of Education, three community college districts and Palo Alto, and Drew decided to cover them through their own agenda emails instead of scraping (see [Agenda emails](#decided-agenda-emails-for-boarddocs-diligent-community-and-primegov)).
 
 | Adapter | Bodies | How it reads | robots.txt | Phase |
 | --- | --- | --- | --- | --- |
@@ -17,8 +17,9 @@ Eight adapters cover about 52 bodies. Four of them read an official JSON API or 
 | BoardDocs | 6 | Their own agenda emails | **disallows all but search engines** | 4, by email (planned) |
 | Diligent Community | 3 | Their own agenda emails | **disallows all** | 4, by email (planned) |
 | PrimeGov | 2 | Their own agenda emails (the public API works, but robots.txt says no) | **`Disallow: /`** | 4, by email (planned) |
+| iCompass ElectronicSchoolBoard | 1 | RSS feed + agenda and item pages, PDFs | none (404) | 4, built |
 | Boardable | 1 (4 of its groups) | Public site pages, which carry their data, + PDFs from S3 | the site allows every bot; **the app host and its JSON API disallow all** | 4, built |
-| One-offs | 7 | Municode Meetings, CivicWeb, iCompass, AgendaOnline, Granicus, Laserfiche | varies | later |
+| One-offs | 6 | Municode Meetings, CivicWeb, AgendaOnline, Granicus, Laserfiche | varies | later |
 
 ## By body
 
@@ -133,6 +134,15 @@ A run asks for the two list pages, then one page per meeting in the window. That
 
 Those five meet about weekly during terms, and their business is mostly student events, club funding, courses and faculty matters. Anything that becomes district policy or a contract goes to the Board. To read one, add its name to `GROUPS` in `adapters/boardable.py`.
 
+### iCompass ElectronicSchoolBoard (phase 4, built)
+
+Mountain View-Los Altos HSD's Board of Trustees, at mvlapub.ic-board.com (the public site; mvla.ic-board.com is the staff side). Neither host has a robots.txt (404), so the usual one request a second applies. Its board policies are on Simbli, which isn't read. What the adapter relies on (checked Oct 15, 2026):
+
+- `/Reference_Library/ESB_RSS/rss.xml` lists the published agendas of the last three months: "Oct 12 2026 7:00PM Agenda", the meeting type, and the meeting id in `default.aspx?rssid=975`. An agenda shows up once it's published (Oct 12's was up by Oct 7); meetings without one aren't listed. Every entry carries the same `pubDate`, the feed's own build time, so it doesn't say when an agenda changed.
+- `/public_agendaview.aspx?mtgId=975` is the agenda: each item's number, title, type (Action, Info) and a "revised" mark, linking to `/public_itemview.aspx?ItemId=...&mtgId=...`. The item ids are encrypted strings, but the same ones come back on every load.
+- An item page has labelled fields (Summary, Funding, Recommendation, Enclosure, and any others the district filled in) and its PDF attachments at `/Attachments/{guid}.pdf`. The printable agenda (`/com/agenda_print.aspx`) has titles only, so the item pages are the only place for text and files.
+- An agenda has about 40 items, one request each (about 40 seconds). The adapter keeps each item's fields and file list in the run's state and reads the page again only when the item's title or revised mark changes, or once a day; a second read the same day is two requests (the feed and the agenda).
+
 ### Simbli (phase 4, stopped by a bot check)
 
 Simbli is eBoardSolutions' board portal, `https://simbli.eboardsolutions.com`, with one site per district, named by a site id (`?S=`). Checked Oct 14, 2026 with the project's `Fetcher`.
@@ -220,7 +230,6 @@ PrimeGov's public API (`/api/v2/PublicPortal/ListUpcomingMeetings`) returned Pal
 | --- | --- | --- |
 | Los Gatos Town Council and commissions | Municode Meetings (losgatos-ca.municodemeetings.com) | **Can't be read as things stand** (checked Oct 15, 2026). The portal lists every Los Gatos body's meetings, but it drops a scripted connection before answering, even for robots.txt, which the app takes as a no. Each agenda is on hosts that allow scripts: an HTML agenda at `meetings.municode.com/adaHtmlDocument/index?cc=LOSGATOS&me={meeting id}` (no robots.txt) and PDFs at `mccmeetings.blob.core.usgovcloudapi.net/losgatos-pubu/MEET-Agenda-{id}.pdf` and `MEET-Packet-{id}.pdf`. But the meeting id is a random 32-character code, and nothing outside the portal lists them: Municode's `PublishPage` needs a page id the town doesn't publish (without one it answers 500), and the town calendar links only to the portal's front page. Ways in: the agenda-email route (a §54954.1 request, whose emails carry the meeting id), or asking the town or Municode to let the app's user agent through, or for the PublishPage id |
 | Monte Sereno | iCompass CivicWeb (montesereno.civicweb.net) | **Blocked by robots.txt** (checked Oct 15, 2026): `User-agent: *` / `Disallow: /`, with only search engines allowed (at a 120-second crawl delay). Its calendar service (`/Services/MeetingsService.svc/meetings?from=&to=`) answers JSON with each meeting's id, type and date. It and the meeting type list were each asked once on Oct 15, in the same batch as robots.txt and before it was read; nothing since. A candidate for the agenda-email route, like BoardDocs and PrimeGov |
-| Mountain View-Los Altos HSD | iCompass / Diligent (mvla.ic-board.com, mvlapub.ic-board.com) | Found by search, not tested |
 | Milpitas Unified | AgendaOnline (per its website) | Not tested |
 | Gilroy Unified | AgendaOnline (gilroy.agendaonline.net); also links Simbli | Confirm which is current |
 | Housing Authority of the County of Santa Clara | Granicus (hacsc.granicus.com) | Found, not tested |
