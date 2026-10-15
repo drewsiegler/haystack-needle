@@ -22,7 +22,8 @@ surveillance:
           Verkada, Axon, RTIC, Real Time Intelligence Center, Fusus]
 policing-contracts:
   priority: high
-  terms: [law enforcement service, police services contract, contract for police services]
+  terms: [law enforcement service, police services contract, contract for police services,
+          Sheriff's Office contract, Sheriff contract]
 immigration:
   priority: high
   terms: [ICE, Immigration and Customs Enforcement, immigration enforcement, 287(g),
