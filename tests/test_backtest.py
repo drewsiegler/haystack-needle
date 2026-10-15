@@ -65,3 +65,27 @@ def test_replay_iqm2_stage_finds_the_item_by_meeting_and_title():
     assert result["item"].number == "56" and result["item"].matter_id == "127331"
     assert run.where(result["matches"]) == 'title: "license plate reader"; item text: "license plate reader"'
     assert run.stage_label(stage) == "meeting 17578"
+
+
+def test_replay_civicclerk_stage_finds_the_item_by_agenda_and_title():
+    base = "https://losaltoshillsca.api.civicclerk.com/v1"
+    january = load("civicclerk/losaltoshillsca_events_2026-01-10_2026-01-20.json")
+    stage = {"date": date(2026, 1, 15), "body": "City Council", "civicclerk_agenda_id": 4957,
+             "item": "Discussion and Possible Direction on Terminating Agreement with FLOCK Safety for the "
+                     "Town's Automatic License Plate Reader System"}
+    result = run.replay_stage(FakeFetcher({f"{base}/Events": january,
+                                           f"{base}/Meetings/4957": load("civicclerk/losaltoshillsca_meeting_4957.json")}),
+                              "losaltoshillsca", stage, TERMS, None)
+
+    assert result["meeting"].id == "4354" and result["item"].number == "6.A"
+    assert run.where(result["matches"]) == 'title: "license plate reader", "Flock"'
+    assert run.stage_label(stage) == "agenda 4957"
+
+
+def test_replay_civicclerk_stage_is_not_found_when_no_meeting_has_that_agenda():
+    base = "https://losaltoshillsca.api.civicclerk.com/v1"
+    stage = {"date": date(2026, 1, 15), "body": "City Council", "civicclerk_agenda_id": 9999, "item": "Anything"}
+    result = run.replay_stage(FakeFetcher({f"{base}/Events": load("civicclerk/losaltoshillsca_events_2026-01-10_2026-01-20.json")}),
+                              "losaltoshillsca", stage, TERMS, None)
+
+    assert result["item"] is None and result["matches"] == []

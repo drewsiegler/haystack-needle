@@ -1,4 +1,4 @@
-"""Replay the Legistar and IQM2 cases in backtest/cases.yaml through the matcher.
+"""Replay the Legistar, IQM2 and CivicClerk cases in backtest/cases.yaml through the matcher.
 
 For each case, every listed stage is looked up on the agenda for its date (by
 MatterId on Legistar; on IQM2, by the meeting's ID and the start of the item's
@@ -30,7 +30,7 @@ import yaml
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from adapters import iqm2, legistar  # noqa: E402
+from adapters import civicclerk, iqm2, legistar  # noqa: E402
 from needle.fetch import Fetcher  # noqa: E402
 from needle.matcher import flag_boilerplate, load_terms, match_item, match_meeting  # noqa: E402
 from needle.pdftext import pdf_pages  # noqa: E402
@@ -62,6 +62,12 @@ def find_stage(fetcher, client, day: date, matter_id: int):
     return None, None
 
 
+def item_by_title(meeting, stage):
+    """The meeting's item whose title starts like the case's (up to any "...")."""
+    wanted = " ".join(re.sub(r"^Item \d+:\s*", "", stage["item"]).split("...")[0].split())[:80].lower()
+    return next((i for i in meeting.items if " ".join(i.title.split()).lower().startswith(wanted)), None)
+
+
 def find_iqm2_stage(fetcher, client, stage):
     """The stage's IQM2 meeting and the item whose title starts like the case's
     (up to any "..."), with its staff report."""
@@ -69,20 +75,34 @@ def find_iqm2_stage(fetcher, client, stage):
            "board": stage["body"], "agenda": None}
     page = iqm2._decode(fetcher.get(iqm2.meeting_page(client, row["id"])))
     meeting = iqm2.build_meeting(client, row, iqm2.parse_outline(page, row["id"]))
-    wanted = " ".join(re.sub(r"^Item \d+:\s*", "", stage["item"]).split("...")[0].split())[:80].lower()
-    item = next((i for i in meeting.items if " ".join(i.title.split()).lower().startswith(wanted)), None)
+    item = item_by_title(meeting, stage)
     if item:
         item.text = "\n\n".join(t for t in (item.text, iqm2.item_text(fetcher, client, item)) if t)
     return meeting, item
 
 
+def find_civicclerk_stage(fetcher, client, stage):
+    """The stage's CivicClerk meeting (found by its agenda ID on that day) and the
+    item whose title starts like the case's. Its description comes with the agenda."""
+    event = next((e for e in civicclerk.fetch_events(fetcher, client, stage["date"], stage["date"])
+                  if e.get("agendaId") == stage["civicclerk_agenda_id"]), None)
+    if event is None:
+        return None, None
+    meeting = civicclerk.read_meeting(fetcher, client, event)
+    return meeting, item_by_title(meeting, stage)
+
+
 def stage_label(stage) -> str:
-    return f'matter {stage["matter"]}' if "matter" in stage else f'meeting {stage["iqm2_meeting_id"]}'
+    if "matter" in stage:
+        return f'matter {stage["matter"]}'
+    return f'agenda {stage["civicclerk_agenda_id"]}' if "civicclerk_agenda_id" in stage else f'meeting {stage["iqm2_meeting_id"]}'
 
 
 def replay_stage(fetcher, client, stage, terms, read_pages):
     if "iqm2_meeting_id" in stage:
         meeting, item = find_iqm2_stage(fetcher, client, stage)
+    elif "civicclerk_agenda_id" in stage:
+        meeting, item = find_civicclerk_stage(fetcher, client, stage)
     else:
         meeting, item = find_stage(fetcher, client, stage["date"], stage["matter"])
     result = {"stage": stage, "meeting": meeting, "item": item, "matches": [], "late": 0}
@@ -121,6 +141,16 @@ def sweep_iqm2(fetcher, client, board: str, first: date, days: int, terms):
     return meetings, matches
 
 
+def sweep_civicclerk(fetcher, client, first: date, days: int, terms):
+    """The same as sweep, for a CivicClerk city: every body's agendas, read where one is posted."""
+    meetings = [civicclerk.read_meeting(fetcher, client, event)
+                for event in civicclerk.fetch_events(fetcher, client, first - timedelta(days=days),
+                                                     first - timedelta(days=1))
+                if civicclerk.is_listed(event)]
+    matches = [m for meeting in meetings for m in match_meeting(meeting, terms)]
+    return meetings, matches
+
+
 def where(matches) -> str:
     parts = []
     for location in ("title", "item_text", "attachment"):
@@ -138,12 +168,14 @@ def where(matches) -> str:
 
 def run_case(fetcher, case, all_terms, lookback, read_pages):
     source = case["source"]
-    client = source.get("client") or source["site"].split(".")[0]
+    client = source.get("client") or source.get("tenant") or source["site"].split(".")[0]
     terms = [t for t in all_terms if t.watchlist == case["watchlist"]]
     stages = [replay_stage(fetcher, client, s, terms, read_pages) for s in case["stages"]]
     first = case["first_appearance"]
     if source["adapter"] == "iqm2":
         swept, sweep_matches = sweep_iqm2(fetcher, client, case["stages"][0]["body"], first, lookback, terms)
+    elif source["adapter"] == "civicclerk":
+        swept, sweep_matches = sweep_civicclerk(fetcher, client, first, lookback, terms)
     else:
         swept, sweep_matches = sweep(fetcher, client, first, lookback, terms)
     first_stage = stages[0]
@@ -235,7 +267,7 @@ def main() -> None:
     for case in cases:
         if args.case and case["id"] != args.case:
             continue
-        if case["source"]["adapter"] not in ("legistar", "iqm2"):
+        if case["source"]["adapter"] not in ("legistar", "iqm2", "civicclerk"):
             skipped.append(case["id"])
             continue
         print(f"Replaying {case['id']}…", file=sys.stderr)
