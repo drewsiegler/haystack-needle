@@ -1,0 +1,22 @@
+<!doctype html>
+<html><body style="font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.45;color:#111;max-width:640px">
+{% if alerts %}
+<p>{{ alerts | length }} agenda item{{ "s" if alerts | length != 1 }} matched a normal-priority watchlist since the last digest.</p>
+{% else %}
+<p>No new matches since the last digest.</p>
+{% endif %}
+{% for a in alerts %}
+<hr style="border:0;border-top:1px solid #ddd;margin:20px 0">
+{% include "_alert.html.j2" %}
+{% endfor %}
+{% if boilerplate %}
+<hr style="border:0;border-top:1px solid #ddd;margin:20px 0">
+<p><b>Held back as likely boilerplate</b> (the phrase is on more than half of that body's agendas). If one of these should alert, say so and the watchlist can be adjusted:</p>
+<ul>
+{% for b in boilerplate %}
+<li>{{ b }}</li>
+{% endfor %}
+</ul>
+{% endif %}
+{% include "_footer.html.j2" %}
+</body></html>

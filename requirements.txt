@@ -3,3 +3,4 @@ httpx>=0.28
 pypdf>=6.0
 cryptography>=3.1  # pypdf needs it to open AES-encrypted PDFs
 PyYAML>=6.0
+Jinja2>=3.1  # email templates; autoescapes agenda text in the HTML part

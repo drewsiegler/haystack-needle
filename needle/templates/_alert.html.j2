@@ -1,0 +1,32 @@
+<div style="margin:0 0 28px">
+{% if a.label %}
+<p style="margin:0 0 8px;font-weight:bold;color:#8a3b00">{{ a.label }}{% if a.label_detail %}: {{ a.label_detail }}{% endif %}</p>
+{% endif %}
+<p style="margin:0;color:#555">{{ a.body }}, {{ a.day }}{% if a.time %}, {{ a.time }}{% endif %}</p>
+<p style="margin:4px 0 12px;font-size:17px;font-weight:bold">{% if a.number %}Item {{ a.number }}: {% endif %}{{ a.title }}</p>
+{% for m in a.matches %}
+<p style="margin:0 0 8px">Matched <b>“{{ m.term }}”</b> ({{ m.watchlist }}) in {{ m.where }}<br>
+<span style="color:#444">“{{ m.snippet }}”</span></p>
+{% endfor %}
+<p style="margin:12px 0 0">
+{% for link in a.links %}
+<a href="{{ link.url }}">{{ link.label }}</a>{% if not loop.last %} · {% endif %}
+{% endfor %}
+</p>
+{% if a.comment %}
+<p style="margin:12px 0 0"><b>Comment by:</b> “{{ a.comment }}” (from agenda; address: {{ a.comment_email }})</p>
+{% else %}
+<p style="margin:12px 0 0"><b>Comment by:</b> the agenda doesn't say; check the agenda link above.</p>
+{% endif %}
+<p style="margin:12px 0 0"><b>Prior history:</b>{% if not a.history %} none found{% endif %}</p>
+{% if a.history %}
+<ul style="margin:4px 0 0">
+{% for h in a.history %}
+<li>{{ h }}</li>
+{% endfor %}
+</ul>
+{% endif %}
+{% if a.votes is defined %}
+<p style="margin:12px 0 0">Useful? <a href="{{ a.votes.useful }}">Yes</a> · Noise? <a href="{{ a.votes.noise }}">Yes, noise</a></p>
+{% endif %}
+</div>

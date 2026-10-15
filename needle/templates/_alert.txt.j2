@@ -1,0 +1,33 @@
+{% if a.label %}
+{{ a.label }}{% if a.label_detail %}: {{ a.label_detail }}{% endif %}
+
+{% endif %}
+{{ a.body }}, {{ a.day }}{% if a.time %}, {{ a.time }}{% endif %}
+
+{% if a.number %}Item {{ a.number }}: {% endif %}{{ a.title }}
+{% for m in a.matches %}
+Matched: "{{ m.term }}" ({{ m.watchlist }}) in {{ m.where }}
+  "{{ m.snippet }}"
+{% endfor %}
+
+{% for link in a.links %}
+{{ (link.label ~ ":") | oneline(40) }} {{ link.url }}
+{% endfor %}
+{% if a.comment %}
+Comment by: "{{ a.comment }}" (from agenda; address: {{ a.comment_email }})
+{% else %}
+Comment by: the agenda doesn't say; check the agenda link above.
+{% endif %}
+{% if a.history %}
+Prior history:
+{% for h in a.history %}
+  - {{ h }}
+{% endfor %}
+{% else %}
+Prior history: none found
+{% endif %}
+{% if a.votes is defined %}
+
+Useful? {{ a.votes.useful }}
+Noise?  {{ a.votes.noise }}
+{% endif %}

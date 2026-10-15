@@ -1,0 +1,21 @@
+{% if alerts %}
+{{ alerts | length }} agenda item{{ "s" if alerts | length != 1 }} matched a normal-priority watchlist since the last digest.
+{% else %}
+No new matches since the last digest.
+{% endif %}
+{% for a in alerts %}
+
+==========
+{% include "_alert.txt.j2" %}
+{% endfor %}
+{% if boilerplate %}
+
+==========
+Held back as likely boilerplate (the phrase is on more than half of that body's agendas).
+If one of these should alert, say so and the watchlist can be adjusted:
+{% for b in boilerplate %}
+  - {{ b }}
+{% endfor %}
+{% endif %}
+
+{% include "_footer.txt.j2" %}
