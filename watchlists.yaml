@@ -18,19 +18,34 @@ surveillance:
   terms: [Flock, Flock Safety, ALPR, automated license plate, automatic license plate,
           license plate reader, license plate recognition,
           real-time crime center, ShotSpotter, SoundThinking, drone as first responder,
-          surveillance use policy, surveillance technology]
+          surveillance use policy, surveillance technology,
+          Verkada, Axon, RTIC, Real Time Intelligence Center, Fusus]
 policing-contracts:
   priority: high
-  terms: [sheriff, law enforcement service,
-          police services contract, contract for police services,
-          Los Gatos-Monte Sereno, LGMSPD]
+  terms: [law enforcement service, police services contract, contract for police services]
 immigration:
   priority: high
   terms: [ICE, Immigration and Customs Enforcement, immigration enforcement, 287(g),
-          immigration detainer, SB 54, sanctuary]
+          immigration detainer, SB 54, sanctuary,
+          DHS, Department of Homeland Security, federal agents, rapid response network, RRN]
   case_sensitive: [ICE]
 tenants:
   priority: normal
   terms: [rent stabilization, rent control, just cause eviction, tenant protection,
           tenant anti-harassment, tenant anti-retaliation, tenant relocation,
-          eviction prevention, anti-displacement, mobilehome rent, rent registry]
+          eviction prevention, anti-displacement, mobilehome rent, rent registry,
+          tenant right to counsel, right to counsel, RTC]
+
+# Categories added Oct 14, 2026 with no terms yet; they match nothing until terms are listed.
+jail:
+  priority: normal
+  terms: []
+data-centers:
+  priority: normal
+  terms: []
+mobile-crisis-response:
+  priority: normal
+  terms: []
+housing-and-homelessness:
+  priority: normal
+  terms: []

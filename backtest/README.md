@@ -69,7 +69,7 @@ What else it turned up:
 
 - Cost of live runs: a matter's text takes 2 requests and each attachment a download, at one request a second. Phase 2b's state file should fetch only new or changed items (Legistar gives each a last-modified time).
 
-- `sheriff` catches Saratoga at every stage but will also fire on most Board of Supervisors agendas. One fix is to limit that term to city bodies, which needs per-term body limits the watchlist format doesn't have yet. Decide after phase 3 shows how noisy it is.
+- `sheriff`, `Los Gatos-Monte Sereno` and `LGMSPD` were removed from policing-contracts on Oct 14, 2026, at Drew's request (the first live run showed how noisy `sheriff` is). The Saratoga case depended on all three: its replay will miss every stage by title and item text until its adapter exists and the case is revisited, since only `law enforcement service`, `police services contract` and `contract for police services` are left.
 - Check whether the county's ALPR policy for contract cities was on a 2025 agenda (the IQM2 calendar read starts in Jan 2026).
 - Los Altos Hills Flock: first appearance found and added (Sept 18, 2025, item 11.A); Jan 15 was a later stage. Nothing earlier in the 60 days before it.
 - Confirm Saratoga's Oct 7, 2026 vote in the minutes.
