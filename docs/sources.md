@@ -88,7 +88,7 @@ What the adapter relies on (checked Oct 14, 2026):
 | Saratoga (council and commissions) | saratoga.ca.us/AgendaCenter | |
 | Campbell commissions | campbellca.gov/AgendaCenter | The City Council category stops at Oct 7, 2025 because the council moved to eScribe (see [eScribe](#escribe-phase-4-built)) |
 | Los Altos Hills committees | losaltoshills.ca.gov/AgendaCenter | The City Council category (id 15) is skipped: CivicClerk reads that council item by item |
-| Los Gatos commissions | losgatosca.gov/AgendaCenter | **Not read**: nothing posted after October 2024. The commissions probably moved to Municode Meetings with the Town Council (not checked) |
+| Los Gatos commissions | losgatosca.gov/AgendaCenter | **Not read**: nothing posted after October 2024. The commissions moved to Municode Meetings with the Town Council (confirmed Oct 15; see One-offs) |
 
 ### eScribe (phase 4, built)
 
@@ -218,8 +218,8 @@ PrimeGov's public API (`/api/v2/PublicPortal/ListUpcomingMeetings`) returned Pal
 
 | Body | Platform | Status |
 | --- | --- | --- |
-| Los Gatos Town Council | Municode Meetings (losgatos-ca.municodemeetings.com) | Agendas and packets load fine for a script, as HTML (meetings.municode.com/adaHtmlDocument) and PDF (Azure blob storage). The meeting list doesn't: the portal drops scripted connections, and there's no RSS. Phase 4 needs another way to learn new meeting ids: the portal's own data calls (look in browser dev tools) or the town's Notify Me emails |
-| Monte Sereno | iCompass CivicWeb (montesereno.civicweb.net) | Found, not yet tested |
+| Los Gatos Town Council and commissions | Municode Meetings (losgatos-ca.municodemeetings.com) | **Can't be read as things stand** (checked Oct 15, 2026). The portal lists every Los Gatos body's meetings, but it drops a scripted connection before answering, even for robots.txt, which the app takes as a no. Each agenda is on hosts that allow scripts: an HTML agenda at `meetings.municode.com/adaHtmlDocument/index?cc=LOSGATOS&me={meeting id}` (no robots.txt) and PDFs at `mccmeetings.blob.core.usgovcloudapi.net/losgatos-pubu/MEET-Agenda-{id}.pdf` and `MEET-Packet-{id}.pdf`. But the meeting id is a random 32-character code, and nothing outside the portal lists them: Municode's `PublishPage` needs a page id the town doesn't publish (without one it answers 500), and the town calendar links only to the portal's front page. Ways in: the agenda-email route (a §54954.1 request, whose emails carry the meeting id), or asking the town or Municode to let the app's user agent through, or for the PublishPage id |
+| Monte Sereno | iCompass CivicWeb (montesereno.civicweb.net) | **Blocked by robots.txt** (checked Oct 15, 2026): `User-agent: *` / `Disallow: /`, with only search engines allowed (at a 120-second crawl delay). Its calendar service (`/Services/MeetingsService.svc/meetings?from=&to=`) answers JSON with each meeting's id, type and date. It and the meeting type list were each asked once on Oct 15, in the same batch as robots.txt and before it was read; nothing since. A candidate for the agenda-email route, like BoardDocs and PrimeGov |
 | Mountain View-Los Altos HSD | iCompass / Diligent (mvla.ic-board.com, mvlapub.ic-board.com) | Found by search, not tested |
 | Milpitas Unified | AgendaOnline (per its website) | Not tested |
 | Gilroy Unified | AgendaOnline (gilroy.agendaonline.net); also links Simbli | Confirm which is current |
