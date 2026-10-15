@@ -6,7 +6,7 @@ Phase 1 source check, done Oct 14, 2026. It replaces the platform table in [scop
 
 **School boards are shelved for a later release** (decided Oct 15, 2026): v1 doesn't read K-12 districts or the community college districts, since so many of them sit behind robots.txt or bot checks. The County Board of Education is the exception: it stays in v1, read from its agenda emails. That leaves Simbli, BoardDocs, Diligent Community, Boardable and ElectronicSchoolBoard out of v1; what was learned about them stays below for the later release.
 
-Nine adapters were built for about 52 bodies, and v1 runs five of them (Legistar, IQM2, CivicClerk, CivicPlus and eScribe). Four of them read an official JSON API or a plain agenda page and need no scraping tricks. The hard part isn't the platforms, it's **robots.txt**: BoardDocs, Diligent Community and PrimeGov tell every bot except search engines to stay out. On Oct 15, 2026 that covered 11 bodies, including the County Board of Education, three community college districts and Palo Alto, and Drew decided to cover them through their own agenda emails instead of scraping (see [Agenda emails](#decided-agenda-emails-for-boarddocs-diligent-community-and-primegov)).
+Ten adapters were built for about 53 bodies, and v1 runs six of them (Legistar, IQM2, CivicClerk, CivicPlus, eScribe and Midpen's own website). Four of them read an official JSON API or a plain agenda page and need no scraping tricks. The hard part isn't the platforms, it's **robots.txt**: BoardDocs, Diligent Community and PrimeGov tell every bot except search engines to stay out. On Oct 15, 2026 that covered 11 bodies, including the County Board of Education, three community college districts and Palo Alto, and Drew decided to cover them through their own agenda emails instead of scraping (see [Agenda emails](#decided-agenda-emails-for-boarddocs-diligent-community-and-primegov)).
 
 | Adapter | Bodies | How it reads | robots.txt | Phase |
 | --- | --- | --- | --- | --- |
@@ -21,7 +21,8 @@ Nine adapters were built for about 52 bodies, and v1 runs five of them (Legistar
 | PrimeGov | 2 | Their own agenda emails (the public API works, but robots.txt says no) | **`Disallow: /`** | 4, by email (planned) |
 | iCompass ElectronicSchoolBoard | 1 | RSS feed + agenda and item pages, PDFs | none (404) | built; later release (schools) |
 | Boardable | 1 (4 of its groups) | Public site pages, which carry their data, + PDFs from S3 | the site allows every bot; **the app host and its JSON API disallow all** | built; later release (schools) |
-| One-offs | 6 | Municode Meetings, CivicWeb, AgendaOnline, Granicus, Laserfiche | varies | later |
+| Midpen's website (Drupal) | 1 (its board and committees) | Public meetings table + meeting pages, PDFs | Drupal's stock file; meeting pages and files allowed | 4, built |
+| One-offs | 5 | Municode Meetings, CivicWeb, AgendaOnline, Granicus | varies | later |
 
 ## By body
 
@@ -107,6 +108,17 @@ The host returns 404 for `/robots.txt`, but requests to it are 10 seconds apart 
 **A Cloudflare bot check guards the files.** On Oct 14, 2026 a test run read the calendar, three agenda pages and 15 attachment PDFs at one request a second. From the 16th file on, every download got a 403 "Verifying your browser" page (header `cf-mitigated: challenge`) that needs JavaScript and cookies, including one that had downloaded minutes earlier. Two minutes later the portal's pages loaded but its files were still refused. How long the check lasts, and whether GitHub Actions' addresses meet it sooner, isn't known. Haystack Needle doesn't try to get past a bot check: `Fetcher` leaves the host alone for the rest of the run and the files wait for the next one. Item titles, descriptions and recommended actions come from the agenda pages, so they're matched either way; the staff reports are what's at risk.
 
 **Decided Oct 14, 2026: ask the portal less often.** Requests to `escribemeetings.com` are 10 seconds apart (`CRAWL_DELAYS` in `needle/fetch.py`), so a new agenda's 25 or so files take about four minutes, well inside the run's 25 minutes for slow hosts. Whether that keeps the check away isn't known yet; if it doesn't, each run reads files until the check refuses one. Still open: asking Campbell's clerk (or eScribe) to let the project's user agent download the files, or matching the agenda pages only and not downloading the files.
+
+### Midpen's website (phase 4, built)
+
+The Midpeninsula Regional Open Space District (Midpen) posts its agendas on its own Drupal website, `www.openspace.org`. Its robots.txt (checked Oct 15, 2026) is Drupal's stock file: it shuts out `/admin/`, `/search/`, `/user/` and the like, not the meeting pages or `/sites/default/files/`, and sets no crawl delay, so the usual one request a second applies. There's no feed. The Laserfiche portal (`portal.laserfiche.com`, linked from the meetings page) holds older records and wasn't needed. What the adapter relies on:
+
+- `/get-involved/public-meetings` lists this year's meetings in one table, upcoming first (47 rows on Oct 15): the meeting's name ("Board Meeting", "Special Board Meeting", "Action Plan & Budget Committee Meeting"), date, time and page. The body comes from the name, not the page's slug, which can be wrong: `bod-20260929` is a Board Appointee Evaluation Committee meeting, and `bod-20261018` meets on Oct 28. This year's list had the board and five committees: Action Plan & Budget, Board Appointee Evaluation, Bond Oversight, Legislative, Funding & Public Affairs, and Planning & Natural Resources. The page says it lists "this year", so around New Year a meeting on the other side of Jan 1 may be missing for a few days; not checked yet.
+- `/about-us/meetings/{slug}` is the meeting's page. Once the agenda is posted (72 hours ahead, 24 for a special meeting) it links the agenda PDF and the agenda packet, one PDF per item, named for the item: `Item 4 AwardofContractforSensitiveSpeciesProtectionProgram_R-26-149.pdf`. Before that the page has only the date.
+
+Each meeting gets an "Agenda" item with the agenda PDF and one item per packet file, titled from the file's name with spaces put back and the staff report number ("Award of Contract for Sensitive Species Protection Program (R-26-149)"). The agenda PDF has the full titles and recommendations, but reading titles from it would be fragile; the matcher reads it anyway. A few titles come out run together ("Myotis Trailat BCR"): "and", "at", "in" and "on" aren't split off because they end too many words (Grassland, Habitat, Mountain). A replaced file gets a new name (`_REVISED`, `_1`), so it's read again; the item keeps its id, which is the meeting and item number.
+
+A test on Oct 15, 2026 (`--dry-run --only midpen --full`) read the list, four meeting pages and 12 PDFs: the Oct 14 board meeting's agenda and 11 packet files; the three meetings ahead had no agenda yet. Nothing matched the watchlists; with test terms, item titles and PDF pages both matched.
 
 ### Boardable (built, shelved with the schools)
 
@@ -235,7 +247,7 @@ PrimeGov's public API (`/api/v2/PublicPortal/ListUpcomingMeetings`) returned Pal
 | Milpitas Unified | AgendaOnline (per its website) | Not tested; shelved with the schools |
 | Gilroy Unified | AgendaOnline (gilroy.agendaonline.net); also links Simbli | Not tested; shelved with the schools |
 | Housing Authority of the County of Santa Clara | Granicus (hacsc.granicus.com) | **Later version** (Drew, Oct 15, 2026): an appointed board. Its robots.txt allows only search engines (checked Oct 15), so it would need the agenda-email route |
-| Midpeninsula Regional Open Space District | Laserfiche portal | Found, not tested |
+| Midpeninsula Regional Open Space District | Its own website (www.openspace.org) | **Read** since Oct 15, 2026; see [Midpen's website](#midpens-website-phase-4-built). The Laserfiche portal holds older records |
 
 Left for a later version (Drew, Oct 15, 2026), platform not yet found: El Camino Healthcare District (an elected board) and Santa Clara County Central Fire (governed by the Board of Supervisors sitting as its board; its agendas may come through the county's IQM2 site, not checked). Lakeside Joint SD is shelved with the schools.
 
