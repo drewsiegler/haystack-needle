@@ -108,7 +108,8 @@ def build(meeting: Meeting, matches: list[Match], alert_id: str, priority: str,
     links = [("Agenda", safe_url(meeting.agenda_url)), ("Meeting page", safe_url(meeting.url))]
     seen = set()
     for m in matches:
-        if m.attachment and m.attachment.id not in seen:
+        # Skip an attachment that is the agenda itself (CivicPlus): it's linked already.
+        if m.attachment and m.attachment.id not in seen and m.attachment.url != meeting.agenda_url:
             seen.add(m.attachment.id)
             links.append((oneline(m.attachment.name, 80) or "Attachment", safe_url(m.attachment.url)))
     subject = (f"[Haystack Needle: {', '.join(watchlists)}] {body}, {day_text(meeting.date)}, "

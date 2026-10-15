@@ -31,6 +31,13 @@ def test_alert_follows_the_scope_format():
     assert "javascript:" not in text and "javascript:" not in html  # only http(s) links
 
 
+def test_an_attachment_that_is_the_agenda_is_linked_once():
+    meeting, match = sample()
+    meeting.agenda_url = match.attachment.url
+    alert = alerts.build(meeting, [match], "abc", "high")
+    assert [link["label"] for link in alert["links"]] == ["Agenda", "Meeting page"]
+
+
 def test_agenda_text_is_escaped_in_html():
     meeting, match = sample(title='<script>alert("x")</script> Item', url='https://x.example/"onmouseover=1')
     _, text, html = alerts.alert_email(alerts.build(meeting, [match], "abc", "high"))

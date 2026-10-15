@@ -25,7 +25,7 @@ from zoneinfo import ZoneInfo
 import httpx
 import yaml
 
-from adapters import civicclerk, iqm2, legistar
+from adapters import civicclerk, civicplus, iqm2, legistar
 from needle import alerts, health, mailer
 from needle import state as statefile
 from needle.fetch import Deferred, Fetcher
@@ -37,7 +37,7 @@ ROOT = Path(__file__).resolve().parents[1]
 WATCHLISTS = ROOT / "watchlists.yaml"
 DEFAULT_STATE = ROOT / ".state" / "state.json"
 PACIFIC = ZoneInfo("America/Los_Angeles")
-ADAPTERS = {"legistar": legistar, "iqm2": iqm2, "civicclerk": civicclerk}
+ADAPTERS = {"legistar": legistar, "iqm2": iqm2, "civicclerk": civicclerk, "civicplus": civicplus}
 FULL_EVERY = timedelta(minutes=110)  # a full run every 2 hours
 NEAR_DAYS = 3  # between full runs, re-check meetings from 72 hours out through meeting day
 TEXT_TTL = timedelta(hours=24)  # re-read item text at least daily, in case it changed quietly
