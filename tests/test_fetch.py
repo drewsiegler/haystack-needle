@@ -1,6 +1,8 @@
 import httpx
 
-from needle.fetch import USER_AGENT, Fetcher
+import pytest
+
+from needle.fetch import USER_AGENT, Deferred, Fetcher
 
 
 def make(handler, **kwargs):
@@ -30,6 +32,31 @@ def test_waits_a_second_between_requests_to_the_same_host_only():
     fetcher.get("https://b.example/1")
     fetcher.get("https://a.example/2")
     assert slept == [1.0]
+
+
+def test_honors_a_hosts_crawl_delay():
+    fetcher, slept = make(lambda r: httpx.Response(200, content=b"x"))
+    fetcher.get("https://sccgov.iqm2.com/1")
+    fetcher.get("https://santaclaravta.iqm2.com/1")  # a different host doesn't wait
+    fetcher.get("https://webapi.legistar.com/1")
+    fetcher.get("https://webapi.legistar.com/2")
+    fetcher.get("https://sccgov.iqm2.com/2")
+    assert slept == [1.0, 60.0 - 1.0]
+
+
+def test_leaves_slow_requests_for_the_next_run_once_its_time_is_up():
+    sent = []
+    fetcher, slept = make(lambda r: sent.append(str(r.url)) or httpx.Response(200, content=b"x"),
+                          slow_budget=90)
+    fetcher.get("https://sccgov.iqm2.com/1")
+    fetcher.get("https://sccgov.iqm2.com/2")  # waits 60 s: inside the 90
+    with pytest.raises(Deferred):
+        fetcher.get("https://sccgov.iqm2.com/3")  # would wait until 120 s
+    fetcher.get("https://webapi.legistar.com/1")  # fast hosts carry on
+    fetcher.sleep(60)  # a minute of other work...
+    fetcher.get("https://sccgov.iqm2.com/4")  # ...and a slow host's turn needs no wait
+    assert slept == [60.0, 60]
+    assert sent[-1].endswith("/4") and len(sent) == 4 and fetcher.deferred == 1
 
 
 def test_retries_server_errors():

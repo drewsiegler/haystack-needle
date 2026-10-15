@@ -1,5 +1,6 @@
-"""Polite HTTP: an honest user agent, at most one request a second per host,
-a few retries, and an optional on-disk cache for the backtest."""
+"""Polite HTTP: an honest user agent, at most one request a second per host
+(slower where a host's robots.txt sets a Crawl-delay), a few retries, and an
+optional on-disk cache for the backtest."""
 
 from __future__ import annotations
 
@@ -17,25 +18,51 @@ USER_AGENT = (
     "+https://github.com/drewsiegler/haystack-needle)"
 )
 RETRIES = 3
+# Seconds between requests, from each host's robots.txt Crawl-delay. A key
+# covers that host and everything under it. Hosts not listed get min_interval.
+CRAWL_DELAYS = {"iqm2.com": 60.0}
+
+
+class Deferred(httpx.HTTPError):
+    """A request to a slow host that would have to wait past the run's time for
+    slow hosts. Nothing was sent; try it on the next run."""
 
 
 class Fetcher:
     def __init__(self, cache_dir: Path | None = None, min_interval: float = 1.0,
-                 client: httpx.Client | None = None, sleep=time.sleep, clock=time.monotonic):
+                 client: httpx.Client | None = None, sleep=time.sleep, clock=time.monotonic,
+                 crawl_delays: dict[str, float] = CRAWL_DELAYS, slow_budget: float | None = None):
         self.client = client or httpx.Client(timeout=60, follow_redirects=True)
         self.client.headers["User-Agent"] = USER_AGENT
         self.cache_dir = cache_dir
         self.min_interval = min_interval
         self.sleep = sleep
         self.clock = clock
+        self.crawl_delays = crawl_delays
+        # Waiting on a crawl delay is allowed only this many seconds from now;
+        # after that, a request that would wait raises Deferred. None: no limit.
+        self.slow_until = None if slow_budget is None else clock() + slow_budget
         self.requests = 0  # network requests made, not cache hits
+        self.deferred = 0  # requests left for the next run
         self._last: dict[str, float] = {}
+
+    def interval(self, host: str) -> float:
+        for domain, delay in self.crawl_delays.items():
+            if host == domain or host.endswith("." + domain):
+                return max(delay, self.min_interval)
+        return self.min_interval
 
     def _wait_turn(self, host: str) -> None:
         last = self._last.get(host)
         if last is not None:
-            wait = self.min_interval - (self.clock() - last)
+            interval = self.interval(host)
+            wait = interval - (self.clock() - last)
             if wait > 0:
+                if (interval > self.min_interval and self.slow_until is not None
+                        and self.clock() + wait > self.slow_until):
+                    self.deferred += 1
+                    raise Deferred(f"{host} asks for {interval:.0f} s between requests; "
+                                   "left for the next run")
                 self.sleep(wait)
         self._last[host] = self.clock()
 
