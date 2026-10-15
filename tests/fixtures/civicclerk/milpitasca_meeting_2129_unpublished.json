@@ -1,0 +1,33 @@
+{
+ "@odata.context": "https://milpitasca.api.civicclerk.com/v1/$metadata#Meetings/$entity",
+ "id": 2129,
+ "agendaPacketIsPublish": false,
+ "agendaIsPublish": false,
+ "enablePublicSpeakerSignup": false,
+ "enableWrittenComment": false,
+ "publishUnlockedAgendaItems": true,
+ "publicCommentRequireUserLogin": false,
+ "speakerSignupRequireUserLogin": false,
+ "signUpAllowOnlineParticipation": false,
+ "signUpAllowPhoneParticipation": false,
+ "commentCutOffTime": 0,
+ "currentDate": "2026-10-14T19:14:26.5088551Z",
+ "signUpCutoffTime": 0,
+ "allowAttachmentsOnWrittenComments": false,
+ "items": [],
+ "publishedFiles": [
+  {
+   "id": 0,
+   "fileId": 5616,
+   "publishTo": null,
+   "type": "Notices",
+   "publishOn": "2026-10-06T12:45:53.543Z",
+   "publishBy": null,
+   "name": "10-28-26 PC Meeting PH Notice",
+   "url": null,
+   "sort": 0,
+   "fileType": 0,
+   "streamUrl": null
+  }
+ ]
+}
