@@ -59,6 +59,15 @@ def test_leaves_slow_requests_for_the_next_run_once_its_time_is_up():
     assert sent[-1].endswith("/4") and len(sent) == 4 and fetcher.deferred == 1
 
 
+def test_keeps_the_query_already_in_a_url():
+    seen = []
+    fetcher, _ = make(lambda r: seen.append(str(r.url)) or httpx.Response(200, content=b"x"))
+    fetcher.get("https://sccgov.iqm2.com/Citizens/Detail_Meeting.aspx?ID=17578")
+    fetcher.get("https://webapi.legistar.com/v1/x/events?a=1", {"$top": 2})
+    assert seen == ["https://sccgov.iqm2.com/Citizens/Detail_Meeting.aspx?ID=17578",
+                    "https://webapi.legistar.com/v1/x/events?a=1&%24top=2"]
+
+
 def test_retries_server_errors():
     answers = iter([httpx.Response(503), httpx.Response(200, content=b"ok")])
     fetcher, slept = make(lambda r: next(answers))

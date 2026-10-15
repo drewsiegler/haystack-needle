@@ -67,7 +67,8 @@ class Fetcher:
         self._last[host] = self.clock()
 
     def get(self, url: str, params: dict | None = None) -> bytes:
-        full = str(httpx.URL(url, params=params))
+        # httpx.URL(url, params=None) would drop a query already in the URL.
+        full = str(httpx.URL(url).copy_merge_params(params) if params else httpx.URL(url))
         cached = None
         if self.cache_dir is not None:
             cached = self.cache_dir / hashlib.sha256(full.encode()).hexdigest()[:40]
