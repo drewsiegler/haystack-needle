@@ -1,17 +1,17 @@
 {% if a.label %}
-{{ a.label }}{% if a.label_detail %}: {{ a.label_detail }}{% endif %}
+{{ a.label }}{{ ": " ~ a.label_detail if a.label_detail }}
 
 {% endif %}
-{{ a.body }}, {{ a.day }}{% if a.time %}, {{ a.time }}{% endif %}
+{{ a.body }}, {{ a.day }}{{ ", " ~ a.time if a.time }}
+{{ "Item " ~ a.number ~ ": " if a.number }}{{ a.title }}
 
-{% if a.number %}Item {{ a.number }}: {% endif %}{{ a.title }}
 {% for m in a.matches %}
 Matched: "{{ m.term }}" ({{ m.watchlist }}) in {{ m.where }}
   "{{ m.snippet }}"
 {% endfor %}
 
 {% for link in a.links %}
-{{ (link.label ~ ":") | oneline(40) }} {{ link.url }}
+{{ link.label }}: {{ link.url }}
 {% endfor %}
 {% if a.comment %}
 Comment by: "{{ a.comment }}" (from agenda; address: {{ a.comment_email }})
@@ -26,8 +26,7 @@ Prior history:
 {% else %}
 Prior history: none found
 {% endif %}
-{% if a.votes is defined %}
 
 Useful? {{ a.votes.useful }}
 Noise?  {{ a.votes.noise }}
-{% endif %}
+(Each opens an email for you to send. Nothing is tracked.)

@@ -11,9 +11,11 @@ from __future__ import annotations
 import re
 from datetime import date
 from pathlib import Path
+from urllib.parse import quote
 
 from jinja2 import Environment, FileSystemLoader, StrictUndefined, select_autoescape
 
+from needle.mailer import ADDRESS
 from needle.matcher import DEEP_PAGE, snippet
 from needle.models import Match, Meeting
 
@@ -75,6 +77,17 @@ def comment_info(pages: list[str]) -> tuple[str, str] | None:
     return None
 
 
+def vote_links(alert_id: str, watchlist: str, term: str) -> dict:
+    """mailto links that record a vote as an email to the alert address.
+
+    Nothing loads when an alert is opened and nothing is counted on a server:
+    a vote is an email someone chose to send, with the alert id, watchlist
+    and term in the subject so the inbox can be searched for "Noise:".
+    """
+    return {vote.lower(): f"mailto:{ADDRESS}?subject={quote(f'{vote}: {watchlist} / {term} [{alert_id}]', safe='')}"
+            for vote in ("Useful", "Noise")}
+
+
 def where(match: Match) -> str:
     if match.location != "attachment":
         return WHERE[match.location]
@@ -121,6 +134,7 @@ def build(meeting: Meeting, matches: list[Match], alert_id: str, priority: str,
         "comment": oneline(comment[0], 400) if comment else "",
         "comment_email": comment[1] if comment else "",
         "history": [oneline(h, 200) for h in history or []],
+        "votes": vote_links(alert_id, matches[0].watchlist, matches[0].term),
     }
 
 

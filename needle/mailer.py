@@ -16,7 +16,8 @@ from email.utils import formatdate, make_msgid
 
 HOST = "smtp.protonmail.ch"
 PORT = 587
-SENDER = "Haystack Needle <alerts@andrewsiegler.com>"
+ADDRESS = "alerts@andrewsiegler.com"
+SENDER = f"Haystack Needle <{ADDRESS}>"
 SECRETS = ("SMTP_USERNAME", "SMTP_PASSWORD", "ALERT_TO")
 
 
@@ -48,7 +49,7 @@ def compose(subject: str, text: str, html: str | None, to: str) -> EmailMessage:
     message["To"] = to
     message["Subject"] = " ".join(subject.split())
     message["Date"] = formatdate(localtime=False)
-    message["Message-ID"] = make_msgid(domain=SENDER.split("@")[1].rstrip(">"))
+    message["Message-ID"] = make_msgid(domain=ADDRESS.split("@")[1])
     message.set_content(text)
     if html:
         message.add_alternative(html, subtype="html")

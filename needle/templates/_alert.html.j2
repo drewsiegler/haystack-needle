@@ -26,7 +26,5 @@
 {% endfor %}
 </ul>
 {% endif %}
-{% if a.votes is defined %}
-<p style="margin:12px 0 0">Useful? <a href="{{ a.votes.useful }}">Yes</a> · Noise? <a href="{{ a.votes.noise }}">Yes, noise</a></p>
-{% endif %}
+<p style="margin:12px 0 0">Was this useful? <a href="{{ a.votes.useful }}">Useful</a> · <a href="{{ a.votes.noise }}">Noise</a> <span style="color:#777">(each opens an email for you to send; nothing is tracked)</span></p>
 </div>

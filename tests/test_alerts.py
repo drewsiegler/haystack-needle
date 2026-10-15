@@ -59,3 +59,13 @@ def test_digest_lists_alerts_and_boilerplate():
     assert subject == "[Haystack Needle] Morning digest, Thu Oct 15: 1 item"
     assert "Item 7:" in text and "Held back as likely boilerplate" in text
     assert "&#34;Flock&#34; is on 5 of 6" in html or "&quot;Flock&quot;" in html
+
+
+def test_vote_links_are_mailto_with_the_alert_id():
+    meeting, match = sample()
+    _, text, html = alerts.alert_email(alerts.build(meeting, [match], "a1b2c3d4e5", "high"))
+
+    assert ("Noise?  mailto:alerts@andrewsiegler.com?subject=Noise%3A%20surveillance%20%2F%20Flock"
+            "%20%5Ba1b2c3d4e5%5D\n") in text
+    assert 'href="mailto:alerts@andrewsiegler.com?subject=Useful%3A' in html
+    assert "http" not in alerts.vote_links("x", "w", "t")["useful"]  # no web request, so nothing to track
