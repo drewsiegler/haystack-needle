@@ -25,7 +25,7 @@ from zoneinfo import ZoneInfo
 import httpx
 import yaml
 
-from adapters import civicclerk, civicplus, escribe, iqm2, legistar
+from adapters import boardable, civicclerk, civicplus, escribe, iqm2, legistar
 from needle import alerts, health, mailer
 from needle import state as statefile
 from needle.fetch import Deferred, Fetcher
@@ -38,7 +38,7 @@ WATCHLISTS = ROOT / "watchlists.yaml"
 DEFAULT_STATE = ROOT / ".state" / "state.json"
 PACIFIC = ZoneInfo("America/Los_Angeles")
 ADAPTERS = {"legistar": legistar, "iqm2": iqm2, "civicclerk": civicclerk, "civicplus": civicplus,
-            "escribe": escribe}
+            "escribe": escribe, "boardable": boardable}
 FULL_EVERY = timedelta(minutes=110)  # a full run every 2 hours
 NEAR_DAYS = 3  # between full runs, re-check meetings from 72 hours out through meeting day
 TEXT_TTL = timedelta(hours=24)  # re-read item text at least daily, in case it changed quietly
@@ -120,14 +120,14 @@ class Reader:
         self.state["items"][k] = {"date": iso(meeting.date), "modified": iso(item.modified),
                                   "read": iso(self.now), "hits": first_hits([item.text], self.terms).get("1", [])}
 
-    def _download(self, url: str) -> bytes | None:
+    def _download(self, url: str, shown: str | None = None) -> bytes | None:
         try:
             data = self.fetcher.get(url)
         except Deferred:
             return None  # a slow host's time is up; try next run
         except httpx.HTTPError as error:
             self.downloads += 1
-            print(f"Couldn't download {url}: {type(error).__name__}", file=sys.stderr)
+            print(f"Couldn't download {shown or url}: {type(error).__name__}", file=sys.stderr)
             return None
         self.downloads += 1
         return data
@@ -138,12 +138,13 @@ class Reader:
         if entry and entry["modified"] == iso(attachment.modified):
             entry["seen"] = self.today
             return cached_pages(entry)
-        if not alerts.safe_url(attachment.url):
+        url = alerts.safe_url(attachment.download_url or attachment.url)
+        if not url:
             return []
         if self.downloads >= self.max_downloads:
             self.deferred += 1
             return cached_pages(entry) if entry else []
-        data = self._download(attachment.url)
+        data = self._download(url, attachment.url)  # log the lasting link, not a signed one
         if data is None:
             return cached_pages(entry) if entry else []
         digest = sha(data)

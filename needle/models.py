@@ -28,8 +28,11 @@ class Body:
 class Attachment:
     id: str
     name: str
-    url: str
+    url: str  # the link for people, in alerts
     modified: datetime | None = None  # UTC; lets a later run skip unchanged files
+    # Where the run downloads the file, when that isn't url: Boardable hands out
+    # S3 links that last 20 minutes, too short for an alert.
+    download_url: str | None = None
 
 
 @dataclass
