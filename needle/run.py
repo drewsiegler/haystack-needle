@@ -25,7 +25,7 @@ from zoneinfo import ZoneInfo
 import httpx
 import yaml
 
-from adapters import civicclerk, civicplus, escribe, iqm2, legistar
+from adapters import civicclerk, civicplus, escribe, iqm2, legistar, midpen
 from needle import alerts, health, mailer
 from needle import state as statefile
 from needle.fetch import Deferred, Fetcher
@@ -41,7 +41,7 @@ PACIFIC = ZoneInfo("America/Los_Angeles")
 # (Foothill-De Anza CCD) and adapters/icboard.py (Mountain View-Los Altos HSD) are
 # kept and tested, but not run.
 ADAPTERS = {"legistar": legistar, "iqm2": iqm2, "civicclerk": civicclerk, "civicplus": civicplus,
-            "escribe": escribe}
+            "escribe": escribe, "midpen": midpen}
 FULL_EVERY = timedelta(minutes=110)  # a full run every 2 hours
 NEAR_DAYS = 3  # between full runs, re-check meetings from 72 hours out through meeting day
 TEXT_TTL = timedelta(hours=24)  # re-read item text at least daily, in case it changed quietly
