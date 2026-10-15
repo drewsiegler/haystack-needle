@@ -2,9 +2,9 @@ name: Check agendas
 
 on:
   schedule:
-    # Hourly at 17 past. Every other run reads every meeting; the ones between
-    # re-check only meetings from 72 hours out through meeting day. The run at
-    # 7:17 a.m. Pacific sends the morning digest.
+    # Hourly at 17 past (UTC). Every other run reads every meeting; the ones
+    # between re-check only meetings from 72 hours out through meeting day. The
+    # run at 7:17 a.m. Pacific sends the morning digest.
     - cron: "17 * * * *"
   workflow_dispatch:
     inputs:
