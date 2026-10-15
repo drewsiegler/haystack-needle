@@ -4,7 +4,7 @@ Phase 1 source check, done Oct 14, 2026. It replaces the platform table in [scop
 
 ## The short version
 
-Seven adapters cover about 51 bodies. Four of them read an official JSON API or a plain agenda page and need no scraping tricks. The hard part isn't the platforms, it's **robots.txt**: BoardDocs and PrimeGov tell every bot except search engines to stay out, and that covers 15 bodies, including the County Board of Education, all four community college districts and Palo Alto. That's a decision for phase 4 (see [Open question](#open-question-boarddocs-and-primegov)).
+Eight adapters cover about 52 bodies. Four of them read an official JSON API or a plain agenda page and need no scraping tricks. The hard part isn't the platforms, it's **robots.txt**: BoardDocs and PrimeGov tell every bot except search engines to stay out, and that covers 15 bodies, including the County Board of Education, all four community college districts and Palo Alto. That's a decision for phase 4 (see [Open question](#open-question-boarddocs-and-primegov)).
 
 | Adapter | Bodies | How it reads | robots.txt | Phase |
 | --- | --- | --- | --- | --- |
@@ -12,10 +12,11 @@ Seven adapters cover about 51 bodies. Four of them read an official JSON API or 
 | Granicus IQM2 | 3 | HTML calendar + RSS feed, PDFs | `Crawl-delay: 60` | 3 |
 | CivicClerk | 5 | Public OData API, JSON (agenda items and attachments) | none (404) | 4, built |
 | CivicPlus AgendaCenter | 3 | Agenda search page + PDFs | `Disallow: /Search`, `/RSS.aspx` (not `/AgendaCenter/`) | 4, built |
+| eScribe | 1 | Meeting calendar (JSON POST) + HTML agenda, PDFs | none (404); a Cloudflare bot check on files | 4, built |
 | Simbli (eBoardSolutions) | 18 (12 confirmed) | Meeting pages | none found | 4 |
 | BoardDocs | 13 | — | **disallows all but search engines** | 4, blocked |
 | PrimeGov | 2 | Public API works, JSON | **`Disallow: /`** | 4, blocked |
-| One-offs | 8 | Municode Meetings, CivicWeb, iCompass, AgendaOnline, Granicus, Laserfiche, eScribe | varies | later |
+| One-offs | 7 | Municode Meetings, CivicWeb, iCompass, AgendaOnline, Granicus, Laserfiche | varies | later |
 
 ## By body
 
@@ -83,9 +84,28 @@ What the adapter relies on (checked Oct 14, 2026):
 | Body | Agenda list | Notes |
 | --- | --- | --- |
 | Saratoga (council and commissions) | saratoga.ca.us/AgendaCenter | |
-| Campbell commissions | campbellca.gov/AgendaCenter | The City Council category stops at Oct 7, 2025 because the council moved to eScribe (see [One-offs](#one-offs)) |
+| Campbell commissions | campbellca.gov/AgendaCenter | The City Council category stops at Oct 7, 2025 because the council moved to eScribe (see [eScribe](#escribe-phase-4-built)) |
 | Los Altos Hills committees | losaltoshills.ca.gov/AgendaCenter | The City Council category (id 15) is skipped: CivicClerk reads that council item by item |
 | Los Gatos commissions | losgatosca.gov/AgendaCenter | **Not read**: nothing posted after October 2024. The commissions probably moved to Municode Meetings with the Town Council (not checked) |
+
+### eScribe (phase 4, built)
+
+Campbell's City Council has posted its agendas on eScribe since October 2025, at `https://pub-campbell.escribemeetings.com`. The city's AgendaCenter page shows that portal in a frame above the old category list, but the council's own page (`/189/City-Council`) still links its "Most Recent Agenda" to the AgendaCenter category, which gives the Oct 7, 2025 packet. That packet was made by eScribe and names the portal on its first page, which is how it was found. The commissions stay on AgendaCenter; the portal has only council meetings, starting with that same Oct 7, 2025 meeting.
+
+The host returns 404 for `/robots.txt`, so the usual one request a second applies. What the adapter relies on (checked Oct 14, 2026):
+
+- `POST /MeetingsCalendarView.aspx/GetCalendarMeetings` with the JSON body `{"calendarStartDate": "2025-09-01", "calendarEndDate": "2026-12-01"}` lists the meetings in that window as JSON (`{"d": [...]}`; 50 meetings and 225 KB for those 15 months). It's the call the portal's own calendar makes; `Fetcher.post_json` makes it. Each meeting has an `ID` (a GUID), `MeetingType` (regular session, executive session, study session or special meeting, all filed under the City Council), `StartDate` in local time (`2026/10/06 19:00:30`), `HasAgenda` and `MeetingDocumentLink`: the short agenda PDF, the full packet as PDF and as HTML, minutes and video. Nothing says when an agenda was posted, and a meeting isn't listed until its agenda is: on Oct 14 the window from Oct 12 to Nov 13 was empty, though the next regular meeting is Oct 20 (agendas go up the Friday before).
+- `/Meeting.aspx?Id={ID}&Agenda=Agenda&lang=English` is the full agenda as HTML, item by item: number, title, description, recommended action and attachments. The Oct 6, 2026 regular meeting has 24 items on the page; without the four headings that have items under them, that's 20 items with 26 attachments. That's real item text, unlike Campbell's AgendaCenter packets. An item keeps its ID when the agenda is revised.
+- A revised agenda is listed as `Merged` (`Agenda=Merged`) and replaces the first one; its attachments get new document IDs. An addendum (`Agenda=Addendum`) lists only the items it adds or changes and is read along with the agenda. One meeting of the 50 had each.
+- Attachments and agenda PDFs are at `/FileStream.ashx?DocumentId=`. A replaced file gets a new ID, so each file is read once.
+
+**A Cloudflare bot check guards the files.** On Oct 14, 2026 a test run read the calendar, three agenda pages and 15 attachment PDFs at one request a second. From the 16th file on, every download got a 403 "Verifying your browser" page (header `cf-mitigated: challenge`) that needs JavaScript and cookies, including one that had downloaded minutes earlier. Two minutes later the portal's pages loaded but its files were still refused. How long the check lasts, and whether GitHub Actions' addresses meet it sooner, isn't known. Haystack Needle doesn't try to get past a bot check: `Fetcher` leaves the host alone for the rest of the run and the files wait for the next one. Item titles, descriptions and recommended actions come from the agenda pages, so they're matched either way; the staff reports are what's at risk.
+
+**Open question for Drew.** As built, each run reads files until the check refuses one, so a new agenda's 25 or so files are spread over a few runs, and each of those runs meets the check once. Options:
+
+1. Ask Campbell's clerk (or eScribe) to let the project's user agent download the files.
+2. Ask the portal less often: a gap of 10 seconds between requests to this host (`CRAWL_DELAYS` in `needle/fetch.py`) would take about four minutes for a new agenda's files.
+3. Match the agenda pages only and stop downloading the files.
 
 ### Simbli (phase 4)
 
@@ -121,25 +141,14 @@ PrimeGov's public API (`/api/v2/PublicPortal/ListUpcomingMeetings`) returned Pal
 | Gilroy Unified | AgendaOnline (gilroy.agendaonline.net); also links Simbli | Confirm which is current |
 | Housing Authority of the County of Santa Clara | Granicus (hacsc.granicus.com) | Found, not tested |
 | Midpeninsula Regional Open Space District | Laserfiche portal | Found, not tested |
-| Campbell City Council | eScribe (pub-campbell.escribemeetings.com) | Found and tested Oct 14, 2026; no adapter yet. Details below |
 
 Still unknown: Lakeside Joint SD, El Camino Healthcare District, Santa Clara County Central Fire.
-
-#### Campbell City Council on eScribe
-
-Campbell's council agendas have been on eScribe since October 2025, at `https://pub-campbell.escribemeetings.com`. The city's AgendaCenter page shows that portal in a frame above the old category list, but the council's own page (`/189/City-Council`) still links its "Most Recent Agenda" to the AgendaCenter category, which gives the Oct 7, 2025 packet. That packet was made by eScribe and names the portal on its first page, which is how it was found. The commissions stay on AgendaCenter; the portal has only council meetings.
-
-The host returns 404 for `/robots.txt`, so the usual one request a second applies. What an adapter could rely on (checked Oct 14, 2026):
-
-- `POST /MeetingsCalendarView.aspx/GetCalendarMeetings` with the JSON body `{"calendarStartDate": "2025-09-01", "calendarEndDate": "2026-12-01"}` lists the meetings in that window as JSON (`{"d": [...]}`; 50 meetings and 225 KB for those 15 months). It's the call the portal's own calendar makes. Each meeting has an `ID` (a GUID), `MeetingName` (regular session, executive session, study session or special meeting), `StartDate` in local time (`2026/10/06 19:00:30`), `Location`, `HasAgenda` and `MeetingDocumentLink`: the agenda PDF, the full packet as PDF and as HTML, minutes and video. `Fetcher` only does GET, so an adapter needs a small POST helper there.
-- `/Meeting.aspx?Id={ID}&Agenda=Agenda&lang=English` is the full agenda as HTML, item by item: number, title, attachments and recommended action. The Oct 6, 2026 regular meeting had 24 items and 52 attachment links in 205 KB. That's real item text, unlike Campbell's AgendaCenter packets.
-- Attachments and agenda PDFs are at `/FileStream.ashx?DocumentId=`.
-- The first meeting listed is Oct 7, 2025, the same meeting as the last one in the AgendaCenter category. The latest is Oct 6, 2026. The next regular meeting is Oct 20, 2026, and agendas go up the Friday before.
 
 ## What this means for the collector
 
 - **User agent.** Use `Mozilla/5.0 (compatible; HaystackNeedle/<version>; +<repo URL>)`. It's the standard honest-bot format, it names the project and where to reach it, and BoardDocs rejects anything else outright.
 - **Rate.** One request a second is the floor, but honor each host's `Crawl-delay`: 60 s for IQM2. Feeds and APIs first, pages second.
+- **A bot check is a no.** When a host answers with one (eScribe's files sit behind Cloudflare's), stop asking it for the rest of the run, and never try to get past it.
 - **robots.txt is per host, not per platform.** Simbli's robots.txt URL redirects to an error page; Legistar's and CivicClerk's API hosts have none.
 
 ## Open question: BoardDocs and PrimeGov
