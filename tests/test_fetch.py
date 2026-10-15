@@ -126,6 +126,61 @@ def test_leaves_a_host_alone_for_the_run_once_it_answers_with_a_bot_check():
     assert len(sent) == 3 and fetcher.requests == 3 and fetcher.deferred == 0
 
 
+# Imperva's block pages, cut down. Both come as ordinary HTML with a 200 status.
+IMPERVA_PARDON = """<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Pardon Our Interruption</title>
+</head>
+<body>
+<h1>Pardon Our Interruption</h1>
+<p>As you were browsing something about your browser made us think you were a bot.</p>
+<script src="/_Incapsula_Resource?SWJIYLWA=719d34d31c8e3a6e6fffd425f7e032f3"></script>
+</body>
+</html>"""
+INCAPSULA_UNSUCCESSFUL = """<html style="height:100%"><head><META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW"></head>
+<body style="margin:0px;height:100%"><iframe id="main-iframe" src="/_Incapsula_Resource?CWUDNSAI=24"
+frameborder=0 width="100%" height="100%">Request unsuccessful. Incapsula incident ID: 0-0</iframe></body></html>"""
+# A normal page on an Imperva host also loads the _Incapsula_Resource script.
+SIMBLI_LISTING = """<!DOCTYPE html>
+<html><head><title>Meeting Listing</title>
+<script src="/_Incapsula_Resource?SWJIYLWA=719d34d31c8e3a6e6fffd425f7e032f3"></script></head>
+<body><table><tr><td><a href="javascript:ViewMeeting('36030528','84410','1')">10/14/2026 - 06:30 PM</a></td>
+<td>Regular Meeting</td></tr></table></body></html>"""
+SIMBLI = "https://simbli.eboardsolutions.com/SB_Meetings/SB_MeetingListing.aspx"
+
+
+@pytest.mark.parametrize("block_page", [IMPERVA_PARDON, INCAPSULA_UNSUCCESSFUL])
+def test_takes_impervas_block_page_as_a_bot_check(block_page):
+    sent = []
+
+    def handler(request):
+        sent.append(str(request.url))
+        if request.url.host == "simbli.eboardsolutions.com":
+            return httpx.Response(200, html=block_page)
+        return httpx.Response(200, json=[])
+
+    fetcher, _ = make(handler)
+    with pytest.raises(BotCheck, match="bot check"):
+        fetcher.get(SIMBLI, {"S": "36030309"})
+    with pytest.raises(Deferred):  # not sent
+        fetcher.get(SIMBLI, {"S": "36030816"})
+    assert fetcher.get_json("https://webapi.legistar.com/v1/x/events") == []  # other hosts carry on
+    assert len(sent) == 2 and fetcher.refused == {"simbli.eboardsolutions.com"}
+
+
+def test_a_normal_page_on_an_imperva_host_is_not_a_bot_check():
+    answers = iter([httpx.Response(200, html=SIMBLI_LISTING), httpx.Response(200, html=SIMBLI_LISTING),
+                    # Only HTML is read for the block page, not a JSON answer that quotes it.
+                    httpx.Response(200, json={"Title": "<title>Pardon Our Interruption</title>"})])
+    fetcher, _ = make(lambda r: next(answers))
+    assert b"ViewMeeting" in fetcher.get(SIMBLI, {"S": "36030528"})
+    assert b"ViewMeeting" in fetcher.get(SIMBLI, {"S": "36030683"})
+    assert fetcher.get_json("https://simbli.eboardsolutions.com/Services/api/GetMeeting/")["Title"]
+    assert fetcher.refused == set() and fetcher.requests == 3
+
+
 def test_waits_ten_seconds_between_requests_to_an_escribe_portal():
     fetcher, slept = make(lambda r: httpx.Response(200, content=b"x"))
     fetcher.get("https://pub-campbell.escribemeetings.com/Meeting.aspx?Id=1")

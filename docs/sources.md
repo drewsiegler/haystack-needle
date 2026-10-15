@@ -153,7 +153,7 @@ Options, for Drew:
 3. **Titles only.** The meeting list and agenda outline, about 3 requests per meeting, with no item text and no files. It may still meet the check.
 4. **Leave Simbli out**, as with BoardDocs, and cover these boards another way (their notification emails).
 
-Whichever it is, `Fetcher` should first learn to recognize Imperva's page as a bot check (a page titled "Pardon Our Interruption", or Imperva's "Request unsuccessful" page). Otherwise an adapter would read the block page as a district with no meetings. The `_Incapsula_Resource` script alone isn't a sign: every normal page has it.
+Whichever it is, `Fetcher` now recognizes Imperva's page as a bot check (since Oct 14, 2026), so an adapter won't read the block page as a district with no meetings. It looks at the start of HTML answers only, for a page titled "Pardon Our Interruption" or Imperva's older "Request unsuccessful. Incapsula incident ID" page, raises `BotCheck` and sends nothing more to the host that run. The `_Incapsula_Resource` script alone isn't a sign: every normal page has it.
 
 ### BoardDocs (phase 4, by email)
 
@@ -204,7 +204,7 @@ Still unknown: Lakeside Joint SD, El Camino Healthcare District, Santa Clara Cou
 
 - **User agent.** Use `Mozilla/5.0 (compatible; HaystackNeedle/<version>; +<repo URL>)`. It's the standard honest-bot format, it names the project and where to reach it, and BoardDocs rejects anything else outright.
 - **Rate.** One request a second is the floor, but honor each host's `Crawl-delay`: 60 s for IQM2. Feeds and APIs first, pages second.
-- **A bot check is a no.** When a host answers with one (eScribe's files sit behind Cloudflare's, Simbli behind Imperva's), stop asking it for the rest of the run, and never try to get past it. Not every bot check says so in a header: Imperva's comes as an ordinary page with a 200 status.
+- **A bot check is a no.** When a host answers with one (eScribe's files sit behind Cloudflare's, Simbli behind Imperva's), stop asking it for the rest of the run, and never try to get past it. Not every bot check says so in a header: Imperva's comes as an ordinary page with a 200 status. `Fetcher` knows both (since Oct 14, 2026 for Imperva's, by the page's title or its "Incapsula incident ID" line).
 - **robots.txt is per host, not per platform.** Simbli's robots.txt URL redirects to an error page (the portal reads `robots.txt` as a district name), so it has none; Legistar's and CivicClerk's API hosts have none either.
 
 ## Decided: agenda emails for BoardDocs, Diligent Community and PrimeGov

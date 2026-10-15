@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 import time
 from pathlib import Path
 from urllib.parse import urlsplit
@@ -23,6 +24,12 @@ RETRIES = 3
 # eScribe, from its bot check: it refused files after 15 at one a second. A key
 # covers that host and everything under it. Hosts not listed get min_interval.
 CRAWL_DELAYS = {"iqm2.com": 60.0, "escribemeetings.com": 10.0}
+# Imperva's bot check is an ordinary HTML page, often with a 200 status: "Pardon Our
+# Interruption", or the older Incapsula "Request unsuccessful" page. Every page on an
+# Imperva host loads its _Incapsula_Resource script, so that alone is no sign. Only
+# the start of the page is read: the block page says so at the top.
+IMPERVA_BLOCK = re.compile(rb"<title[^>]*>\s*Pardon Our Interruption|Incapsula incident ID", re.I)
+BLOCK_PAGE_HEAD = 16_384
 
 
 class Deferred(httpx.HTTPError):
@@ -32,9 +39,17 @@ class Deferred(httpx.HTTPError):
 
 
 class BotCheck(httpx.HTTPError):
-    """The host answered with a bot check (a Cloudflare challenge) instead of what
-    was asked for. Haystack Needle doesn't try to get past one: the host is left
-    alone for the rest of the run."""
+    """The host answered with a bot check (a Cloudflare challenge or Imperva's block
+    page) instead of what was asked for. Haystack Needle doesn't try to get past one:
+    the host is left alone for the rest of the run."""
+
+
+def is_bot_check(response: httpx.Response) -> bool:
+    if response.headers.get("cf-mitigated") == "challenge":
+        return True
+    if "html" not in response.headers.get("content-type", "").lower():
+        return False
+    return IMPERVA_BLOCK.search(response.content[:BLOCK_PAGE_HEAD]) is not None
 
 
 class Fetcher:
@@ -106,7 +121,7 @@ class Fetcher:
                     raise
                 self.sleep(5 * attempt)
                 continue
-            if response.headers.get("cf-mitigated") == "challenge":
+            if is_bot_check(response):
                 self.refused.add(host)
                 raise BotCheck(f"{host} answered with a bot check instead of the file or page, so "
                                "nothing more is asked of it this run")
