@@ -15,6 +15,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import os
+import re
 import sys
 import time
 from collections import defaultdict
@@ -25,7 +26,7 @@ from zoneinfo import ZoneInfo
 import httpx
 import yaml
 
-from adapters import agendamail, civicclerk, civicplus, escribe, iqm2, legistar, midpen
+from adapters import agendamail, civicband, civicclerk, civicplus, escribe, iqm2, legistar, midpen
 from needle import alerts, health, mailer
 from needle import state as statefile
 from needle.fetch import Deferred, Fetcher
@@ -41,7 +42,8 @@ PACIFIC = ZoneInfo("America/Los_Angeles")
 # (Foothill-De Anza CCD) and adapters/icboard.py (Mountain View-Los Altos HSD) are
 # kept and tested, but not run.
 ADAPTERS = {"legistar": legistar, "iqm2": iqm2, "civicclerk": civicclerk, "civicplus": civicplus,
-            "escribe": escribe, "midpen": midpen, "agendamail": agendamail}
+            "escribe": escribe, "midpen": midpen, "agendamail": agendamail,
+            "civicband": civicband}
 FULL_EVERY = timedelta(minutes=110)  # a full run every 2 hours
 NEAR_DAYS = 3  # between full runs, re-check meetings from 72 hours out through meeting day
 TEXT_TTL = timedelta(hours=24)  # re-read item text at least daily, in case it changed quietly
@@ -62,6 +64,12 @@ def sha(data: bytes | str) -> str:
 
 def iso(value) -> str | None:
     return value.isoformat() if value else None
+
+
+def loose(name: str) -> tuple[str, ...]:
+    """A body's name to compare loosely: Civic Band says "City Schools Liaison
+    Committee" where Palo Alto's own email says "City School Liaison Committee"."""
+    return tuple(w.rstrip("s") for w in re.findall(r"[a-z]+", name.lower()))
 
 
 def key(source: Source, kind: str, ident: str) -> str:
@@ -138,10 +146,11 @@ class Reader:
     def pages(self, source: Source, attachment: Attachment) -> list[str]:
         k = key(source, "attachment", attachment.id)
         entry = self.state["attachments"].get(k)
-        if entry and entry["modified"] == iso(attachment.modified):
+        if attachment.pages is None and entry and entry["modified"] == iso(attachment.modified):
             entry["seen"] = self.today
             return cached_pages(entry)
-        data = attachment.data
+        # Text the adapter already has is new if it has changed, whatever its date says.
+        data = "\f".join(attachment.pages).encode() if attachment.pages is not None else attachment.data
         if data is None:
             url = alerts.safe_url(attachment.download_url or attachment.url)
             if not url:
@@ -156,7 +165,7 @@ class Reader:
         if entry and entry["sha256"] == digest:
             entry.update(seen=self.today, modified=iso(attachment.modified))
             return cached_pages(entry)
-        pages = pdf_pages(data)
+        pages = attachment.pages if attachment.pages is not None else pdf_pages(data)
         self.state["attachments"][k] = {"seen": self.today, "modified": iso(attachment.modified),
                                         "sha256": digest, "pages": len(pages),
                                         "hits": first_hits(pages, self.terms)}
@@ -311,8 +320,11 @@ def run(state: dict, fetcher, outbox: Outbox, now: datetime, adapters: dict = AD
             if notice:
                 notices.append(notice)
 
+    # An agenda emailed as a notice only goes in the digest once, unless another
+    # source reads that meeting's agenda (Civic Band, for Palo Alto).
+    readable = {(m.body.source.name, loose(m.body.name), m.date) for m in meetings if not m.notice}
     for meeting in meetings:
-        if meeting.notice:  # an agenda emailed as a notice only: list it once in the digest
+        if meeting.notice and (meeting.body.source.name, loose(meeting.body.name), meeting.date) not in readable:
             state["posted"].setdefault(key(meeting.body.source, "meeting", meeting.id), {
                 "date": iso(meeting.date), "line": f"{meeting.body.source.name}: {meeting.notice}",
                 "url": meeting.url, "reported": False})

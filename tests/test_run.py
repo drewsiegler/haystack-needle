@@ -163,6 +163,16 @@ def test_agendas_emailed_only_as_a_notice_are_listed_once_in_the_digest(setup, c
     assert go(NOW + timedelta(days=1)) == []  # listed once
 
 
+def test_a_notice_is_left_out_when_another_source_reads_that_agenda(setup):
+    adapter, fetcher, state, go = setup
+    posted = meeting(COUNCIL, date(2026, 10, 19), title="City Councils Regular Meeting", matter=None,
+                     meeting_id="email-1")
+    posted.notice = "Mon Oct 19: City Council Regular Meeting at 5:30 pm"
+    adapter.meetings = [posted, meeting(COUNCIL, date(2026, 10, 19), title="Agenda", matter=None)]
+
+    assert go() == [] and state["posted"] == {}
+
+
 def test_a_source_failing_twice_warns_once(setup):
     adapter, fetcher, state, go = setup
     adapter.fail = True

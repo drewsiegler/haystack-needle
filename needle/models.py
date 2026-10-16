@@ -35,6 +35,8 @@ class Attachment:
     download_url: str | None = None
     # The file itself, when the adapter already has it: a PDF attached to an agenda email.
     data: bytes | None = None
+    # Its text by page, when the adapter already has it: Civic Band serves agendas as text.
+    pages: list[str] | None = None
 
 
 @dataclass
