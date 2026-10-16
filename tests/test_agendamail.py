@@ -14,6 +14,8 @@ from needle.run import Reader
 from pdfs import make_pdf
 
 EML = (FIXTURES / "agendamail" / "pausd-liaison.eml").read_bytes()
+LOSGATOS = (FIXTURES / "agendamail" / "losgatos-council.eml").read_bytes()
+PALOALTO = (FIXTURES / "agendamail" / "paloalto-weekly.eml").read_bytes()
 SESSION = "https://api.fastmail.com/jmap/session"
 API = "https://api.fastmail.com/jmap/api/"
 DOWNLOAD = "https://www.fastmailusercontent.com/jmap/download/u1a2b3c4d/"
@@ -25,8 +27,8 @@ class FakeJmap:
     """Answers the session, the listing (honoring its "after" filter) and message
     downloads, and records every request."""
 
-    def __init__(self, raw: bytes = EML, listing: dict | None = None):
-        self.raw, self.listing = raw, listing or load("agendamail/recent.json")
+    def __init__(self, raw: bytes = EML, listing: dict | None = None, raws: dict | None = None):
+        self.raws, self.listing = raws or {"G-pausd": raw}, listing or load("agendamail/recent.json")
         self.requests: list[httpx.Request] = []
 
     def handle(self, request: httpx.Request) -> httpx.Response:
@@ -44,8 +46,9 @@ class FakeJmap:
                 emails["list"] = [e for e in emails["list"] if e["receivedAt"] >= after]
             return httpx.Response(200, json=answer)
         if url.startswith(DOWNLOAD):
-            assert url == DOWNLOAD + "G-pausd/message.eml?type=message%2Frfc822"
-            return httpx.Response(200, content=self.raw)
+            blob, rest = url.removeprefix(DOWNLOAD).split("/", 1)
+            assert rest == "message.eml?type=message%2Frfc822"
+            return httpx.Response(200, content=self.raws[blob])
         raise AssertionError(f"no fixture for {url}")
 
     def connect(self):
@@ -55,6 +58,20 @@ class FakeJmap:
     @property
     def downloads(self) -> int:
         return sum(str(r.url).startswith(DOWNLOAD) for r in self.requests)
+
+
+def listing(*emails):
+    return {"methodResponses": [
+        ["Mailbox/get", {"list": [{"id": "P-inbox", "role": "inbox"}]}, "boxes"],
+        ["Email/query", {"ids": [e["id"] for e in emails]}, "query"],
+        ["Email/get", {"list": list(emails)}, "emails"]]}
+
+
+def message(ident, sender, subject, received, reply_to=None):
+    return {"id": ident, "blobId": f"G-{ident}", "receivedAt": received, "subject": subject,
+            "from": [{"name": None, "email": sender}],
+            "replyTo": [{"name": None, "email": reply_to}] if reply_to else None,
+            "mailboxIds": {"P-inbox": True}}
 
 
 @pytest.fixture
@@ -153,6 +170,45 @@ def test_reads_an_attached_agenda_pdf(monkeypatch, pausd_on):
     assert [(m.location, m.page) for m in matches] == [("attachment", 2)]
 
 
+def test_reads_a_los_gatos_notice_by_its_reply_to(monkeypatch):
+    # From the address every CivicPlus town shares, so the town's Reply-To tells it.
+    notice = message("lg", "noreply@civicplus.com", "Town Council Meeting Agendas", "2026-10-16T02:35:09Z",
+                     reply_to="manager@losgatosca.gov")
+    fake = FakeJmap(listing=listing(notice), raws={"G-lg": LOSGATOS})
+    monkeypatch.setattr(agendamail, "connect", fake.connect)
+    [meeting], failures = collect({})
+    assert failures == {}
+    assert (meeting.body.source.name, meeting.body.name) == ("Los Gatos", "Town Council")
+    assert meeting.date == date(2026, 10, 15)  # no date in it: the day it came
+    assert meeting.url == "https://losgatos-ca.municodemeetings.com/"  # not the unsubscribe link
+    text = meeting.items[0].text
+    assert "Town Council Agendas have been posted on the website" in text
+    assert "http" not in text and "example.invalid" not in text  # links, and the inbox's address, out
+
+
+def test_reads_palo_altos_weekly_notice(monkeypatch):
+    notice = message("pa", "city.clerk@paloalto.gov", "Notice for City Council Meeting Agendas: October 15, 2026",
+                     "2026-10-16T03:00:18Z")
+    fake = FakeJmap(listing=listing(notice), raws={"G-pa": PALOALTO})
+    monkeypatch.setattr(agendamail, "connect", fake.connect)
+    [meeting], _ = collect({})
+    assert (meeting.body.source.name, meeting.body.name) == ("Palo Alto", "City Council")
+    assert meeting.date == date(2026, 10, 15)  # the notice's date; it lists five meetings
+    # Its links all go through Constant Contact's click tracking: the alert links the portal.
+    assert meeting.url == agendamail.calendar_url("paloalto")
+    assert "Finance Committee Regular Meeting at 4:00 pm" in meeting.items[0].text
+
+
+def test_never_links_an_unsubscribe_link():
+    [losgatos] = [s for s in agendamail.SENDERS if s.client == "losgatos"]
+    agenda = "https://meetings.municode.com/adaHtmlDocument/index?cc=LOSGATOS&me=0123abcd"
+    assert agendamail.agenda_link([
+        "https://meetings.municode.com/list.aspx?mode=Unsubscribe&CID=145",
+        "https://meetings.municode.com/prefs?Email=agendas%40example.invalid",
+        "https://www.losgatosca.gov/list.aspx?MID=3326",
+        agenda], losgatos) == agenda
+
+
 def test_reports_a_missing_token(monkeypatch):
     monkeypatch.delenv("FASTMAIL_API_TOKEN", raising=False)
     meetings, failures = collect({})
@@ -195,7 +251,8 @@ def test_finds_the_date_in_the_text_from_the_day_it_came():
     assert agendamail.meeting_date("Agenda posted", text, date(2026, 10, 15)) == date(2026, 11, 3)
 
 
-def test_tells_the_sender_by_address_then_domain():
-    assert agendamail.sender_for("ListServ@CivicPlus.com").client == "losgatos"
+def test_tells_the_sender_by_address_or_domain():
+    assert agendamail.sender_for("City.Clerk@PaloAlto.gov").client == "paloalto"
     assert agendamail.sender_for("clerk@pausd.org").client == "pausd"
+    assert agendamail.sender_for("noreply@civicplus.com") is None
     assert agendamail.sender_for("clerk@mail.pausd.org") is None

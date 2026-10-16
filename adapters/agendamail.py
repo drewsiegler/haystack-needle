@@ -11,7 +11,8 @@ and each run reads it.
   LOOKBACK_DAYS of mail with each message's sender and subject; each new message
   from a sender being read is then downloaded whole and parsed here. Mail in Junk
   or Trash is skipped.
-- SENDERS tells the body by the sender's address or domain. The subject names
+- SENDERS tells the body by the sender's address or domain, or the Reply-To's
+  when the sender is a mailing service many towns share. The subject names
   the committee when it can ("October 22, 2026, City Schools Liaison Committee
   Meeting"). Mail from a sender not on the list, or a shelved one, is left
   unread, so adding a sender later picks up its recent emails.
@@ -20,7 +21,11 @@ and each run reads it.
   The meeting's date is the first date in the subject, else the first in the
   text from the day the email came on, else the day it came.
 - Links in an email are never followed: most point to sites whose robots.txt
-  says no. The alert links to the first one on a host the sender's line lists.
+  says no, or through a mailing service's click tracking. The alert links to the
+  first one on a host the sender's line lists, never an unsubscribe link, else to
+  the body's agenda page. Links are taken out of the text that's matched.
+- So far (Oct 15, 2026) Palo Alto and Los Gatos send only notices that agendas
+  are up, with no item text and no direct link (docs/sources.md).
 - The run's cache keeps what each message gave (not its text), so a message is
   downloaded once. Later runs rebuild its meeting from the cache, and the
   matcher's saved snippets stand in for its text. If the run that downloaded it
@@ -70,8 +75,9 @@ class Sender:
 
 # Who sends agendas, one line each. School districts are shelved for a later
 # release (docs/scope.md): their emails arrive and wait, and read=True turns one
-# on. The domains are each body's own until its first email confirms the sender;
-# mail from a domain not listed is named in the run's log and left unread.
+# on. The Palo Alto and Los Gatos lines are confirmed by their first emails; the
+# others use each body's own domain until its first email confirms the sender.
+# Mail from a domain not listed is named in the run's log and left unread.
 SENDERS = [
     Sender("paloalto.gov", "paloalto", "Palo Alto", "City Council",
            "https://cityofpaloalto.primegov.com/public/portal",
@@ -79,10 +85,12 @@ SENDERS = [
     Sender("openspaceauthority.org", "openspaceauthority", "Open Space Authority", "Board of Directors",
            "https://openspaceauthority.primegov.com/public/portal",
            ("openspaceauthority.primegov.com", "www.openspaceauthority.org")),
-    # Every Los Gatos Notify Me list sends from here; the subject names the body.
-    Sender("listserv@civicplus.com", "losgatos", "Los Gatos", "Town Council",
+    # Los Gatos's Notify Me lists send from noreply@civicplus.com, which every
+    # CivicPlus town shares, with the town's Reply-To; the subject names the body.
+    Sender("losgatosca.gov", "losgatos", "Los Gatos", "Town Council",
            "https://losgatos-ca.municodemeetings.com/",
-           ("losgatos-ca.municodemeetings.com", "meetings.municode.com", "www.losgatosca.gov")),
+           ("losgatos-ca.municodemeetings.com", "meetings.municode.com",
+            "mccmeetings.blob.core.usgovcloudapi.net")),
     Sender("cityofmontesereno.org", "montesereno", "Monte Sereno", "City Council",
            "https://montesereno.civicweb.net/portal/",
            ("montesereno.civicweb.net", "www.cityofmontesereno.org")),
@@ -162,7 +170,8 @@ class Inbox:
                              "sort": [{"property": "receivedAt", "isAscending": False}], "limit": LIMIT}, "query"],
             ["Email/get", {"accountId": account,
                            "#ids": {"resultOf": "query", "name": "Email/query", "path": "/ids"},
-                           "properties": ["blobId", "from", "subject", "receivedAt", "mailboxIds"]}, "emails"])
+                           "properties": ["blobId", "from", "replyTo", "subject", "receivedAt",
+                                          "mailboxIds"]}, "emails"])
         skip = {box["id"] for box in answers["boxes"]["list"] if box.get("role") in ("junk", "trash")}
         return [e for e in answers["emails"]["list"] if not skip & set(e.get("mailboxIds") or {})]
 
@@ -205,13 +214,22 @@ def read(raw: bytes) -> Mail:
         links = [html.unescape(u) for u in _HREF.findall(text)]
         text = html.unescape(_TAGS.sub("", _BREAK.sub("\n", _SCRIPT.sub("", text))))
     else:
-        links = _URL.findall(text)
-    text = re.sub(r"\n{3,}", "\n\n", re.sub(r"[ \t\xa0]+\n", "\n", _BRACKETED.sub("", text))).strip()
+        links = [u.rstrip(".,;:") for u in _URL.findall(text)]
+    # Links aren't agenda text, and an unsubscribe link can carry the inbox's address.
+    text = _URL.sub("", _BRACKETED.sub("", text))
+    text = re.sub(r"\n{3,}", "\n\n", re.sub(r"[ \t\xa0]+\n", "\n", text)).strip()
     pdfs = [(p.get_filename() or "Agenda.pdf", p.get_payload(decode=True) or b"")
             for p in message.walk()
             if not p.is_multipart() and (p.get_content_type() == "application/pdf"
                                          or (p.get_filename() or "").lower().endswith(".pdf"))]
     return Mail(text, links, pdfs)
+
+
+def agenda_link(links: list[str], sender: Sender) -> str | None:
+    """The first link on a host the sender's line lists that isn't an unsubscribe
+    link or one carrying an address (the inbox's, in a list's own links)."""
+    return next((u for u in links if urlsplit(u).hostname in sender.hosts
+                 and not re.search(r"(?i)unsubscribe|@|%40", u)), None)
 
 
 def sender_for(address: str) -> Sender | None:
@@ -271,7 +289,8 @@ def _meeting(ident: str, entry: dict, text: str = "", pdfs: list | None = None) 
                    for n, (name, data) in enumerate(files, 1)]
     body = Body(SOURCES[entry["client"]], _slug(entry["body"]), entry["body"])
     item = Item(ident, entry["subject"], text, attachments=attachments, modified=received)
-    return Meeting(body, ident, date.fromisoformat(entry["date"]), url=entry["url"],
+    return Meeting(body, ident, date.fromisoformat(entry["date"]),
+                   url=entry["url"] or calendar_url(entry["client"]),
                    items=[item], modified=received)
 
 
@@ -312,7 +331,8 @@ def collect(fetcher=None, clients=tuple(SOURCES), today: date | None = None,
         if ident in cache:
             continue
         address = ((message.get("from") or [{}])[0].get("email") or "")
-        sender = sender_for(address)
+        replies = [r.get("email") or "" for r in message.get("replyTo") or []]
+        sender = next(filter(None, map(sender_for, [address, *replies])), None)
         if sender is None:
             unknown.add(address.rpartition("@")[2] or "no sender")
             continue
@@ -325,7 +345,7 @@ def collect(fetcher=None, clients=tuple(SOURCES), today: date | None = None,
             continue  # not cached, so it's tried again next run
         received = datetime.fromisoformat(message["receivedAt"].replace("Z", "+00:00"))
         subject = " ".join((message.get("subject") or "").split())[:200]
-        link = next((u for u in mail.links if urlsplit(u).hostname in sender.hosts), None)
+        link = agenda_link(mail.links, sender)
         cache[ident] = {
             "received": received.isoformat(), "blob": message["blobId"], "client": sender.client,
             "body": body_name(subject, sender.body), "subject": subject or "Agenda email",
