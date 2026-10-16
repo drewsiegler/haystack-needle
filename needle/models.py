@@ -61,6 +61,9 @@ class Meeting:
     url: str | None = None  # the meeting's public web page
     items: list[Item] = field(default_factory=list)
     modified: datetime | None = None
+    # When the agenda itself can't be read (an agenda email that only says it's up):
+    # what was posted, for the digest's list to check by hand.
+    notice: str = ""
 
 
 # Where a match landed, best first.

@@ -144,10 +144,17 @@ def alert_email(alert: dict) -> tuple[str, str, str]:
     return (alert["subject"], render("alert.txt.j2", a=alert), render("alert.html.j2", a=alert))
 
 
-def digest_email(alerts: list[dict], boilerplate: list[str], day: date) -> tuple[str, str, str]:
-    count, held = len(alerts), len(boilerplate)
-    summary = (f"{count} item{'s' if count != 1 else ''}" if count else
-               f"nothing new, {held} phrase{'s' if held != 1 else ''} held back")
+def digest_email(alerts: list[dict], boilerplate: list[str], day: date,
+                 posted: list[dict] = ()) -> tuple[str, str, str]:
+    """posted: agendas a body emailed only a notice of ({"line", "url"}), to check by hand."""
+    count, held, check = len(alerts), len(boilerplate), len(posted)
+    if count:
+        summary = f"{count} item{'s' if count != 1 else ''}"
+    elif check:
+        summary = f"{check} agenda{'s' if check != 1 else ''} to check by hand"
+    else:
+        summary = f"nothing new, {held} phrase{'s' if held != 1 else ''} held back"
     subject = f"[Haystack Needle] Morning digest, {day_text(day)}: {summary}"
-    context = {"alerts": alerts, "boilerplate": [oneline(b, 300) for b in boilerplate]}
+    context = {"alerts": alerts, "boilerplate": [oneline(b, 300) for b in boilerplate],
+               "posted": [{"line": oneline(p["line"], 200), "url": safe_url(p["url"])} for p in posted]}
     return subject, render("digest.txt.j2", **context), render("digest.html.j2", **context)

@@ -17,5 +17,14 @@ If one of these should alert, say so and the watchlist can be adjusted:
   - {{ b }}
 {% endfor %}
 {% endif %}
+{% if posted %}
+
+==========
+Posted, but Haystack Needle can't read these agendas: the body emails only a notice. Check them by hand:
+{% for p in posted %}
+  - {{ p.line }}{% if p.url %}
+    {{ p.url }}{% endif %}
+{% endfor %}
+{% endif %}
 
 {% include "_footer.txt.j2" %}

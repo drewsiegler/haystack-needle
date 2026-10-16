@@ -311,6 +311,12 @@ def run(state: dict, fetcher, outbox: Outbox, now: datetime, adapters: dict = AD
             if notice:
                 notices.append(notice)
 
+    for meeting in meetings:
+        if meeting.notice:  # an agenda emailed as a notice only: list it once in the digest
+            state["posted"].setdefault(key(meeting.body.source, "meeting", meeting.id), {
+                "date": iso(meeting.date), "line": f"{meeting.body.source.name}: {meeting.notice}",
+                "url": meeting.url, "reported": False})
+
     by_body = defaultdict(list)
     for meeting in meetings:
         by_body[meeting.body].append(meeting.date)
@@ -343,8 +349,12 @@ def run(state: dict, fetcher, outbox: Outbox, now: datetime, adapters: dict = AD
 
     if pacific.hour >= DIGEST_HOUR and state["last_digest"] != iso(today):
         pending = [k for k, v in state["boilerplate"].items() if not v["reported"]]
-        if state["digest"] or pending:
-            outbox.send(*alerts.digest_email(state["digest"], [state["boilerplate"][k]["note"] for k in pending], today))
+        posted = [v for v in state["posted"].values() if not v["reported"]]
+        if state["digest"] or pending or posted:
+            outbox.send(*alerts.digest_email(state["digest"], [state["boilerplate"][k]["note"] for k in pending],
+                                             today, sorted(posted, key=lambda v: v["date"])))
+            for entry in posted:
+                entry["reported"] = True
             state["digest"] = []
             for k in pending:
                 state["boilerplate"][k]["reported"] = True

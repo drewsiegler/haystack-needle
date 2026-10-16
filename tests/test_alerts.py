@@ -68,6 +68,15 @@ def test_digest_lists_alerts_and_boilerplate():
     assert "&#34;Flock&#34; is on 5 of 6" in html or "&quot;Flock&quot;" in html
 
 
+def test_digest_lists_agendas_to_check_by_hand():
+    posted = [{"line": "Palo Alto: Mon Oct 19: City Council <Regular> Meeting", "url": "https://town.example/portal"}]
+    subject, text, html = alerts.digest_email([], [], date(2026, 10, 15), posted)
+
+    assert subject == "[Haystack Needle] Morning digest, Thu Oct 15: 1 agenda to check by hand"
+    assert "Check them by hand" in text and "https://town.example/portal" in text
+    assert '<a href="https://town.example/portal">Palo Alto: Mon Oct 19: City Council &lt;Regular&gt; Meeting</a>' in html
+
+
 def test_vote_links_are_mailto_with_the_alert_id():
     meeting, match = sample()
     _, text, html = alerts.alert_email(alerts.build(meeting, [match], "a1b2c3d4e5", "high"))

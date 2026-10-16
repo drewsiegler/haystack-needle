@@ -150,6 +150,19 @@ def test_boilerplate_is_held_back_and_reported_in_the_digest(setup, capsys):
     assert '"Flock" (surveillance) is on 4 of 4 Townsville City Council agendas' in capsys.readouterr().out
 
 
+def test_agendas_emailed_only_as_a_notice_are_listed_once_in_the_digest(setup, capsys):
+    adapter, fetcher, state, go = setup
+    posted = meeting(COUNCIL, date(2026, 10, 19), title="City Council Regular Meeting", matter=None)
+    posted.notice, posted.url = "Mon Oct 19: City Council Regular Meeting at 5:30 pm", "https://town.example/portal"
+    adapter.meetings = [posted]
+
+    assert go() == ["[Haystack Needle] Morning digest, Wed Oct 14: 1 agenda to check by hand"]
+    printed = capsys.readouterr().out
+    assert "Townsville: Mon Oct 19: City Council Regular Meeting at 5:30 pm" in printed
+    assert "https://town.example/portal" in printed
+    assert go(NOW + timedelta(days=1)) == []  # listed once
+
+
 def test_a_source_failing_twice_warns_once(setup):
     adapter, fetcher, state, go = setup
     adapter.fail = True

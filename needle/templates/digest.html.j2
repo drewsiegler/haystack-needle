@@ -18,5 +18,14 @@
 {% endfor %}
 </ul>
 {% endif %}
+{% if posted %}
+<hr style="border:0;border-top:1px solid #ddd;margin:20px 0">
+<p><b>Posted, but Haystack Needle can't read these agendas</b> (the body emails only a notice). Check them by hand:</p>
+<ul>
+{% for p in posted %}
+<li>{% if p.url %}<a href="{{ p.url }}">{{ p.line }}</a>{% else %}{{ p.line }}{% endif %}</li>
+{% endfor %}
+</ul>
+{% endif %}
 {% include "_footer.html.j2" %}
 </body></html>

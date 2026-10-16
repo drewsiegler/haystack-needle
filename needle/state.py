@@ -29,6 +29,7 @@ def empty() -> dict:
         "bodies": {},  # body key -> {"name", "dates", "warned", "agendas": {meeting id: {"date", "hits"}}}
         "sources": {},  # adapter/client -> {"fails", "error", "warned"}
         "boilerplate": {},  # "body key|watchlist|term" -> {"note", "reported"}: held back as likely boilerplate
+        "posted": {},  # meeting key -> {"date", "line", "url", "reported"}: agendas emailed as a notice only, to check by hand
         "cache": {},  # adapter -> what it keeps between runs (IQM2: agenda outlines); the adapter prunes it
     }
 
@@ -64,7 +65,7 @@ def use_watchlists(state: dict, digest: str) -> None:
 def prune(state: dict, today: date) -> None:
     cutoff = (today - timedelta(days=KEEP_DAYS)).isoformat()
     for section, field in (("items", "date"), ("attachments", "seen"),
-                           ("meetings", "date"), ("alerts", "date")):
+                           ("meetings", "date"), ("alerts", "date"), ("posted", "date")):
         for key in [k for k, v in state[section].items() if (v.get(field) or "") < cutoff]:
             del state[section][key]
     for body in state["bodies"].values():
