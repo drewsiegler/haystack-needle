@@ -119,7 +119,9 @@ def test_reads_an_agenda_email(jmap, pausd_on, capsys):
     assert jmap.downloads == 1
     log = capsys.readouterr().err
     assert "example.org" in log and "news@" not in log
-    assert cache["M-pausd"]["date"] == "2026-10-22" and "text" not in cache["M-pausd"]
+    assert cache["M-pausd"]["meetings"][0]["date"] == "2026-10-22" and "text" not in str(cache)
+    # It only links the agenda, so it's also listed in the digest to check by hand.
+    assert meeting.notice == "Thu Oct 22: October 22, 2026, City Schools Liaison Committee Meeting"
 
 
 def test_reads_each_email_once(jmap, pausd_on):
@@ -158,6 +160,7 @@ def test_reads_an_attached_agenda_pdf(monkeypatch, pausd_on):
     assert (meeting.body.name, meeting.date) == ("Board of Education", date(2026, 10, 20))
     [attachment] = meeting.items[0].attachments
     assert (attachment.name, attachment.data, attachment.url) == ("Agenda 10-20.pdf", pdf, "")
+    assert meeting.notice == ""  # the agenda came with it: nothing to check by hand
 
     class NoFetcher:
         def get(self, url, params=None):
@@ -184,6 +187,7 @@ def test_reads_a_los_gatos_notice_by_its_reply_to(monkeypatch):
     text = meeting.items[0].text
     assert "Town Council Agendas have been posted on the website" in text
     assert "http" not in text and "example.invalid" not in text  # links, and the inbox's address, out
+    assert meeting.notice == "Town Council Meeting Agendas (sent Thu Oct 15; it gives no meeting date)"
 
 
 def test_reads_palo_altos_weekly_notice(monkeypatch):
@@ -191,12 +195,33 @@ def test_reads_palo_altos_weekly_notice(monkeypatch):
                      "2026-10-16T03:00:18Z")
     fake = FakeJmap(listing=listing(notice), raws={"G-pa": PALOALTO})
     monkeypatch.setattr(agendamail, "connect", fake.connect)
-    [meeting], _ = collect({})
-    assert (meeting.body.source.name, meeting.body.name) == ("Palo Alto", "City Council")
-    assert meeting.date == date(2026, 10, 15)  # the notice's date; it lists five meetings
+    cache = {}
+    meetings, _ = collect(cache)
+    # One meeting for each it lists; the canceled Economic Development Committee is left out.
+    assert [(m.date, m.body.name, m.notice) for m in meetings] == [
+        (date(2026, 10, 19), "City Council", "Mon Oct 19: City Council Regular Meeting at 5:30 pm"),
+        (date(2026, 10, 26), "City Council", "Mon Oct 26: City Council Special Meeting at 5:30 pm"),
+        (date(2026, 10, 20), "Finance Committee", "Tue Oct 20: Finance Committee Regular Meeting at 4:00 pm"),
+        (date(2026, 10, 22), "City School Liaison Committee",
+         "Thu Oct 22: City School Liaison Committee Regular Meeting at 7:00 pm")]
+    first = meetings[0]
+    assert first.id == "pa#1" and first.body.source.name == "Palo Alto"
+    assert first.items[0].text == ("Monday, October 19, 2026, City Council Regular Meeting at 5:30 pm "
+                                   "Item 6: Supplemental Report Added Agenda Packet")
+    assert "Voter" not in meetings[-1].items[0].text  # the newsletter's news isn't agenda text
     # Its links all go through Constant Contact's click tracking: the alert links the portal.
-    assert meeting.url == agendamail.calendar_url("paloalto")
-    assert "Finance Committee Regular Meeting at 4:00 pm" in meeting.items[0].text
+    assert first.url == agendamail.calendar_url("paloalto")
+    # Rebuilt from the cache on a later run, the same four.
+    assert [m.id for m in collect(cache)[0]] == ["pa#1", "pa#2", "pa#3", "pa#4"]
+
+
+def test_rereads_an_email_kept_by_the_first_version(jmap, pausd_on):
+    cache = {"M-pausd": {"received": "2026-10-15T21:00:05+00:00", "blob": "G-pausd", "client": "pausd",
+                         "body": "City Schools Liaison Committee", "subject": "...", "date": "2026-10-22",
+                         "url": None, "files": []}}
+    [meeting], _ = collect(cache)
+    assert jmap.downloads == 1 and "meetings" in cache["M-pausd"]
+    assert "Aspen" in meeting.items[0].text
 
 
 def test_never_links_an_unsubscribe_link():
@@ -235,11 +260,11 @@ def test_reads_an_html_only_email():
 
 @pytest.mark.parametrize("subject, body, day", [
     ("October 22, 2026, City Schools Liaison Committee Meeting", "City Schools Liaison Committee", date(2026, 10, 22)),
-    ("Agenda - Town Council", "Town Council", date(2026, 10, 15)),
+    ("Agenda - Town Council", "Town Council", None),
     ("Special Meeting of the Board of Education, Tues. Oct. 20th, 2026", "Board of Education", date(2026, 10, 20)),
     ("Planning and Transportation Commission Agenda for 10/21/2026", "Planning and Transportation Commission",
      date(2026, 10, 21)),
-    ("Your agenda is posted", "City Council", date(2026, 10, 15)),
+    ("Your agenda is posted", "City Council", None),
 ])
 def test_tells_the_body_and_date_from_the_subject(subject, body, day):
     assert agendamail.body_name(subject, "City Council") == body

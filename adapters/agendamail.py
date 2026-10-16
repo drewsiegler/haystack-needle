@@ -19,7 +19,11 @@ and each run reads it.
 - Each email becomes a meeting with one item: the subject as its title, the
   email's text, and any attached PDF, which the matcher reads like any agenda.
   The meeting's date is the first date in the subject, else the first in the
-  text from the day the email came on, else the day it came.
+  text from the day the email came on, else the day it came. An email that lists
+  several meetings ("Monday, October 19, 2026, City Council Regular Meeting at
+  5:30 pm ...") becomes one meeting for each, from a sender whose line says so.
+- A sender whose emails only say an agenda is up (Palo Alto and Los Gatos, so
+  far) gets a line in the morning digest for each meeting, to check by hand.
 - Links in an email are never followed: most point to sites whose robots.txt
   says no, or through a mailing service's click tracking. The alert links to the
   first one on a host the sender's line lists, never an unsubscribe link, else to
@@ -71,6 +75,9 @@ class Sender:
     page: str  # where people find the agendas, for health notices
     hosts: tuple[str, ...]  # hosts an alert may link to from the email; never fetched
     read: bool = True  # False: shelved, its emails wait unread in the inbox
+    # Its emails only say an agenda is up: each goes in the digest's list to check by hand.
+    notice: bool = False
+    lists: bool = False  # one email lists several meetings, each its own meeting here
 
 
 # Who sends agendas, one line each. School districts are shelved for a later
@@ -81,7 +88,7 @@ class Sender:
 SENDERS = [
     Sender("paloalto.gov", "paloalto", "Palo Alto", "City Council",
            "https://cityofpaloalto.primegov.com/public/portal",
-           ("cityofpaloalto.primegov.com", "www.paloalto.gov")),
+           ("cityofpaloalto.primegov.com", "www.paloalto.gov"), notice=True, lists=True),
     Sender("openspaceauthority.org", "openspaceauthority", "Open Space Authority", "Board of Directors",
            "https://openspaceauthority.primegov.com/public/portal",
            ("openspaceauthority.primegov.com", "www.openspaceauthority.org")),
@@ -90,14 +97,14 @@ SENDERS = [
     Sender("losgatosca.gov", "losgatos", "Los Gatos", "Town Council",
            "https://losgatos-ca.municodemeetings.com/",
            ("losgatos-ca.municodemeetings.com", "meetings.municode.com",
-            "mccmeetings.blob.core.usgovcloudapi.net")),
+            "mccmeetings.blob.core.usgovcloudapi.net"), notice=True),
     Sender("cityofmontesereno.org", "montesereno", "Monte Sereno", "City Council",
            "https://montesereno.civicweb.net/portal/",
            ("montesereno.civicweb.net", "www.cityofmontesereno.org")),
     Sender("sccoe.org", "sccoe", "Santa Clara County", "Board of Education",
            "https://www.sccoe.org/", ("go.boarddocs.com", "www.sccoe.org")),
     Sender("pausd.org", "pausd", "Palo Alto Unified", "Board of Education",
-           "https://go.boarddocs.com/ca/pausd/Board.nsf/Public", ("go.boarddocs.com",), read=False),
+           "https://go.boarddocs.com/ca/pausd/Board.nsf/Public", ("go.boarddocs.com",), read=False, notice=True),
 ]
 
 SOURCES = {s.client: Source("agendamail", s.client, s.name) for s in SENDERS if s.read}
@@ -254,16 +261,16 @@ def dates_in(text: str) -> list[date]:
     return days
 
 
-def meeting_date(subject: str, text: str, sent: date) -> date:
+def meeting_date(subject: str, text: str, sent: date) -> date | None:
     """The first date in the subject, else the first in the text from the day it
-    came on, else that day. Dates more than a year out are someone's typo."""
+    came on. Dates more than a year out are someone's typo."""
     for d in dates_in(subject):
         if sent - timedelta(days=30) <= d <= sent + timedelta(days=365):
             return d
     for d in dates_in(text):
         if sent <= d <= sent + timedelta(days=365):
             return d
-    return sent
+    return None
 
 
 def body_name(subject: str, default: str) -> str:
@@ -277,26 +284,71 @@ def body_name(subject: str, default: str) -> str:
     return " ".join(words)[:80] or default
 
 
+# A meeting in a list of them, after its date: "Monday, October 19, 2026, City
+# Council Regular Meeting at 5:30 pm Item 6: Supplemental Report Added Agenda Packet".
+_ROW = re.compile(r",?\s+(" + _BODY.pattern + r")\s+(?:(?:Regular|Special|Joint|Adjourned)\s+)?Meeting"
+                  r"(?:\s+at\s+\d{1,2}(?::\d{2})?\s*[ap]\.?m\.?)?")
+_CANCELED = re.compile(r"\s*-?\s*Cancel", re.I)
+ROW_CHARS = 300  # a listed meeting's text; what follows the last one is the newsletter's news
+
+
+def listed(text: str) -> list[tuple[date, str, str, str]]:
+    """The meetings an email lists, as (date, body, title, its text); canceled ones left out."""
+    heads = [(m, row) for m in _DATE.finditer(text) if (row := _ROW.match(text, m.end()))]
+    found = []
+    for n, (m, row) in enumerate(heads):
+        days = dates_in(m[0])
+        if not days or _CANCELED.match(text, row.end()):
+            continue
+        end = min(heads[n + 1][0].start() if n + 1 < len(heads) else len(text), m.start() + ROW_CHARS)
+        found.append((days[0], row[1], " ".join(row[0].lstrip(",").split()), text[m.start():end].strip()))
+    return found
+
+
+def _day(d: date) -> str:
+    return f"{d:%a %b} {d.day}"  # as alerts write it: "Mon Oct 19"
+
+
+def rows_for(mail: Mail, subject: str, sender: Sender, sent: date) -> list[dict]:
+    """The meetings an email is about, each with its body, date, title and text, and
+    the line for the digest's list to check by hand when the agenda isn't in it."""
+    notice = sender.notice and not mail.pdfs
+    if sender.lists and not mail.pdfs:
+        rows = [{"body": body, "date": day.isoformat(), "title": title, "text": text,
+                 "notice": f"{_day(day)}: {title}" if notice else ""}
+                for day, body, title, text in listed(mail.text)]
+        if rows:
+            return rows
+    day, title = meeting_date(subject, mail.text, sent), subject or "Agenda email"
+    line = f"{_day(day)}: {title}" if day else f"{title} (sent {_day(sent)}; it gives no meeting date)"
+    return [{"body": body_name(subject, sender.body), "date": (day or sent).isoformat(), "title": title,
+             "text": mail.text, "notice": line if notice else ""}]
+
+
 def _slug(name: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")
 
 
-def _meeting(ident: str, entry: dict, text: str = "", pdfs: list | None = None) -> Meeting:
+def _meetings(ident: str, entry: dict, texts: list[str] | None = None, pdfs: list | None = None) -> list[Meeting]:
     received = datetime.fromisoformat(entry["received"])
     files = pdfs if pdfs is not None else [(name, None) for name in entry["files"]]
-    # An emailed PDF has no link for people; the alert links the email's agenda link instead.
-    attachments = [Attachment(f"{ident}/{n}", name, "", received, data=data)
-                   for n, (name, data) in enumerate(files, 1)]
-    body = Body(SOURCES[entry["client"]], _slug(entry["body"]), entry["body"])
-    item = Item(ident, entry["subject"], text, attachments=attachments, modified=received)
-    return Meeting(body, ident, date.fromisoformat(entry["date"]),
-                   url=entry["url"] or calendar_url(entry["client"]),
-                   items=[item], modified=received)
+    rows = entry["meetings"]
+    meetings = []
+    for n, row in enumerate(rows):
+        mid = ident if len(rows) == 1 else f"{ident}#{n + 1}"
+        # An emailed PDF has no link for people; the alert links the email's agenda link instead.
+        attachments = [Attachment(f"{ident}/{k}", name, "", received, data=data)
+                       for k, (name, data) in enumerate(files, 1)] if n == 0 else []
+        item = Item(mid, row["title"], texts[n] if texts else "", attachments=attachments, modified=received)
+        meetings.append(Meeting(Body(SOURCES[entry["client"]], _slug(row["body"]), row["body"]), mid,
+                                date.fromisoformat(row["date"]), url=entry["url"] or calendar_url(entry["client"]),
+                                items=[item], modified=received, notice=row["notice"]))
+    return meetings
 
 
-# Set by collect for item_text: the run's connection, and the messages it rebuilt from the cache.
+# Set by collect for item_text: the run's connection, and the meetings it rebuilt from the cache.
 _inbox: Inbox | None = None
-_blobs: dict[str, str] = {}
+_rebuilt: dict[str, tuple[dict, int]] = {}
 
 
 def collect(fetcher=None, clients=tuple(SOURCES), today: date | None = None,
@@ -310,14 +362,16 @@ def collect(fetcher=None, clients=tuple(SOURCES), today: date | None = None,
 
     Returns the meetings and, for each source that failed, what went wrong.
     """
-    global _inbox, _blobs
-    _inbox, _blobs = None, {}
+    global _inbox, _rebuilt
+    _inbox, _rebuilt = None, {}
     today = today or datetime.now(PACIFIC).date()
     cache = {} if cache is None else cache
+    for ident in [i for i, entry in cache.items() if "meetings" not in entry]:
+        del cache[ident]  # kept by the first version (Oct 15): read it again
     since = datetime.combine(today - timedelta(days=LOOKBACK_DAYS), datetime.min.time(), PACIFIC)
     try:
         _inbox = inbox = connect()
-        listed = inbox.recent(since)
+        listed_mail = inbox.recent(since)
     except (httpx.HTTPError, KeyError, TypeError, ValueError) as error:
         reason = str(error) if isinstance(error, InboxError) else type(error).__name__
         print(f"Couldn't read the agenda inbox: {reason}", file=sys.stderr)
@@ -326,7 +380,7 @@ def collect(fetcher=None, clients=tuple(SOURCES), today: date | None = None,
     meetings: list[Meeting] = []
     failures: dict[str, str] = {}
     unknown, fresh = set(), set()
-    for message in listed:
+    for message in listed_mail:
         ident = message["id"]
         if ident in cache:
             continue
@@ -345,13 +399,12 @@ def collect(fetcher=None, clients=tuple(SOURCES), today: date | None = None,
             continue  # not cached, so it's tried again next run
         received = datetime.fromisoformat(message["receivedAt"].replace("Z", "+00:00"))
         subject = " ".join((message.get("subject") or "").split())[:200]
-        link = agenda_link(mail.links, sender)
+        rows = rows_for(mail, subject, sender, received.astimezone(PACIFIC).date())
         cache[ident] = {
             "received": received.isoformat(), "blob": message["blobId"], "client": sender.client,
-            "body": body_name(subject, sender.body), "subject": subject or "Agenda email",
-            "date": meeting_date(subject, mail.text, received.astimezone(PACIFIC).date()).isoformat(),
-            "url": link, "files": [name for name, _ in mail.pdfs]}
-        meetings.append(_meeting(ident, cache[ident], mail.text, mail.pdfs))
+            "subject": subject, "url": agenda_link(mail.links, sender), "files": [name for name, _ in mail.pdfs],
+            "meetings": [{k: v for k, v in row.items() if k != "text"} for row in rows]}
+        meetings += _meetings(ident, cache[ident], [row["text"] for row in rows], mail.pdfs)
         fresh.add(ident)
     if unknown:
         print(f"Left agenda emails unread from senders not in SENDERS: {', '.join(sorted(unknown))}. "
@@ -361,24 +414,29 @@ def collect(fetcher=None, clients=tuple(SOURCES), today: date | None = None,
     for ident, entry in list(cache.items()):
         if datetime.fromisoformat(entry["received"]) < since:
             del cache[ident]
-        elif (ident not in fresh and entry["client"] in clients and entry["client"] in SOURCES
-              and start <= date.fromisoformat(entry["date"]) <= end):
-            meetings.append(_meeting(ident, entry))
-            _blobs[ident] = entry["blob"]
+        elif ident not in fresh and entry["client"] in clients and entry["client"] in SOURCES:
+            for n, meeting in enumerate(_meetings(ident, entry)):
+                if start <= meeting.date <= end:
+                    meetings.append(meeting)
+                    _rebuilt[meeting.id] = (entry, n)
     return meetings, failures
 
 
 def item_text(fetcher, client: str, item: Item) -> str:
-    """Nothing for an email read this run: its text came with it. For one rebuilt
-    from the cache whose text was never matched (the run that read it ran out of
-    time), the email again, with its PDFs."""
-    blob = _blobs.get(item.id)
-    if item.text or not blob or _inbox is None:
+    """Nothing for an email read this run: its text came with it. For a meeting
+    rebuilt from the cache whose text was never matched (the run that read it ran
+    out of time), the email again, with its PDFs."""
+    ref = _rebuilt.get(item.id)
+    if item.text or ref is None or _inbox is None:
         return ""
-    mail = read(_inbox.raw(blob))
+    entry, n = ref
+    mail = read(_inbox.raw(entry["blob"]))
+    sender = next(s for s in SENDERS if s.client == entry["client"])
+    sent = datetime.fromisoformat(entry["received"]).astimezone(PACIFIC).date()
+    rows = rows_for(mail, entry["subject"], sender, sent)
     for attachment, (_, data) in zip(item.attachments, mail.pdfs):
         attachment.data = data
-    return mail.text
+    return rows[n]["text"] if n < len(rows) else ""
 
 
 def calendar_url(client: str) -> str:
