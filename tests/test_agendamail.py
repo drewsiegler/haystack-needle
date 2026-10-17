@@ -1,6 +1,8 @@
+import email
 import json
 from dataclasses import replace
 from datetime import date, datetime, timezone
+from email import policy
 from email.message import EmailMessage
 
 import httpx
@@ -10,12 +12,14 @@ from adapters import agendamail
 from conftest import FIXTURES, load
 from needle.matcher import compile_terms, match_meeting
 from needle.models import Source
+from needle.pdftext import pdf_pages
 from needle.run import Reader
 from pdfs import make_pdf
 
 EML = (FIXTURES / "agendamail" / "pausd-liaison.eml").read_bytes()
 LOSGATOS = (FIXTURES / "agendamail" / "losgatos-council.eml").read_bytes()
 PALOALTO = (FIXTURES / "agendamail" / "paloalto-weekly.eml").read_bytes()
+OSA = (FIXTURES / "agendamail" / "osa-committee.eml").read_bytes()
 SESSION = "https://api.fastmail.com/jmap/session"
 API = "https://api.fastmail.com/jmap/api/"
 DOWNLOAD = "https://www.fastmailusercontent.com/jmap/download/u1a2b3c4d/"
@@ -188,6 +192,51 @@ def test_reads_a_los_gatos_notice_by_its_reply_to(monkeypatch):
     assert "Town Council Agendas have been posted on the website" in text
     assert "http" not in text and "example.invalid" not in text  # links, and the inbox's address, out
     assert meeting.notice == "Town Council Meeting Agendas (sent Thu Oct 15; it gives no meeting date)"
+
+
+def test_reads_an_open_space_authority_agenda(monkeypatch):
+    # Its first committee agenda (Oct 16, 2026): the date is only in the text,
+    # written "October 21,2026", and the agenda is attached. The real PDF isn't
+    # kept here; a made-up one stands in under its file name.
+    mail = email.message_from_bytes(OSA, policy=policy.default)
+    pdf = make_pdf(["Expenditure Plan Oversight Committee", "Site tour of the Coyote Valley preserves"])
+    mail.add_attachment(pdf, maintype="application", subtype="pdf", filename="EPOC Agenda_20261021.pdf")
+    sent = message("osa", "osaclerk@openspaceauthority.org", mail["Subject"], "2026-10-17T00:55:20Z")
+    fake = FakeJmap(listing=listing(sent), raws={"G-osa": mail.as_bytes()})
+    monkeypatch.setattr(agendamail, "connect", fake.connect)
+    [meeting], failures = collect({}, today=date(2026, 10, 17))
+    assert failures == {}
+    assert meeting.body.source.name == "Open Space Authority"
+    assert meeting.body.name == "Expenditure Plan Oversight Committee"
+    assert meeting.date == date(2026, 10, 21)  # not Oct 16, the day it came
+    assert meeting.url == "https://openspaceauthority.primegov.com/public/portal"  # not the signature's home page
+    assert meeting.notice == ""
+    terms = compile_terms({"stand-in": {"terms": ["Coyote Valley"]}})
+    matches = match_meeting(meeting, terms, lambda a: pdf_pages(a.data))
+    assert [(m.location, m.page) for m in matches] == [("attachment", 2)]
+
+
+def test_leaves_replies_to_requests_and_sign_ups_unread(monkeypatch):
+    # From the inbox's first days (Oct 15-17, 2026): none is an agenda.
+    mail = [
+        message("re", "clerk@losgatosca.gov",
+                "RE: Request for Los Gatos Town Council agendas by email (Gov. Code § 54954.1)",
+                "2026-10-15T19:03:01Z"),
+        message("fw", "staff@sccoe.org",
+                "FW: Request for Santa Clara County Board of Education agendas by email (Gov. Code § 54954.1)",
+                "2026-10-15T21:26:44Z"),
+        message("confirm", "notification@diligent.community", "Confirm your email address",
+                "2026-10-16T20:48:36Z", reply_to="staff@sccoe.org"),
+        message("subscribed", "noreply@civicplus.com", "You have been subscribed to Agenda - Town Council.",
+                "2026-10-15T18:00:00Z", reply_to="clerk@losgatosca.gov"),
+        message("pending", "noreply@civicplus.com", "Information on Your Subscriptions (Confirmation Needed)",
+                "2026-10-15T17:00:00Z", reply_to="clerk@losgatosca.gov"),
+    ]
+    fake = FakeJmap(listing=listing(*mail), raws={})
+    monkeypatch.setattr(agendamail, "connect", fake.connect)
+    cache = {}
+    assert collect(cache) == ([], {})
+    assert cache == {} and fake.downloads == 0
 
 
 def test_reads_palo_altos_weekly_notice(monkeypatch):

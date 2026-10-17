@@ -15,7 +15,8 @@ and each run reads it.
   when the sender is a mailing service many towns share. The subject names
   the committee when it can ("October 22, 2026, City Schools Liaison Committee
   Meeting"). Mail from a sender not on the list, or a shelved one, is left
-  unread, so adding a sender later picks up its recent emails.
+  unread, so adding a sender later picks up its recent emails. Replies to the
+  inbox's written requests and lists' sign-up messages are left unread too.
 - Each email becomes a meeting with one item: the subject as its title, the
   email's text, and any attached PDF, which the matcher reads like any agenda.
   The meeting's date is the first date in the subject, else the first in the
@@ -29,7 +30,8 @@ and each run reads it.
   first one on a host the sender's line lists, never an unsubscribe link, else to
   the body's agenda page. Links are taken out of the text that's matched.
 - So far (Oct 15, 2026) Palo Alto and Los Gatos send only notices that agendas
-  are up, with no item text and no direct link (docs/sources.md).
+  are up, with no item text and no direct link (docs/sources.md). The Open Space
+  Authority attaches each agenda as a PDF with a text layer (Oct 16).
 - The run's cache keeps what each message gave (not its text), so a message is
   downloaded once. Later runs rebuild its meeting from the cache, and the
   matcher's saved snippets stand in for its text. If the run that downloaded it
@@ -82,16 +84,18 @@ class Sender:
 
 # Who sends agendas, one line each. School districts are shelved for a later
 # release (docs/scope.md): their emails arrive and wait, and read=True turns one
-# on. The Palo Alto and Los Gatos lines are confirmed by their first emails; the
-# others use each body's own domain until its first email confirms the sender.
+# on. The Palo Alto, Los Gatos and Open Space Authority lines are confirmed by
+# their first emails; the others use each body's own domain until its first
+# email confirms the sender.
 # Mail from a domain not listed is named in the run's log and left unread.
 SENDERS = [
     Sender("paloalto.gov", "paloalto", "Palo Alto", "City Council",
            "https://cityofpaloalto.primegov.com/public/portal",
            ("cityofpaloalto.primegov.com", "www.paloalto.gov"), notice=True, lists=True),
+    # Its clerk attaches each agenda; the only link is the signature's, to the
+    # home page, so alerts link the agendas portal instead.
     Sender("openspaceauthority.org", "openspaceauthority", "Open Space Authority", "Board of Directors",
-           "https://openspaceauthority.primegov.com/public/portal",
-           ("openspaceauthority.primegov.com", "www.openspaceauthority.org")),
+           "https://openspaceauthority.primegov.com/public/portal", ("openspaceauthority.primegov.com",)),
     # Los Gatos's Notify Me lists send from noreply@civicplus.com, which every
     # CivicPlus town shares, with the town's Reply-To; the subject names the body.
     Sender("losgatosca.gov", "losgatos", "Los Gatos", "Town Council",
@@ -112,13 +116,18 @@ SOURCES = {s.client: Source("agendamail", s.client, s.name) for s in SENDERS if 
 _MONTH = "jan feb mar apr may jun jul aug sep oct nov dec".split()
 _DATE = re.compile(r"\b(?:(?:mon|tues|wednes|thurs|fri|satur|sun)day,?\s+)?"
                    r"(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?\s+"
-                   r"(\d{1,2})(?:st|nd|rd|th)?,?\s+(\d{4})\b", re.I)
+                   r"(\d{1,2})(?:st|nd|rd|th)?(?:,\s*|\s+)(\d{4})\b", re.I)  # "October 21,2026" too
 _NUMERIC = re.compile(r"\b(\d{1,2})/(\d{1,2})/(\d{4})\b")
 # A run of capitalized words ending in what a body is called.
 _BODY = re.compile(r"(?:[A-Z][\w'&.-]*\s+(?:(?:and|of|on|for|the|&)\s+)*)*?"
                    r"(?:Committee|Commission|Council|Authority|Board(?:\s+of\s+(?:Education|Trustees|Directors))?)\b")
 _LEAD = {"agenda", "meeting", "notice", "regular", "special", "adjourned", "revised", "amended",
          "updated", "posted", "draft", "final", "the", "of", "for", "and", "on"}
+# Mail about getting on a list, not agendas: replies to the inbox's own written
+# requests ("RE: Request for Los Gatos Town Council agendas by email (Gov. Code §
+# 54954.1)") and lists' sign-up messages ("Confirm your email address").
+_NOT_AGENDA = re.compile(r"(?i)agendas by email|54954\.1|confirm your email|confirmation needed"
+                         r"|you have been subscribed|information on your subscriptions")
 _URL = re.compile(r"https?://[^\s<>\"')\]]+")
 _HREF = re.compile(r"""href=["'](https?://[^"']+)""", re.I)
 # Gmail's plain text puts each link's target, and phone links, in angle brackets.
@@ -392,13 +401,15 @@ def collect(fetcher=None, clients=tuple(SOURCES), today: date | None = None,
             continue
         if not sender.read or sender.client not in clients:
             continue  # shelved: left unread until its line says read=True
+        subject = " ".join((message.get("subject") or "").split())[:200]
+        if _NOT_AGENDA.search(subject):
+            continue
         try:
             mail = read(inbox.raw(message["blobId"]))
         except httpx.HTTPError as error:
             failures[sender.client] = f"Couldn't download an agenda email: {type(error).__name__}."
             continue  # not cached, so it's tried again next run
         received = datetime.fromisoformat(message["receivedAt"].replace("Z", "+00:00"))
-        subject = " ".join((message.get("subject") or "").split())[:200]
         rows = rows_for(mail, subject, sender, received.astimezone(PACIFIC).date())
         cache[ident] = {
             "received": received.isoformat(), "blob": message["blobId"], "client": sender.client,
