@@ -12,8 +12,9 @@ TERMS = compile_terms({"surveillance": {"terms": ["Flock", "ALPR"]}})
 def with_alert():
     state = statefile.empty()
     state["alerts"]["town/matter/100@m1"] = {
-        "id": "a1b2c3d4e5", "earlier_ids": ["0f0f0f0f0f"], "body_name": "City Council", "date": "2026-10-21",
+        "id": "a1b2c3d4e5", "earlier_ids": ["0f0f0f0f0f"], "body": "fake/town/body/1", "body_name": "City Council", "date": "2026-10-21",
         "sigs": ["surveillance|Flock|attachment|a1", "surveillance|ALPR|title|"]}
+    state["bodies"]["fake/town/body/1"] = {"name": "Townsville City Council"}
     return state
 
 
@@ -27,9 +28,9 @@ def test_counts_a_vote_on_an_alert_the_state_remembers():
     assert votes.count(state, [mail("Noise: surveillance / Flock [a1b2c3d4e5]")]) == 1
     assert state["votes"]["terms"] == {"surveillance|Flock": {"useful": [], "noise": ["2026-10-18"]}}
     assert state["votes"]["new"] == [{"vote": "noise", "watchlist": "surveillance", "term": "Flock",
-                                      "body": "City Council", "date": "2026-10-21"}]
+                                      "body": "Townsville City Council", "date": "2026-10-21"}]
     assert votes.since_digest(state) == [
-        "Noise: surveillance / Flock, on City Council, Wed Oct 21 (so far 0 useful, 1 noise)"]
+        "Noise: surveillance / Flock, on Townsville City Council, Wed Oct 21 (so far 0 useful, 1 noise)"]
 
 
 def test_counts_one_vote_per_person_per_alert():

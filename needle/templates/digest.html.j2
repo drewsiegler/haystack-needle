@@ -27,5 +27,29 @@
 {% endfor %}
 </ul>
 {% endif %}
+{% if voted or review or skipped %}
+<hr style="border:0;border-top:1px solid #ddd;margin:20px 0">
+<p><b>Votes since the last digest</b> (from the Useful and Noise links):</p>
+{% if voted %}
+<ul>
+{% for v in voted %}
+<li>{{ v }}</li>
+{% endfor %}
+</ul>
+{% else %}
+<p>None.</p>
+{% endif %}
+{% if skipped %}
+<p>{{ skipped }} email{{ "s" if skipped != 1 }} to the votes address didn't count: the subject wasn't a vote's, or its alert is too old.</p>
+{% endif %}
+{% if review %}
+<p><b>Terms to review.</b> The app doesn't change the watchlists; say if one should change:</p>
+<ul>
+{% for r in review %}
+<li>{{ r }}</li>
+{% endfor %}
+</ul>
+{% endif %}
+{% endif %}
 {% include "_footer.html.j2" %}
 </body></html>

@@ -146,16 +146,23 @@ def alert_email(alert: dict) -> tuple[str, str, str]:
 
 
 def digest_email(alerts: list[dict], boilerplate: list[str], day: date,
-                 posted: list[dict] = ()) -> tuple[str, str, str]:
-    """posted: agendas a body emailed only a notice of ({"line", "url"}), to check by hand."""
+                 posted: list[dict] = (), voted: list[str] = (), review: list[str] = (),
+                 skipped: int = 0) -> tuple[str, str, str]:
+    """posted: agendas a body emailed only a notice of ({"line", "url"}), to check by hand.
+    voted: a line for each vote since the last digest; review: terms with only noise
+    votes lately; skipped: vote emails not counted (needle/votes.py)."""
     count, held, check = len(alerts), len(boilerplate), len(posted)
     if count:
         summary = f"{count} item{'s' if count != 1 else ''}"
     elif check:
         summary = f"{check} agenda{'s' if check != 1 else ''} to check by hand"
+    elif voted:
+        summary = f"{len(voted)} vote{'s' if len(voted) != 1 else ''} counted"
     else:
         summary = f"nothing new, {held} phrase{'s' if held != 1 else ''} held back"
     subject = f"[Haystack Needle] Morning digest, {day_text(day)}: {summary}"
     context = {"alerts": alerts, "boilerplate": [oneline(b, 300) for b in boilerplate],
-               "posted": [{"line": oneline(p["line"], 200), "url": safe_url(p["url"])} for p in posted]}
+               "posted": [{"line": oneline(p["line"], 200), "url": safe_url(p["url"])} for p in posted],
+               "voted": [oneline(v, 300) for v in voted], "review": [oneline(r, 300) for r in review],
+               "skipped": skipped}
     return subject, render("digest.txt.j2", **context), render("digest.html.j2", **context)

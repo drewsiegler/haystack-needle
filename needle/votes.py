@@ -74,8 +74,9 @@ def count(state: dict, mail: list[dict]) -> int:
         entry["voters"].append(voter)
         (watchlist, term), kind = pair, parsed[0]
         tally["terms"].setdefault(f"{watchlist}|{term}", {"useful": [], "noise": []})[kind].append(vote["date"])
-        tally["new"].append({"vote": kind, "watchlist": watchlist, "term": term,
-                             "body": entry.get("body_name", ""), "date": entry["date"]})
+        body = state["bodies"].get(entry.get("body"), {}).get("name") or entry.get("body_name", "")
+        tally["new"].append({"vote": kind, "watchlist": watchlist, "term": term, "body": body,
+                             "date": entry["date"]})
         counted += 1
     return counted
 

@@ -26,5 +26,25 @@ Posted, but Haystack Needle can't read these agendas: the body emails only a not
     {{ p.url }}{% endif %}
 {% endfor %}
 {% endif %}
+{% if voted or review or skipped %}
+
+==========
+Votes since the last digest (from the Useful and Noise links):
+{% for v in voted %}
+  - {{ v }}
+{% endfor %}
+{% if not voted %}
+  None.
+{% endif %}
+{% if skipped %}
+{{ skipped }} email{{ "s" if skipped != 1 }} to the votes address didn't count: the subject wasn't a vote's, or its alert is too old.
+{% endif %}
+{% if review %}
+Terms to review. The app doesn't change the watchlists; say if one should change:
+{% for r in review %}
+  - {{ r }}
+{% endfor %}
+{% endif %}
+{% endif %}
 
 {% include "_footer.txt.j2" %}

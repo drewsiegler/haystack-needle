@@ -85,3 +85,11 @@ def test_vote_links_are_mailto_with_the_alert_id():
             "%20%5Ba1b2c3d4e5%5D\n") in text
     assert 'href="mailto:haystackneedle.agendas+votes@fastmail.com?subject=Useful%3A' in html
     assert "http" not in alerts.vote_links("x", "w", "t")["useful"]  # no web request, so nothing to track
+
+
+def test_digest_lists_votes_escaped():
+    _, text, html = alerts.digest_email([], [], date(2026, 10, 15), voted=[
+        "Noise: surveillance / Flock, on <b>City</b> Council, Tue Oct 20 (so far 0 useful, 1 noise)"],
+        review=["surveillance / Flock: 3 noise votes and no useful ones in the last 30 days"], skipped=2)
+    assert "&lt;b&gt;City&lt;/b&gt; Council" in html and "<b>City</b>" not in html
+    assert "2 emails to the votes address didn't count" in text and "Terms to review" in html

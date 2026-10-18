@@ -160,6 +160,30 @@ def test_votes_from_the_adapter_are_counted_even_after_an_update(setup, capsys):
                                        "surveillance|license plate reader": {"useful": ["2026-10-14"], "noise": []}}
 
 
+def test_the_digest_lists_votes_and_terms_to_review(setup, capsys):
+    adapter, fetcher, state, go = setup
+    adapter.meetings = [meeting(COUNCIL, date(2026, 10, 20), attachments=[Attachment("a1", "Staff Report", REPORT)])]
+    go()
+    [entry] = state["alerts"].values()
+    adapter.collected_votes = lambda: [
+        {"subject": f"Noise: surveillance / Flock [{entry['id']}]", "voter": v, "date": "2026-10-14"}
+        for v in ("v1", "v2", "v3")] + [{"subject": "Noise: surveillance / Flock", "voter": "v4", "date": "2026-10-14"}]
+    capsys.readouterr()
+
+    # Votes alone send the digest.
+    assert go(datetime(2026, 10, 15, 10, 0, tzinfo=timezone.utc)) == [
+        "[Haystack Needle] Morning digest, Thu Oct 15: 3 votes counted"]
+    printed = capsys.readouterr().out
+    assert "  - Noise: surveillance / Flock, on Townsville City Council, Tue Oct 20 (so far 0 useful, 3 noise)" in printed
+    assert "1 email to the votes address didn't count" in printed
+    assert "  - surveillance / Flock: 3 noise votes and no useful ones in the last 30 days" in printed
+    assert state["votes"]["new"] == [] and state["votes"]["skipped"] == 0
+
+    # A term to review alone doesn't send one.
+    adapter.collected_votes = lambda: []
+    assert go(datetime(2026, 10, 16, 10, 0, tzinfo=timezone.utc)) == []
+
+
 def test_meetings_already_over_dont_alert(setup):
     adapter, fetcher, state, go = setup
     adapter.meetings = [meeting(COUNCIL, date(2026, 10, 13), title="Flock contract")]

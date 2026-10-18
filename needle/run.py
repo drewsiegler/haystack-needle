@@ -370,12 +370,15 @@ def run(state: dict, fetcher, outbox: Outbox, now: datetime, adapters: dict = AD
     if pacific.hour >= DIGEST_HOUR and state["last_digest"] != iso(today):
         pending = [k for k, v in state["boilerplate"].items() if not v["reported"]]
         posted = [v for v in state["posted"].values() if not v["reported"]]
-        if state["digest"] or pending or posted:
+        voted = state["votes"]
+        if state["digest"] or pending or posted or voted["new"] or voted["skipped"]:
             outbox.send(*alerts.digest_email(state["digest"], [state["boilerplate"][k]["note"] for k in pending],
-                                             today, sorted(posted, key=lambda v: v["date"])))
+                                             today, sorted(posted, key=lambda v: v["date"]),
+                                             votes.since_digest(state), votes.to_review(state, today, terms),
+                                             voted["skipped"]))
             for entry in posted:
                 entry["reported"] = True
-            state["digest"] = []
+            state["digest"], voted["new"], voted["skipped"] = [], [], 0
             for k in pending:
                 state["boilerplate"][k]["reported"] = True
         state["last_digest"] = iso(today)
