@@ -81,7 +81,7 @@ def test_vote_links_are_mailto_with_the_alert_id():
     meeting, match = sample()
     _, text, html = alerts.alert_email(alerts.build(meeting, [match], "a1b2c3d4e5", "high"))
 
-    assert ("Noise?  mailto:alerts@andrewsiegler.com?subject=Noise%3A%20surveillance%20%2F%20Flock"
+    assert ("Noise?  mailto:haystackneedle.agendas+votes@fastmail.com?subject=Noise%3A%20surveillance%20%2F%20Flock"
             "%20%5Ba1b2c3d4e5%5D\n") in text
-    assert 'href="mailto:alerts@andrewsiegler.com?subject=Useful%3A' in html
+    assert 'href="mailto:haystackneedle.agendas+votes@fastmail.com?subject=Useful%3A' in html
     assert "http" not in alerts.vote_links("x", "w", "t")["useful"]  # no web request, so nothing to track

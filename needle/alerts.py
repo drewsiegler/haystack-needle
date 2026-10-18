@@ -15,7 +15,7 @@ from urllib.parse import quote
 
 from jinja2 import Environment, FileSystemLoader, StrictUndefined, select_autoescape
 
-from needle.mailer import ADDRESS
+from needle import votes
 from needle.matcher import DEEP_PAGE, snippet
 from needle.models import Match, Meeting
 
@@ -78,14 +78,15 @@ def comment_info(pages: list[str]) -> tuple[str, str] | None:
 
 
 def vote_links(alert_id: str, watchlist: str, term: str) -> dict:
-    """mailto links that record a vote as an email to the alert address.
+    """mailto links that record a vote as an email to the agenda inbox's +votes address.
 
     Nothing loads when an alert is opened and nothing is counted on a server:
     a vote is an email someone chose to send, with the alert id, watchlist
-    and term in the subject so the inbox can be searched for "Noise:".
+    and term in the subject, which the run reads with the agendas and counts
+    (needle/votes.py).
     """
-    return {vote.lower(): f"mailto:{ADDRESS}?subject={quote(f'{vote}: {watchlist} / {term} [{alert_id}]', safe='')}"
-            for vote in ("Useful", "Noise")}
+    return {vote.lower(): f"mailto:{votes.ADDRESS}?subject={quote(votes.subject(vote, watchlist, term, alert_id), safe='')}"
+            for vote in votes.KINDS}
 
 
 def where(match: Match) -> str:
