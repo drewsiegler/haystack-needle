@@ -1,6 +1,6 @@
 # Haystack Needle
 
-Haystack Needle reads every public meeting agenda in Santa Clara County as it's posted (the Board of Supervisors, city councils, school boards, VTA, Valley Water and their committees) and emails organizers when an item matches a campaign's watchlist: surveillance, policing contracts, immigration enforcement, tenant protections.
+Haystack Needle reads every public meeting agenda in Santa Clara County as it's posted (the Board of Supervisors, city councils, school boards, VTA, Valley Water and their committees) and emails organizers when an item matches a campaign's watchlist: surveillance, policing contracts, immigration enforcement, tenant protections. Each organizer gets only the watchlists, terms and places they picked.
 
 It's built for catching an item at its first public appearance, often a committee referral, a study session or a consent-calendar line, while there's still time to organize.
 
@@ -35,7 +35,7 @@ The tests never touch the network. `needle.run --dry-run` reads the live agendas
 
 Each alert ends with Useful and Noise links. Each opens an email for you to send, to the agenda inbox's votes address, with the alert's watchlist, term and id in the subject; don't change the subject, or the vote won't count. Each run counts the votes: one per person per alert. The state is public, so it keeps no email address, only a scrambled code made with a secret key, which no one can match to an address. The morning digest lists the votes since the last digest, and names a term to review once it has 3 noise votes and no useful ones in 30 days. The app never changes the watchlists: say which terms to change, and Drew decides.
 
-It needs five Actions secrets (Settings → Secrets and variables → Actions), which never go in this repo:
+It needs five Actions secrets (Settings → Secrets and variables → Actions), which never go in this repo, and two more to email other organizers (below):
 
 | Secret | What it is |
 | --- | --- |
@@ -44,10 +44,52 @@ It needs five Actions secrets (Settings → Secrets and variables → Actions), 
 | `ALERT_TO` | Where alerts and health warnings go |
 | `FASTMAIL_API_TOKEN` | A read-only Fastmail API token for the agenda inbox, which gets the agenda emails and the alerts' votes |
 | `HEALTHCHECKS_URL` | The ping URL of a Healthchecks.io check, which emails if runs stop arriving |
+| `SUBSCRIBERS` | The other organizers who get alerts, and what each picked (below) |
+| `SUBSCRIBERS_KEY` | A random key that turns each address into a code for the public state file |
 
 The workflow runs hourly, plus three tries at 2:47, 4:47 and 6:47 a.m. California time for the digest; the first run after 2 a.m. each day sends it. GitHub often starts scheduled runs hours late and drops many of them (only 5 to 7 of the 24 hourly runs fired each day on Oct 15-17, 2026), so the digest usually comes around 6 a.m., and on a day GitHub isn't behind it can come before 3. Set the Healthchecks.io check to a period of 1 hour with a 6-hour grace time, so it emails you only when no run has finished for about 7 hours. If it does, run the workflow by hand (Actions → Check agendas → Run workflow).
 
 To check the mail setup, run the workflow by hand (Actions → Check agendas → Run workflow) with "Send one sample alert" ticked.
+
+## Other organizers
+
+Organizers sign up on a CryptPad form (end-to-end encrypted), and Drew approves each one by hand. The form asks for an email address, which watchlists they want, single terms from the watchlists, any terms of their own, and which cities or agencies (all of them if left blank). It asks for no name. `python -m needle.subscribers places` lists the city and agency names the form should offer.
+
+Each person gets alerts only for what they picked: high-priority matches right away, the rest in their own morning digest, one email each, never a CC or BCC. Their own terms are matched for them alone and always wait for the digest. Their first email says what they picked. Every email they get ends with how to stop or change it: reply to it, and Drew updates the list. They hear about matches found after they sign up, not earlier ones.
+
+Drew's own address (`ALERT_TO`) still gets everything on the watchlists, plus the health warnings, the boilerplate notes and the vote counts. Once a week the morning digest lists the terms organizers added themselves, with how many people chose each, to consider for watchlists.yaml.
+
+To add, change or remove people:
+
+1. Export the form's answers as CSV and save it **outside this repo**. Delete the rows you haven't approved; to remove someone or change what they get, delete or edit their row. If one address has several rows, the last one counts.
+2. Turn it into the secret. This sends the list straight to GitHub and never shows it on screen:
+
+   ```bash
+   python -m needle.subscribers import ~/Documents/responses.csv | gh secret set SUBSCRIBERS
+   ```
+
+   It says how many people it read and which rows it left out and why, by row number.
+3. Once only, make the key (keep it the same from then on: a new key welcomes everyone again and re-reads every agenda once):
+
+   ```bash
+   python -m needle.subscribers key | gh secret set SUBSCRIBERS_KEY
+   ```
+
+GitHub won't show a secret again, so the CSV export is your copy of the list. The next run emails anyone new and forgets anyone taken off. A new term someone adds means every agenda is read again once, over a few runs, just like a term added to watchlists.yaml.
+
+**What's public.** The repo, its Actions logs and the `data` branch are public. None of them holds an address or a name. The state file knows each person only by a code made from their address with `SUBSCRIBERS_KEY`, which no one without the key can match to an address, and their own terms by codes made the same way. Alerts waiting for someone's digest sit in the state under their code until the digest goes out, quoting the agenda as every alert does. The logs give only a count of emails sent to organizers, not their subjects. If Proton refuses an address, Drew's digest names the subscriber by number (their place in the list), not by address.
+
+### Sending limits
+
+Proton sends this mail through its SMTP service, which needs a paid plan with a custom domain. Proton doesn't publish its paid plans' sending limits (they depend on the account's reputation); its free plan allows 50 emails an hour and 150 a day, and Proton says it isn't built for bulk mail. So each run sends at most 20 emails to organizers, and each day at most 140 in all (`SUBSCRIBER_SENDS` and `DAY_SENDS` in `needle/run.py`). Drew's own alerts always go. An organizer's email past the cap waits for the next run, and the morning digest says how many had to wait.
+
+Each organizer costs about one digest a day, plus an email for each high-priority match. Move to a sending service such as Amazon SES or Postmark when any of these happens:
+
+- the list passes about 25 people;
+- the digest says emails had to wait on more than a couple of days a week;
+- Proton warns about a sending limit ("Daily external limit reached") or holds the account for review.
+
+Both take mail over SMTP with STARTTLS on port 587, as Proton does, so moving means changing `HOST` in `needle/mailer.py` and the `SMTP_USERNAME` and `SMTP_PASSWORD` secrets, then raising the caps to the new service's limits. Unlike Proton, a sending service sees who each email goes to.
 
 ## License
 
