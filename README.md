@@ -31,15 +31,18 @@ The tests never touch the network. `needle.run --dry-run` reads the live agendas
 
 ## How it runs
 
-[A GitHub Actions workflow](.github/workflows/check-agendas.yml) checks every source every 2 hours, and hourly from 72 hours before a meeting through meeting day. It identifies itself by name in every request, keeps to each site's rate limits and honors robots.txt. What it has seen and sent is kept in `state.json` on the `data` branch: dates, hashes and short snippets, never PDFs. Alerts go by email; nothing tracks who opens or clicks them, and the useful/noise links open an email you choose to send.
+[A GitHub Actions workflow](.github/workflows/check-agendas.yml) checks every source every 2 hours, and hourly from 72 hours before a meeting through meeting day. It identifies itself by name in every request, keeps to each site's rate limits and honors robots.txt. What it has seen and sent is kept in `state.json` on the `data` branch: dates, hashes and short snippets, never PDFs. Alerts go by email; nothing tracks who opens or clicks them.
 
-It needs four Actions secrets (Settings → Secrets and variables → Actions), which never go in this repo:
+Each alert ends with Useful and Noise links. Each opens an email for you to send, to the agenda inbox's votes address, with the alert's watchlist, term and id in the subject; don't change the subject, or the vote won't count. Each run counts the votes: one per person per alert. The state is public, so it keeps no email address, only a scrambled code made with a secret key, which no one can match to an address. The morning digest lists the votes since the last digest, and names a term to review once it has 3 noise votes and no useful ones in 30 days. The app never changes the watchlists: say which terms to change, and Drew decides.
+
+It needs five Actions secrets (Settings → Secrets and variables → Actions), which never go in this repo:
 
 | Secret | What it is |
 | --- | --- |
 | `SMTP_USERNAME` | The Proton address mail is sent from, `alerts@andrewsiegler.com` |
 | `SMTP_PASSWORD` | A Proton SMTP token for that address (not the account password) |
 | `ALERT_TO` | Where alerts and health warnings go |
+| `FASTMAIL_API_TOKEN` | A read-only Fastmail API token for the agenda inbox, which gets the agenda emails and the alerts' votes |
 | `HEALTHCHECKS_URL` | The ping URL of a Healthchecks.io check, which emails if runs stop arriving |
 
 The workflow runs hourly, plus three tries at 2:47, 4:47 and 6:47 a.m. California time for the digest; the first run after 2 a.m. each day sends it. GitHub often starts scheduled runs hours late and drops many of them (only 5 to 7 of the 24 hourly runs fired each day on Oct 15-17, 2026), so the digest usually comes around 6 a.m., and on a day GitHub isn't behind it can come before 3. Set the Healthchecks.io check to a period of 1 hour with a 6-hour grace time, so it emails you only when no run has finished for about 7 hours. If it does, run the workflow by hand (Actions → Check agendas → Run workflow).
