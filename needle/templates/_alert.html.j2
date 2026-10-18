@@ -26,5 +26,7 @@
 {% endfor %}
 </ul>
 {% endif %}
+{% if a.votes %}
 <p style="margin:12px 0 0">Was this useful? <a href="{{ a.votes.useful }}">Useful</a> · <a href="{{ a.votes.noise }}">Noise</a> <span style="color:#777">(each opens an email for you to send; nothing is tracked)</span></p>
+{% endif %}
 </div>

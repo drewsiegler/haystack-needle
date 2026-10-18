@@ -1,0 +1,20 @@
+You're signed up for Haystack Needle. It reads public meeting agendas across Santa Clara County, and from now on it emails you when an agenda item matches what you picked:
+
+{% if watchlists %}
+Watchlists: {{ watchlists | join(", ") }}
+{% endif %}
+{% if terms %}
+Terms: {{ terms | join(", ") }}
+{% endif %}
+{% if custom %}
+Your own terms: {{ custom | join("; ") }}
+{% endif %}
+Places: {{ places | join(", ") if places else "every city and agency it reads" }}
+
+{% if high %}Matches on the {{ high | join(", ") }} watchlists come right away. Everything else, your own terms included, comes{% else %}Matches come{% endif %} in a morning digest, usually by 7 a.m. You'll hear about matches found from now on, not earlier ones.
+
+Each alert links the agenda and quotes how to send public comment, when the agenda says. Its Useful and Noise links open an email for you to send, which helps tune the watchlists. Nothing is tracked, and your address is never published.
+
+The watchlists: https://github.com/drewsiegler/haystack-needle/blob/main/watchlists.yaml
+
+{{ stop_line }}

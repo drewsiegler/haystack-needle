@@ -1,5 +1,5 @@
 {% if alerts %}
-{{ alerts | length }} agenda item{{ "s" if alerts | length != 1 }} matched a normal-priority watchlist since the last digest.
+{{ alerts | length }} agenda item{{ "s" if alerts | length != 1 }} {{ "matched what you picked" if subscriber else "matched a normal-priority watchlist" }} since the last digest.
 {% else %}
 No new matches since the last digest.
 {% endif %}
@@ -45,6 +45,22 @@ Terms to review. The app doesn't change the watchlists; say if one should change
   - {{ r }}
 {% endfor %}
 {% endif %}
+{% endif %}
+{% if new_terms %}
+
+==========
+Terms subscribers added themselves this week. They're matched only for them; add one to watchlists.yaml to get it too:
+{% for t in new_terms %}
+  - {{ t }}
+{% endfor %}
+{% endif %}
+{% if sending %}
+
+==========
+Email to subscribers:
+{% for n in sending %}
+  - {{ n }}
+{% endfor %}
 {% endif %}
 
 {% include "_footer.txt.j2" %}

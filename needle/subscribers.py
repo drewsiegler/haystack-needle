@@ -65,13 +65,13 @@ class Subscriber:
     watchlists: frozenset = frozenset()
     terms: frozenset = frozenset()  # as written in watchlists.yaml
     custom: tuple = ()  # (label, phrase) pairs; the label is a keyed hash of the phrase
-    places: frozenset = frozenset()  # folded; empty means all
+    places: tuple = ()  # as given; empty means all
 
     def __repr__(self) -> str:  # keep the address out of tracebacks and logs
         return f"Subscriber({self.number})"
 
     def wants(self, watchlist: str, term: str, place: str) -> bool:
-        if self.places and fold(place) not in self.places:
+        if self.places and fold(place) not in {fold(p) for p in self.places}:
             return False
         if watchlist == CUSTOM:
             return any(term == label for label, _ in self.custom)
@@ -156,7 +156,7 @@ def load(raw: str | None, key: str | None, watchlists: dict, owner: str | None =
             elif phrase:
                 custom.setdefault(roster.label(phrase), phrase)
         subscriber = Subscriber(number, email, frozenset(picked & set(watchlists)), frozenset(chosen),
-                                tuple(custom.items()), frozenset(fold(p) for p in entry.get("places") or []))
+                                tuple(custom.items()), tuple(str(p) for p in entry.get("places") or []))
         if not (subscriber.watchlists or subscriber.terms or subscriber.custom):
             warn(f"Subscriber {number} picked nothing the app can match; left out.")
             continue

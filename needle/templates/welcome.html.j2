@@ -1,0 +1,19 @@
+<!doctype html>
+<html><body style="font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.45;color:#111;max-width:640px">
+<p>You're signed up for Haystack Needle. It reads public meeting agendas across Santa Clara County, and from now on it emails you when an agenda item matches what you picked:</p>
+<ul>
+{% if watchlists %}
+<li><b>Watchlists:</b> {{ watchlists | join(", ") }}</li>
+{% endif %}
+{% if terms %}
+<li><b>Terms:</b> {{ terms | join(", ") }}</li>
+{% endif %}
+{% if custom %}
+<li><b>Your own terms:</b> {{ custom | join("; ") }}</li>
+{% endif %}
+<li><b>Places:</b> {{ places | join(", ") if places else "every city and agency it reads" }}</li>
+</ul>
+<p>{% if high %}Matches on the {{ high | join(", ") }} watchlists come right away. Everything else, your own terms included, comes{% else %}Matches come{% endif %} in a morning digest, usually by 7 a.m. You'll hear about matches found from now on, not earlier ones.</p>
+<p>Each alert links the agenda and quotes how to send public comment, when the agenda says. Its Useful and Noise links open an email for you to send, which helps tune the <a href="https://github.com/drewsiegler/haystack-needle/blob/main/watchlists.yaml">watchlists</a>. Nothing is tracked, and your address is never published.</p>
+<p style="margin:12px 0 0">{{ stop_line }}</p>
+</body></html>

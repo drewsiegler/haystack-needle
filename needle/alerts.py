@@ -21,6 +21,8 @@ from needle.models import Match, Meeting
 
 TEMPLATES = Path(__file__).parent / "templates"
 TITLE_CHARS = 300  # agenda titles can run to a paragraph
+# The last line of every email to a subscriber. Replies reach the sending address, which Drew reads.
+STOP_LINE = "To stop these emails or change what you get, reply to this email."
 WHERE = {"title": "item title", "item_text": "item text"}
 
 _CONTROL = re.compile(r"[\x00-\x1f\x7f]+")
@@ -54,10 +56,12 @@ _env = Environment(
     keep_trailing_newline=True,
 )
 _env.filters["oneline"] = oneline
+_env.globals["stop_line"] = STOP_LINE
 
 
-def render(name: str, **context) -> str:
-    return _env.get_template(name).render(**context)
+def render(name: str, subscriber: bool = False, **context) -> str:
+    """subscriber: for someone on the list rather than the owner."""
+    return _env.get_template(name).render(subscriber=subscriber, **context)
 
 
 def comment_info(pages: list[str]) -> tuple[str, str] | None:
@@ -140,17 +144,30 @@ def build(meeting: Meeting, matches: list[Match], alert_id: str, priority: str,
     }
 
 
-def alert_email(alert: dict) -> tuple[str, str, str]:
+def alert_email(alert: dict, subscriber: bool = False) -> tuple[str, str, str]:
     """(subject, text, html) for one alert sent right away."""
-    return (alert["subject"], render("alert.txt.j2", a=alert), render("alert.html.j2", a=alert))
+    return (alert["subject"], render("alert.txt.j2", subscriber, a=alert),
+            render("alert.html.j2", subscriber, a=alert))
+
+
+def welcome_email(watchlists, terms, custom, places, priorities: dict) -> tuple[str, str, str]:
+    """A subscriber's first email: what they picked, and how to stop or change it."""
+    context = {"watchlists": sorted(watchlists), "terms": sorted(terms, key=str.casefold),
+               "custom": [oneline(c, 100) for c in custom], "places": [oneline(p, 60) for p in places],
+               "high": sorted(w for w, p in priorities.items() if p == "high")}
+    return ("[Haystack Needle] You're signed up for agenda alerts",
+            render("welcome.txt.j2", True, **context), render("welcome.html.j2", True, **context))
 
 
 def digest_email(alerts: list[dict], boilerplate: list[str], day: date,
                  posted: list[dict] = (), voted: list[str] = (), review: list[str] = (),
-                 skipped: int = 0) -> tuple[str, str, str]:
+                 skipped: int = 0, new_terms: list[str] = (), sending: list[str] = (),
+                 subscriber: bool = False) -> tuple[str, str, str]:
     """posted: agendas a body emailed only a notice of ({"line", "url"}), to check by hand.
     voted: a line for each vote since the last digest; review: terms with only noise
-    votes lately; skipped: vote emails not counted (needle/votes.py)."""
+    votes lately; skipped: vote emails not counted (needle/votes.py). new_terms:
+    subscribers' own terms added lately; sending: notes on email to subscribers.
+    subscriber: a subscriber's digest, which has only their alerts."""
     count, held, check = len(alerts), len(boilerplate), len(posted)
     if count:
         summary = f"{count} item{'s' if count != 1 else ''}"
@@ -158,11 +175,17 @@ def digest_email(alerts: list[dict], boilerplate: list[str], day: date,
         summary = f"{check} agenda{'s' if check != 1 else ''} to check by hand"
     elif voted:
         summary = f"{len(voted)} vote{'s' if len(voted) != 1 else ''} counted"
+    elif new_terms:
+        summary = f"{len(new_terms)} new term{'s' if len(new_terms) != 1 else ''} from subscribers"
+    elif sending:
+        summary = "a note on email to subscribers"
     else:
         summary = f"nothing new, {held} phrase{'s' if held != 1 else ''} held back"
     subject = f"[Haystack Needle] Morning digest, {day_text(day)}: {summary}"
     context = {"alerts": alerts, "boilerplate": [oneline(b, 300) for b in boilerplate],
                "posted": [{"line": oneline(p["line"], 200), "url": safe_url(p["url"])} for p in posted],
                "voted": [oneline(v, 300) for v in voted], "review": [oneline(r, 300) for r in review],
-               "skipped": skipped}
-    return subject, render("digest.txt.j2", **context), render("digest.html.j2", **context)
+               "skipped": skipped, "new_terms": [oneline(t, 150) for t in new_terms],
+               "sending": [oneline(n, 400) for n in sending]}
+    return (subject, render("digest.txt.j2", subscriber, **context),
+            render("digest.html.j2", subscriber, **context))

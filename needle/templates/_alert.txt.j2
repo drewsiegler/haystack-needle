@@ -26,7 +26,9 @@ Prior history:
 {% else %}
 Prior history: none found
 {% endif %}
+{% if a.votes %}
 
 Useful? {{ a.votes.useful }}
 Noise?  {{ a.votes.noise }}
 (Each opens an email for you to send. Nothing is tracked.)
+{% endif %}

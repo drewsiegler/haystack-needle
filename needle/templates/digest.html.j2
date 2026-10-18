@@ -1,7 +1,7 @@
 <!doctype html>
 <html><body style="font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.45;color:#111;max-width:640px">
 {% if alerts %}
-<p>{{ alerts | length }} agenda item{{ "s" if alerts | length != 1 }} matched a normal-priority watchlist since the last digest.</p>
+<p>{{ alerts | length }} agenda item{{ "s" if alerts | length != 1 }} {{ "matched what you picked" if subscriber else "matched a normal-priority watchlist" }} since the last digest.</p>
 {% else %}
 <p>No new matches since the last digest.</p>
 {% endif %}
@@ -50,6 +50,24 @@
 {% endfor %}
 </ul>
 {% endif %}
+{% endif %}
+{% if new_terms %}
+<hr style="border:0;border-top:1px solid #ddd;margin:20px 0">
+<p><b>Terms subscribers added themselves this week.</b> They're matched only for them; add one to watchlists.yaml to get it too:</p>
+<ul>
+{% for t in new_terms %}
+<li>{{ t }}</li>
+{% endfor %}
+</ul>
+{% endif %}
+{% if sending %}
+<hr style="border:0;border-top:1px solid #ddd;margin:20px 0">
+<p><b>Email to subscribers:</b></p>
+<ul>
+{% for n in sending %}
+<li>{{ n }}</li>
+{% endfor %}
+</ul>
 {% endif %}
 {% include "_footer.html.j2" %}
 </body></html>

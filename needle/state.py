@@ -40,6 +40,15 @@ def empty() -> dict:
         # Useful and Noise votes (needle/votes.py): "terms": {"watchlist|term": {"useful": [date],
         # "noise": [date]}}, "new": votes since the last digest, "skipped": vote emails not counted
         "votes": {"terms": {}, "new": [], "skipped": 0},
+        # Other organizers (needle/subscribers.py), each known only by an HMAC of their address:
+        # hash -> {"welcomed": Pacific date or None, "held": alerts the send cap held back,
+        # "digest": alerts for their next digest, "digest_sent": Pacific date}
+        "subscribers": {},
+        # Subscribers' own terms already listed for the owner, by label (an HMAC), and when
+        "custom": {"labels": [], "on": None},
+        # Today's sends (Pacific), for the cap; since the owner's last digest, subscribers'
+        # emails that had to wait and subscribers whose address was refused, by number
+        "sends": {"day": None, "count": 0, "held": 0, "refused": []},
         "cache": {},  # adapter -> what it keeps between runs (IQM2: agenda outlines); the adapter prunes it
     }
 
