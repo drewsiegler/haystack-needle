@@ -1,5 +1,5 @@
 """Turn matches into alert emails: one per item for high-priority watchlists, and
-the 7 a.m. digest for the rest.
+the morning digest for the rest.
 
 An alert is a plain dict of strings, so a digest entry can wait in the state
 file until morning. Agenda text is untrusted: the HTML templates escape it,

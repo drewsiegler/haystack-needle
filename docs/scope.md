@@ -66,7 +66,7 @@ v1 runs through phase 4: the Legistar and IQM2 bodies and the other long-tail pl
 - Checks every source every 2 hours, and hourly from 72 hours before a meeting through meeting day, to catch amended agendas and late memos.
 - Reads agenda item titles, item text and attached PDFs (staff reports, contracts, resolutions), not just the agenda cover.
 - Matches against watchlists, one per campaign: surveillance, policing contracts, immigration enforcement, tenant protections.
-- Emails you right away for high-priority watchlists, and in a 7 a.m. digest for the rest.
+- Emails you right away for high-priority watchlists, and in a morning digest (usually by 7 a.m.) for the rest.
 - Tracks an item as it moves. When Legistar shows the same matter going from committee to council, the alert says "this moved forward" instead of looking new.
 - Includes a "useful / noise" link in every alert so watchlists can be tuned.
 

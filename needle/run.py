@@ -47,7 +47,7 @@ ADAPTERS = {"legistar": legistar, "iqm2": iqm2, "civicclerk": civicclerk, "civic
 FULL_EVERY = timedelta(minutes=110)  # a full run every 2 hours
 NEAR_DAYS = 3  # between full runs, re-check meetings from 72 hours out through meeting day
 TEXT_TTL = timedelta(hours=24)  # re-read item text at least daily, in case it changed quietly
-DIGEST_HOUR = 7  # Pacific
+DIGEST_HOUR = 2  # Pacific: the first run after 2 a.m. sends the day's digest (usually by 7; see the workflow)
 MAX_DOWNLOADS = 150  # PDFs per run; the rest wait for the next run, soonest meetings first
 BUDGET = timedelta(minutes=40)  # then stop reading meetings, well inside the job's 55-minute limit
 # Slow hosts (IQM2 asks for a minute between requests) may hold the run up only

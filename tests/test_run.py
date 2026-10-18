@@ -121,15 +121,16 @@ def test_same_matter_at_a_new_body_moved_forward(setup, capsys):
     assert "This moved forward: from Public Safety Committee (Thu Oct 15, 2026)" in capsys.readouterr().out
 
 
-def test_normal_priority_waits_for_the_7am_digest(setup):
+def test_normal_priority_waits_for_the_morning_digest(setup):
     adapter, fetcher, state, go = setup
     adapter.meetings = [meeting(COUNCIL, date(2026, 10, 20), title="Rent stabilization update")]
-    five_am = datetime(2026, 10, 15, 12, 0, tzinfo=timezone.utc)
+    one_am = datetime(2026, 10, 15, 8, 0, tzinfo=timezone.utc)
 
-    assert go(five_am) == []
+    assert go(one_am) == []
     assert len(state["digest"]) == 1
-    assert go(five_am + timedelta(hours=2, minutes=30)) == ["[Haystack Needle] Morning digest, Thu Oct 15: 1 item"]
-    assert state["digest"] == [] and go(five_am + timedelta(hours=4)) == []
+    # The first run after 2 a.m. sends it (the 2:47 try, or an hourly run), and later ones don't.
+    assert go(one_am + timedelta(hours=1, minutes=47)) == ["[Haystack Needle] Morning digest, Thu Oct 15: 1 item"]
+    assert state["digest"] == [] and go(one_am + timedelta(hours=5, minutes=47)) == []
 
 
 def test_meetings_already_over_dont_alert(setup):

@@ -3,9 +3,20 @@ name: Check agendas
 on:
   schedule:
     # Hourly at 17 past (UTC). Every other run reads every meeting; the ones
-    # between re-check only meetings from 72 hours out through meeting day. The
-    # run at 7:17 a.m. Pacific sends the morning digest.
+    # between re-check only meetings from 72 hours out through meeting day.
     - cron: "17 * * * *"
+    # Three more tries each morning, in California time, for the digest.
+    # GitHub has been starting scheduled runs 3 to 4 hours late and dropping
+    # most (5 to 7 of 24 hourly runs a day fired on Oct 15-17, 2026), so the 2:47 try
+    # usually lands around 6 a.m. and the later ones cover a day it's dropped.
+    # The first run after 2 a.m. Pacific sends the day's digest; the state
+    # file records it, so the others that day don't send it again.
+    - cron: "47 2 * * *"
+      timezone: America/Los_Angeles
+    - cron: "47 4 * * *"
+      timezone: America/Los_Angeles
+    - cron: "47 6 * * *"
+      timezone: America/Los_Angeles
   workflow_dispatch:
     inputs:
       test_email:
