@@ -1,4 +1,5 @@
 import email
+import smtplib
 import ssl
 from email.policy import default
 
@@ -34,7 +35,7 @@ def test_sends_over_starttls_with_display_name(cert):
 
     assert fake.logins == [("alerts@example.org", True)]  # logged in only after TLS
     [(_, rcpts, data, tls)] = fake.messages
-    assert tls and [r.lower() for r in rcpts] == ["rcpt to:<someone@example.org>"]
+    assert tls and rcpts == ["someone@example.org"]
     sent = email.message_from_bytes(data, policy=default)
     assert sent["From"] == "Haystack Needle <alerts@andrewsiegler.com>"
     assert sent["Message-ID"].endswith("@andrewsiegler.com>")
@@ -53,8 +54,25 @@ def test_a_refused_address_is_skipped_and_a_limit_stops_the_rest_naming_no_addre
         fake.close()
 
     assert results == [None, "refused (550)", None, "stopped: 127.0.0.1 stopped taking mail (451)"]
-    assert [rcpts for _, rcpts, _, _ in fake.messages] == [["rcpt to:<a@example.org>"], ["rcpt to:<b@example.org>"]]
+    assert [rcpts for _, rcpts, _, _ in fake.messages] == [["a@example.org"], ["b@example.org"]]
     assert "example.org" not in "".join(r for r in results if r)
+
+
+def test_the_fake_server_takes_commands_in_either_case():
+    # smtplib sends "RCPT TO:" on Python 3.12 (the workflow) and "rcpt to:" on 3.14,
+    # so the fake keeps only the addresses and the tests pass on both.
+    fake = FakeSMTP(None)
+    try:
+        with smtplib.SMTP("127.0.0.1", fake.port) as client:
+            client.ehlo()
+            client.docmd("MAIL", "FROM:<alerts@example.org>")
+            client.docmd("RCPT", "TO:<a@example.org>")
+            client.docmd("rcpt", "to:<b@example.org>")
+            client.data("Subject: s\r\n\r\nt")
+    finally:
+        fake.close()
+    assert [(mail_from, rcpts) for mail_from, rcpts, _, _ in fake.messages] == [
+        ("alerts@example.org", ["a@example.org", "b@example.org"])]
 
 
 def test_refuses_without_starttls(cert):

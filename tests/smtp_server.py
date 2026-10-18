@@ -1,4 +1,7 @@
-"""A small local SMTP server for tests: EHLO, optional STARTTLS, AUTH PLAIN, one or more messages."""
+"""A small local SMTP server for tests: EHLO, optional STARTTLS, AUTH PLAIN, one or more messages.
+
+It keeps the addresses from MAIL and RCPT, not the command lines: smtplib writes
+"RCPT TO:" on Python 3.12 and "rcpt to:" on 3.14, and SMTP takes either."""
 
 import base64
 import datetime
@@ -31,6 +34,10 @@ def make_cert(directory: Path) -> tuple[Path, Path]:
     key_path.write_bytes(key.private_bytes(serialization.Encoding.PEM, serialization.PrivateFormat.PKCS8,
                                            serialization.NoEncryption()))
     return cert_path, key_path
+
+
+def _address(command: str) -> str:
+    return command.split("<", 1)[1].split(">", 1)[0]
 
 
 class _Handler(socketserver.StreamRequestHandler):
@@ -69,12 +76,12 @@ class _Handler(socketserver.StreamRequestHandler):
             elif verb == "MAIL" and fake.limit is not None and len(fake.messages) >= fake.limit:
                 self.reply("451 4.7.0 Hourly external limit reached")
             elif verb == "MAIL":
-                mail_from, rcpts = command, []
+                mail_from, rcpts = _address(command), []
                 self.reply("250 ok")
             elif verb == "RCPT" and any(f"<{a}>" in command for a in fake.refuse):
                 self.reply(f"550 5.1.1 {command.split(':', 1)[1]}: no such mailbox")  # quotes the address
             elif verb == "RCPT":
-                rcpts.append(command)
+                rcpts.append(_address(command))
                 self.reply("250 ok")
             elif verb == "DATA":
                 self.reply("354 go ahead")
