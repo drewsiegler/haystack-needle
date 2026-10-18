@@ -13,3 +13,8 @@ __pycache__/
 
 # Local state from python -m needle.run; the workflow keeps it on the data branch.
 .state/
+
+# The sign-up form's export and the subscriber list hold addresses. Keep them
+# outside the repo; these catch a copy saved here by mistake.
+/*.csv
+/subscribers*.json
