@@ -66,9 +66,13 @@ class _Handler(socketserver.StreamRequestHandler):
                 user = base64.b64decode(command.split()[2]).split(b"\0")[1].decode()
                 fake.logins.append((user, tls))
                 self.reply("235 ok")
+            elif verb == "MAIL" and fake.limit is not None and len(fake.messages) >= fake.limit:
+                self.reply("451 4.7.0 Hourly external limit reached")
             elif verb == "MAIL":
                 mail_from, rcpts = command, []
                 self.reply("250 ok")
+            elif verb == "RCPT" and any(f"<{a}>" in command for a in fake.refuse):
+                self.reply(f"550 5.1.1 {command.split(':', 1)[1]}: no such mailbox")  # quotes the address
             elif verb == "RCPT":
                 rcpts.append(command)
                 self.reply("250 ok")
@@ -91,6 +95,8 @@ class FakeSMTP:
         self.tls_context = tls_context
         self.logins: list[tuple[str, bool]] = []
         self.messages: list[tuple] = []
+        self.refuse: set[str] = set()  # addresses to refuse
+        self.limit: int | None = None  # messages to take before answering like a sending limit
         self.server = socketserver.ThreadingTCPServer(("127.0.0.1", 0), _Handler)
         self.server.daemon_threads = True
         self.server.fake = self

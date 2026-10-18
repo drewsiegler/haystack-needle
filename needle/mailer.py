@@ -2,7 +2,8 @@
 
 The connection switches to TLS with STARTTLS before logging in; if that fails,
 nothing is sent. The login, the token and the alert address come from the
-environment (Actions secrets) and are never printed.
+environment (Actions secrets) and are never printed, and neither is any
+subscriber's address.
 """
 
 from __future__ import annotations
@@ -57,7 +58,14 @@ def compose(subject: str, text: str, html: str | None, to: str) -> EmailMessage:
 
 
 def send(messages: list[EmailMessage], settings: Settings, host: str = HOST, port: int = PORT,
-         context: ssl.SSLContext | None = None, timeout: float = 60) -> None:
+         context: ssl.SSLContext | None = None, timeout: float = 60) -> list[str | None]:
+    """Sends the messages over one connection, each to its own recipient. Returns,
+    for each, None if it went out or why it didn't: a refused address skips that
+    message, and any other refusal (a sending limit) stops the rest. Raises
+    MailError, with nothing sent, if it can't connect securely or log in.
+
+    A server's reply can quote the address, so only its reply code is kept.
+    """
     context = context or ssl.create_default_context()
     with smtplib.SMTP(host, port, timeout=timeout) as smtp:
         smtp.ehlo()
@@ -77,5 +85,20 @@ def send(messages: list[EmailMessage], settings: Settings, host: str = HOST, por
         except smtplib.SMTPAuthenticationError:
             raise MailError(f"Didn't send: {host} refused the login. Check the SMTP_USERNAME "
                             "and SMTP_PASSWORD secrets (the password is a Proton SMTP token).") from None
+        results, stopped = [], None
         for message in messages:
-            smtp.send_message(message)
+            if stopped:
+                results.append(stopped)
+                continue
+            try:
+                smtp.send_message(message)
+                results.append(None)
+            except smtplib.SMTPRecipientsRefused as error:
+                results.append(f"refused ({', '.join(sorted({str(c) for c, _ in error.recipients.values()}))})")
+            except smtplib.SMTPResponseException as error:
+                stopped = f"stopped: {host} stopped taking mail ({error.smtp_code})"
+                results.append(stopped)
+            except (smtplib.SMTPException, OSError) as error:
+                stopped = f"stopped: the connection to {host} broke ({type(error).__name__})"
+                results.append(stopped)
+        return results

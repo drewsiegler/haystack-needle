@@ -41,6 +41,22 @@ def test_sends_over_starttls_with_display_name(cert):
     assert sent.get_body(("plain",)).get_content().strip() == "Plain text"
 
 
+def test_a_refused_address_is_skipped_and_a_limit_stops_the_rest_naming_no_address(cert):
+    fake = server(cert, starttls=True)
+    fake.refuse, fake.limit = {"gone@example.org"}, 2
+    to = ["a@example.org", "gone@example.org", "b@example.org", "c@example.org"]
+    try:
+        results = mailer.send([mailer.compose("s", "t", None, address) for address in to], SETTINGS,
+                              host="127.0.0.1", port=fake.port,
+                              context=ssl.create_default_context(cafile=str(cert[0])))
+    finally:
+        fake.close()
+
+    assert results == [None, "refused (550)", None, "stopped: 127.0.0.1 stopped taking mail (451)"]
+    assert [rcpts for _, rcpts, _, _ in fake.messages] == [["rcpt to:<a@example.org>"], ["rcpt to:<b@example.org>"]]
+    assert "example.org" not in "".join(r for r in results if r)
+
+
 def test_refuses_without_starttls(cert):
     fake = server(cert, starttls=False)
     try:
