@@ -260,7 +260,7 @@ def test_between_full_runs_only_near_meetings_are_read(setup):
     assert adapter.windows == [(2, 30), (0, 3), (2, 30)]
 
 
-def test_changed_watchlists_reread_everything(setup, tmp_path):
+def test_a_new_term_rereads_everything(setup, tmp_path):
     adapter, fetcher, state, go = setup
     adapter.meetings = [meeting(COUNCIL, date(2026, 10, 20), attachments=[Attachment("a1", "Staff Report", REPORT)])]
     go()
@@ -269,6 +269,38 @@ def test_changed_watchlists_reread_everything(setup, tmp_path):
     assert go(NOW + timedelta(hours=2)) == [
         "[Haystack Needle: surveillance, cameras] Townsville City Council, Tue Oct 20, Item 7 (updated)"]
     assert fetcher.gets.count(REPORT) == 2 and adapter.text_reads == 2
+
+
+def test_taking_terms_out_rereads_nothing(setup, tmp_path):
+    adapter, fetcher, state, go = setup
+    adapter.meetings = [meeting(COUNCIL, date(2026, 10, 20), title="Rent stabilization and Flock cameras",
+                                attachments=[Attachment("a1", "Staff Report", REPORT)])]
+    go()
+    # Flock goes, license plate reader turns case-sensitive, tenants turns high priority, a comment.
+    (tmp_path / "watchlists.yaml").write_text(
+        "# a comment\nsurveillance: {priority: high, terms: [license plate reader], case_sensitive: [license plate reader]}\n"
+        "tenants: {priority: high, terms: [rent stabilization]}\n")
+    adapter.meetings[0].items[0].attachments.append(Attachment("a2", "Memo", REPORT + "?memo"))
+    fetcher.files[REPORT + "?memo"] = make_pdf(["Flock cameras again"])
+
+    go(NOW + timedelta(hours=2))
+    assert fetcher.gets.count(REPORT) == 1 and adapter.text_reads == 1
+    assert state["terms"] == ["c|license plate reader", "i|rent stabilization"]
+
+    # Making it match any case again counts as new.
+    (tmp_path / "watchlists.yaml").write_text(WATCHLISTS)
+    go(NOW + timedelta(hours=4))
+    assert fetcher.gets.count(REPORT) == 2 and adapter.text_reads == 2
+
+
+def test_a_state_from_before_the_term_list_keeps_its_cache(setup):
+    adapter, fetcher, state, go = setup
+    adapter.meetings = [meeting(COUNCIL, date(2026, 10, 20), attachments=[Attachment("a1", "Staff Report", REPORT)])]
+    go()
+    state["terms"], state["watchlists"] = None, "b0973a3d8d7d"
+
+    go(NOW + timedelta(hours=2))
+    assert fetcher.gets.count(REPORT) == 1 and "watchlists" not in state and len(state["terms"]) == 3
 
 
 def test_state_survives_a_round_trip(setup, tmp_path):

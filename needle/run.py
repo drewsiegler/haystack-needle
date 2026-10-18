@@ -304,7 +304,7 @@ def run(state: dict, fetcher, outbox: Outbox, now: datetime, adapters: dict = AD
     watchlists = yaml.safe_load(raw)
     terms = compile_terms(watchlists)
     priorities = {name: (w or {}).get("priority", "normal") for name, w in watchlists.items()}
-    statefile.use_watchlists(state, sha(raw))
+    statefile.use_watchlists(state, terms)
     full = full_run_due(state, now) if full is None else full
     reader = Reader(fetcher, state, terms, now, max_downloads)
     notices, failed = [], set()

@@ -8,6 +8,7 @@ changed since the last one and still rebuild the same matches.
 from __future__ import annotations
 
 import json
+import re
 from datetime import date, timedelta
 from pathlib import Path
 
@@ -20,7 +21,9 @@ KEEP_DAYS = 400  # forget items, attachments, meetings and alerts older than thi
 def empty() -> dict:
     return {
         "schema": SCHEMA,
-        "watchlists": "",  # hash of watchlists.yaml; when it changes, cached matches are dropped
+        # The terms matched ("i|Flock", or "c|ICE" for case-sensitive); a new one drops cached matches.
+        # None: not recorded yet.
+        "terms": None,
         "last_full_run": None,  # UTC, ISO format
         "last_digest": None,  # Pacific date of the last 7 a.m. digest
         "items": {},  # item key -> {"date", "modified", "read", "hits": [snippet, ...]}
@@ -61,12 +64,25 @@ def save(state: dict, path: Path) -> None:
     tmp.replace(path)
 
 
-def use_watchlists(state: dict, digest: str) -> None:
-    """Drop cached matches when the watchlists change, so new terms are looked for everywhere."""
-    if state["watchlists"] != digest:
+def use_watchlists(state: dict, terms) -> None:
+    """Drop cached matches when a term is added or made to match any case, so it's
+    looked for everywhere.
+
+    The saved snippets hold the text around each term's first match, and they're
+    matched again with the current terms, so taking a term out, making one
+    case-sensitive, moving one to another watchlist or changing a priority needs
+    nothing read again.
+    """
+    now = {f"{'i' if t.pattern.flags & re.IGNORECASE else 'c'}|{t.text}" for t in terms}
+    before = state["terms"]
+    # Until Oct 18, 2026 the state kept only a hash of the file. The first run
+    # after that takes the terms as they are: the one change since (RTC taken out
+    # of tenants) added none.
+    if before is not None and not all(k in before or f"i|{k[2:]}" in before for k in now):
         state["items"].clear()
         state["attachments"].clear()
-        state["watchlists"] = digest
+    state["terms"] = sorted(now)
+    state.pop("watchlists", None)  # the old hash
 
 
 def prune(state: dict, today: date) -> None:
