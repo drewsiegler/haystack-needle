@@ -32,6 +32,11 @@ and each run reads it.
 - So far (Oct 15, 2026) Palo Alto and Los Gatos send only notices that agendas
   are up, with no item text and no direct link (docs/sources.md). The Open Space
   Authority attaches each agenda as a PDF with a text layer (Oct 16).
+- Votes from alerts' Useful and Noise links come to the same inbox, at its +votes
+  address (needle/votes.py). A message to that address, or with a vote's subject,
+  is never read as an agenda: collected_votes hands the run its subject, date and
+  a hash of the sender keyed with a secret derived from the token, and the cache
+  keeps only that it was seen, so no vote is counted twice. No address is kept.
 - The run's cache keeps what each message gave (not its text), so a message is
   downloaded once. Later runs rebuild its meeting from the cache, and the
   matcher's saved snippets stand in for its text. If the run that downloaded it
@@ -41,6 +46,8 @@ and each run reads it.
 from __future__ import annotations
 
 import email
+import hashlib
+import hmac
 import html
 import os
 import re
@@ -54,6 +61,7 @@ from zoneinfo import ZoneInfo
 
 import httpx
 
+from needle import votes
 from needle.fetch import USER_AGENT
 from needle.models import Attachment, Body, Item, Meeting, Source
 
@@ -148,6 +156,8 @@ class Inbox:
         self.client = client or httpx.Client(timeout=60)
         self.client.headers.update({"Authorization": f"Bearer {token}", "User-Agent": USER_AGENT})
         self.interval, self.last = interval, 0.0
+        # Hashes voters' addresses: secret, so a guessed address can't be checked against the state.
+        self._voter_key = hmac.new(token.encode(), b"haystack-needle votes", hashlib.sha256).digest()
         session = self._get(SESSION_URL).json()
         self.api, self.download_url = session["apiUrl"], session["downloadUrl"]
         self.account = session["primaryAccounts"][MAIL]
@@ -186,10 +196,13 @@ class Inbox:
                              "sort": [{"property": "receivedAt", "isAscending": False}], "limit": LIMIT}, "query"],
             ["Email/get", {"accountId": account,
                            "#ids": {"resultOf": "query", "name": "Email/query", "path": "/ids"},
-                           "properties": ["blobId", "from", "replyTo", "subject", "receivedAt",
+                           "properties": ["blobId", "from", "to", "replyTo", "subject", "receivedAt",
                                           "mailboxIds"]}, "emails"])
         skip = {box["id"] for box in answers["boxes"]["list"] if box.get("role") in ("junk", "trash")}
         return [e for e in answers["emails"]["list"] if not skip & set(e.get("mailboxIds") or {})]
+
+    def voter(self, address: str) -> str:
+        return hmac.new(self._voter_key, address.strip().lower().encode(), hashlib.sha256).hexdigest()
 
     def raw(self, blob: str) -> bytes:
         """The whole message, as sent."""
@@ -355,9 +368,21 @@ def _meetings(ident: str, entry: dict, texts: list[str] | None = None, pdfs: lis
     return meetings
 
 
-# Set by collect for item_text: the run's connection, and the meetings it rebuilt from the cache.
+# Set by collect for item_text: the run's connection, and the meetings it rebuilt from the cache;
+# and for the run, the votes it read.
 _inbox: Inbox | None = None
 _rebuilt: dict[str, tuple[dict, int]] = {}
+_votes: list[dict] = []
+
+
+def is_vote(message: dict) -> bool:
+    to = {(r.get("email") or "").lower() for r in message.get("to") or []}
+    return votes.ADDRESS in to or votes.parse(message.get("subject")) is not None
+
+
+def collected_votes() -> list[dict]:
+    """The votes the last collect read, for the run to count: {"subject", "voter", "date"}."""
+    return _votes
 
 
 def collect(fetcher=None, clients=tuple(SOURCES), today: date | None = None,
@@ -371,8 +396,8 @@ def collect(fetcher=None, clients=tuple(SOURCES), today: date | None = None,
 
     Returns the meetings and, for each source that failed, what went wrong.
     """
-    global _inbox, _rebuilt
-    _inbox, _rebuilt = None, {}
+    global _inbox, _rebuilt, _votes
+    _inbox, _rebuilt, _votes = None, {}, []
     today = today or datetime.now(PACIFIC).date()
     cache = {} if cache is None else cache
     for ident in [i for i, entry in cache.items() if "meetings" not in entry]:
@@ -392,6 +417,13 @@ def collect(fetcher=None, clients=tuple(SOURCES), today: date | None = None,
     for message in listed_mail:
         ident = message["id"]
         if ident in cache:
+            continue
+        if is_vote(message):
+            received = datetime.fromisoformat(message["receivedAt"].replace("Z", "+00:00"))
+            voter = ((message.get("from") or [{}])[0].get("email") or "").strip()
+            _votes.append({"subject": message.get("subject") or "", "voter": inbox.voter(voter) if voter else None,
+                           "date": received.astimezone(PACIFIC).date().isoformat()})
+            cache[ident] = {"received": received.isoformat(), "client": "votes", "meetings": []}
             continue
         address = ((message.get("from") or [{}])[0].get("email") or "")
         replies = [r.get("email") or "" for r in message.get("replyTo") or []]

@@ -1,4 +1,5 @@
 import email
+import hashlib
 import json
 from dataclasses import replace
 from datetime import date, datetime, timezone
@@ -330,3 +331,36 @@ def test_tells_the_sender_by_address_or_domain():
     assert agendamail.sender_for("clerk@pausd.org").client == "pausd"
     assert agendamail.sender_for("noreply@civicplus.com") is None
     assert agendamail.sender_for("clerk@mail.pausd.org") is None
+
+
+def vote(ident, sender, subject, received="2026-10-15T16:00:00Z", to=agendamail.votes.ADDRESS):
+    return {**message(ident, sender, subject, received), "to": [{"name": None, "email": to}]}
+
+
+def test_reads_votes_and_never_as_agendas(monkeypatch):
+    fake = FakeJmap(listing=listing(
+        # A vote from a sender whose agendas are read is still a vote.
+        vote("M-1", "Clerk@LosGatosCA.gov", "Noise: surveillance / Flock [a1b2c3d4e5]"),
+        vote("M-2", "organizer@example.org", "Useful: surveillance / ALPR [a1b2c3d4e5]",
+             to="haystackneedle.agendas@fastmail.com"),
+        vote("M-3", "organizer@example.org", "What do these links do?"),
+        vote("M-4", "", "Noise: surveillance / Flock [a1b2c3d4e5]")))
+    monkeypatch.setattr(agendamail, "connect", fake.connect)
+    cache = {}
+
+    assert collect(cache) == ([], {})
+    assert fake.downloads == 0
+    found = agendamail.collected_votes()
+    assert [v["subject"] for v in found] == ["Noise: surveillance / Flock [a1b2c3d4e5]",
+                                             "Useful: surveillance / ALPR [a1b2c3d4e5]",
+                                             "What do these links do?", "Noise: surveillance / Flock [a1b2c3d4e5]"]
+    assert {v["date"] for v in found} == {"2026-10-15"}
+    # The sender is a keyed hash, the same for any spelling of the address; none at all is None.
+    assert found[0]["voter"] == fake.connect().voter("clerk@losgatosca.gov") != found[1]["voter"]
+    assert found[1]["voter"] == found[2]["voter"] and found[3]["voter"] is None
+    assert found[1]["voter"] != hashlib.sha256(b"organizer@example.org").hexdigest()  # keyed, not plain
+    # The cache keeps that each was seen, and no address or subject.
+    assert set(cache) == {"M-1", "M-2", "M-3", "M-4"}
+    assert "@" not in json.dumps(cache) and "Noise" not in json.dumps(cache)
+
+    assert collect(cache) == ([], {}) and agendamail.collected_votes() == []

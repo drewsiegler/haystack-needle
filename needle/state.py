@@ -11,6 +11,8 @@ import json
 from datetime import date, timedelta
 from pathlib import Path
 
+from needle import votes
+
 SCHEMA = 1
 KEEP_DAYS = 400  # forget items, attachments, meetings and alerts older than this
 
@@ -24,12 +26,17 @@ def empty() -> dict:
         "items": {},  # item key -> {"date", "modified", "read", "hits": [snippet, ...]}
         "attachments": {},  # attachment key -> {"seen", "modified", "sha256", "pages", "hits": {page: [snippet]}}
         "meetings": {},  # meeting key -> {"date", "modified", "comment", "comment_email"}
-        "alerts": {},  # stage key -> {"id", "thread", "body", "date", "sigs", "sent", "priority"}
+        # stage key -> {"id", "thread", "body", "date", "sigs", "sent", "priority"}, and once there are
+        # any, "earlier_ids" (the alert's ids before an update) and "voters" (hashes, never addresses)
+        "alerts": {},
         "digest": [],  # alerts waiting for the 7 a.m. digest, ready to render
         "bodies": {},  # body key -> {"name", "dates", "warned", "agendas": {meeting id: {"date", "hits"}}}
         "sources": {},  # adapter/client -> {"fails", "error", "warned"}
         "boilerplate": {},  # "body key|watchlist|term" -> {"note", "reported"}: held back as likely boilerplate
         "posted": {},  # meeting key -> {"date", "line", "url", "reported"}: agendas emailed as a notice only, to check by hand
+        # Useful and Noise votes (needle/votes.py): "terms": {"watchlist|term": {"useful": [date],
+        # "noise": [date]}}, "new": votes since the last digest, "skipped": vote emails not counted
+        "votes": {"terms": {}, "new": [], "skipped": 0},
         "cache": {},  # adapter -> what it keeps between runs (IQM2: agenda outlines); the adapter prunes it
     }
 
@@ -68,6 +75,7 @@ def prune(state: dict, today: date) -> None:
                            ("meetings", "date"), ("alerts", "date"), ("posted", "date")):
         for key in [k for k, v in state[section].items() if (v.get(field) or "") < cutoff]:
             del state[section][key]
+    votes.prune(state, cutoff)
     for body in state["bodies"].values():
         agendas = body.get("agendas", {})
         for key in [k for k, v in agendas.items() if v["date"] < cutoff]:

@@ -27,7 +27,7 @@ import httpx
 import yaml
 
 from adapters import agendamail, civicband, civicclerk, civicplus, escribe, iqm2, legistar, midpen
-from needle import alerts, health, mailer
+from needle import alerts, health, mailer, votes
 from needle import state as statefile
 from needle.fetch import Deferred, Fetcher
 from needle.matcher import DEEP_SCORE, compile_terms, match_meeting, snippet
@@ -270,6 +270,10 @@ def plan_alerts(by_item: list[tuple[Meeting, Item, list[Match]]], adapters: dict
             "id": alert["id"], "thread": thread, "body": key(source, "body", meeting.body.id),
             "body_name": meeting.body.name, "date": iso(meeting.date), "priority": priority,
             "sigs": sorted(set(sigs) | set(previous["sigs"] if previous else [])), "sent": iso(now)}
+        if previous:  # votes on the alert before the update still count, once per person
+            state["alerts"][stage]["earlier_ids"] = previous.get("earlier_ids", []) + [previous["id"]]
+            if previous.get("voters"):
+                state["alerts"][stage]["voters"] = previous["voters"]
         planned.append(alert)
     return planned
 
@@ -311,6 +315,10 @@ def run(state: dict, fetcher, outbox: Outbox, now: datetime, adapters: dict = AD
         found, failures = adapter.collect(fetcher, today=today, with_text=False,
                                           cache=state["cache"].setdefault(name, {}), **window)
         meetings += found
+        if hasattr(adapter, "collected_votes"):  # the agenda inbox also gets the alerts' votes
+            counted = votes.count(state, adapter.collected_votes())
+            if counted:
+                print(f"Counted {counted} vote{'s' if counted != 1 else ''}.")
         for client, source in adapter.SOURCES.items():
             source_key = f"{name}/{client}"
             if client in failures:
