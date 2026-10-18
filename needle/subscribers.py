@@ -52,10 +52,11 @@ class SubscriberError(Exception):
 
 
 def fold(text) -> str:
-    """Text to compare loosely: any case, no accents, hyphens as spaces ("San Jose" is "San José")."""
+    """Text to compare loosely: any case, no accents, hyphens as spaces, "&" as "and"
+    ("San Jose" is "San José")."""
     text = unicodedata.normalize("NFKD", str(text))
     text = "".join(c for c in text if not unicodedata.combining(c))
-    return " ".join(text.casefold().replace("-", " ").replace("_", " ").split())
+    return " ".join(text.casefold().replace("-", " ").replace("_", " ").replace("&", " and ").split())
 
 
 @dataclass(frozen=True, repr=False)
@@ -167,12 +168,14 @@ def load(raw: str | None, key: str | None, watchlists: dict, owner: str | None =
 # Turning the sign-up form's answers into the list
 
 
-COLUMNS = (  # field, words that name its column; checked in this order
-    ("email", ("email", "e-mail")),
-    ("custom", ("new term", "own term", "other term")),
-    ("terms", ("term",)),
-    ("watchlists", ("categor", "watchlist", "topic")),
-    ("places", ("cit", "agenc", "place")),
+COLUMNS = (  # field, the words in a question's title that name it; checked in this order
+    # Whole words, since a title can explain itself: "Pick whole categories. Matches
+    # for surveillance are emailed right away" is the categories question.
+    ("email", re.compile(r"\be-?mail\b")),
+    ("custom", re.compile(r"\b(?:new|own|other) terms?\b")),
+    ("terms", re.compile(r"\bterms?\b")),
+    ("watchlists", re.compile(r"\b(?:categor|watchlist|topic)")),
+    ("places", re.compile(r"\b(?:cit(?:y|ies)|agenc|place)")),
 )
 
 
@@ -180,7 +183,7 @@ def columns(header: list[str]) -> dict[str, int]:
     found = {}
     for index, name in enumerate(header):
         for field, words in COLUMNS:
-            if any(w in name.lower() for w in words):
+            if words.search(name.lower()):
                 found.setdefault(field, index)
                 break
     return found

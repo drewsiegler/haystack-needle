@@ -47,6 +47,9 @@ def test_who_wants_what():
 def test_own_terms_already_on_a_watchlist_are_matched_as_that_term():
     [a] = roster({"email": "a@example.org", "custom": ["License Plate Reader"]}).people
     assert a.terms == {"license plate reader"} and a.custom == ()
+    entries, _ = read_form([["Email", "Your own terms"], ["a@example.org", "Rent & Stabilization"]],
+                           {"tenants": {"terms": ["rent and stabilization"]}}, PLACES)
+    assert entries[0]["terms"] == ["rent and stabilization"]  # "&" reads as "and"
 
 
 def test_own_terms_match_once_each_under_a_keyed_label():
@@ -98,6 +101,21 @@ def test_the_form_export_becomes_the_list():
     assert notes == ['Row 3: "Gotham" isn\'t a city or agency the app reads; left out.',
                      "Row 4: no usable email address; left out.",
                      "Row 5 replaces row 2, from the same address."]
+
+
+def test_questions_are_found_by_whole_words_in_their_titles():
+    # The titles on Drew's form, Oct 18, 2026: the categories question says "emailed".
+    header = ["Time", "Participant", "Please enter your email address",
+              "Pick whole categories. Matches for surveillance, policing contracts and immigration are "
+              "emailed right away; the rest come in a morning digest.",
+              "Want just a few terms instead, or something that’s not on a list? Type them here, one per "
+              "line or separated by commas. Terms from the watchlists, like Flock, work too.",
+              "Cities & Agencies (leave blank if you want all of them)"]
+    assert subscribers.columns(header) == {"email": 2, "watchlists": 3, "terms": 4, "places": 5}
+    entries, _ = read_form([header, ["", "Anonymous", "a@example.org", "tenants,Surveillance",
+                                     "flock\nMeasure A", "San Jose"]], WATCHLISTS, PLACES)
+    assert entries == [{"email": "a@example.org", "watchlists": ["tenants", "surveillance"], "terms": ["Flock"],
+                        "custom": ["Measure A"], "places": ["San José"]}]
 
 
 class Screen(io.StringIO):
