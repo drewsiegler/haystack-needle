@@ -276,7 +276,7 @@ Also on Oct 15 Drew added two towns on the same terms: Monte Sereno, whose Civic
 | --- | --- | --- |
 | Palo Alto City Council and committees | PrimeGov | Form: "Sign Up for City Council and Committee Agendas Mailing List" on paloalto.gov's City Council page (a Constant Contact list). **Subscribed Oct 15**: the agenda inbox is on the list. The first notice (Oct 15) is a weekly newsletter from city.clerk@paloalto.gov, "Notice for City Council Meeting Agendas: October 15, 2026": it lists the coming council and standing committee meetings (five, from Oct 19 to Oct 26) with links to each agenda and packet, plus clerk's office news. No item text and no attachment, and every link goes through Constant Contact's click tracking (`cc.rs6.net`), so the app follows none of them |
 | Moreland SD | Diligent Community | Form: "Sign-up to receive notification of each Board Meeting" on its Board Meetings page (a Google Form) |
-| County Board of Education | BoardDocs | Written request; no sign-up found |
+| County Board of Education | BoardDocs | Written request; no sign-up found. **Subscribed**: the County Office of Education confirmed on Oct 18 that the agenda inbox is on its agenda posting list |
 | Palo Alto Unified | BoardDocs | Written request; no sign-up found |
 | Evergreen SD | BoardDocs | Written request; no sign-up found |
 | West Valley-Mission CCD | BoardDocs | Written request to the Executive Assistant to the Board; no sign-up found |
