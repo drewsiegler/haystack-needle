@@ -4,6 +4,8 @@ the morning digest for the rest.
 An alert is a plain dict of strings, so a digest entry can wait in the state
 file until morning. Agenda text is untrusted: the HTML templates escape it,
 the text templates flatten it to one line, and only http(s) links get through.
+The owner's surveillance alerts also get an "Ask for the records" link
+(needle/records.py), added only as the email is written.
 """
 
 from __future__ import annotations
@@ -15,7 +17,7 @@ from urllib.parse import quote
 
 from jinja2 import Environment, FileSystemLoader, StrictUndefined, select_autoescape
 
-from needle import votes
+from needle import records, votes
 from needle.matcher import DEEP_PAGE, snippet
 from needle.models import Match, Meeting
 
@@ -129,6 +131,8 @@ def build(meeting: Meeting, matches: list[Match], alert_id: str, priority: str,
         "label": label,
         "label_detail": oneline(label_detail, 200),
         "body": body,
+        "place": oneline(source.name, 60),
+        "source": f"{source.adapter}/{source.client}",
         "date": meeting.date.isoformat(),
         "day": day_text(meeting.date),
         "time": oneline(meeting.time, 20),
@@ -144,10 +148,18 @@ def build(meeting: Meeting, matches: list[Match], alert_id: str, priority: str,
     }
 
 
-def alert_email(alert: dict, subscriber: bool = False) -> tuple[str, str, str]:
-    """(subject, text, html) for one alert sent right away."""
-    return (alert["subject"], render("alert.txt.j2", subscriber, a=alert),
-            render("alert.html.j2", subscriber, a=alert))
+def with_records(alert: dict, settings: records.Settings | None, subscriber: bool) -> dict:
+    """The alert with its "Ask for the records" link, for the owner's email only.
+    A copy: the link never goes into the state."""
+    return {**alert, "records": None if subscriber else records.link(alert, settings)}
+
+
+def alert_email(alert: dict, subscriber: bool = False,
+                records_to: records.Settings | None = None) -> tuple[str, str, str]:
+    """(subject, text, html) for one alert sent right away. records_to: where the
+    owner's "Ask for the records" links go (needle/records.py)."""
+    a = with_records(alert, records_to, subscriber)
+    return (alert["subject"], render("alert.txt.j2", subscriber, a=a), render("alert.html.j2", subscriber, a=a))
 
 
 def welcome_email(watchlists, terms, custom, places, priorities: dict) -> tuple[str, str, str]:
@@ -162,12 +174,13 @@ def welcome_email(watchlists, terms, custom, places, priorities: dict) -> tuple[
 def digest_email(alerts: list[dict], boilerplate: list[str], day: date,
                  posted: list[dict] = (), voted: list[str] = (), review: list[str] = (),
                  skipped: int = 0, new_terms: list[str] = (), sending: list[str] = (),
-                 subscriber: bool = False) -> tuple[str, str, str]:
+                 subscriber: bool = False, records_to: records.Settings | None = None) -> tuple[str, str, str]:
     """posted: agendas a body emailed only a notice of ({"line", "url"}), to check by hand.
     voted: a line for each vote since the last digest; review: terms with only noise
     votes lately; skipped: vote emails not counted (needle/votes.py). new_terms:
     subscribers' own terms added lately; sending: notes on email to subscribers.
-    subscriber: a subscriber's digest, which has only their alerts."""
+    subscriber: a subscriber's digest, which has only their alerts. records_to: as for
+    alert_email."""
     count, held, check = len(alerts), len(boilerplate), len(posted)
     if count:
         summary = f"{count} item{'s' if count != 1 else ''}"
@@ -182,7 +195,7 @@ def digest_email(alerts: list[dict], boilerplate: list[str], day: date,
     else:
         summary = f"nothing new, {held} phrase{'s' if held != 1 else ''} held back"
     subject = f"[Haystack Needle] Morning digest, {day_text(day)}: {summary}"
-    context = {"alerts": alerts, "boilerplate": [oneline(b, 300) for b in boilerplate],
+    context = {"alerts": [with_records(a, records_to, subscriber) for a in alerts], "boilerplate": [oneline(b, 300) for b in boilerplate],
                "posted": [{"line": oneline(p["line"], 200), "url": safe_url(p["url"])} for p in posted],
                "voted": [oneline(v, 300) for v in voted], "review": [oneline(r, 300) for r in review],
                "skipped": skipped, "new_terms": [oneline(t, 150) for t in new_terms],

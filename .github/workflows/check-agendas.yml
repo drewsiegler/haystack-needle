@@ -76,6 +76,9 @@ jobs:
           # Other organizers and the key that hides their addresses in the state; empty means none.
           SUBSCRIBERS: ${{ secrets.SUBSCRIBERS }}
           SUBSCRIBERS_KEY: ${{ secrets.SUBSCRIBERS_KEY }}
+          # Where the owner's "Ask for the records" links go, and their key; empty means no link.
+          PRA_LINK_TO: ${{ secrets.PRA_LINK_TO }}
+          PRA_LINK_KEY: ${{ secrets.PRA_LINK_KEY }}
         run: python -m needle.run --state data/state.json
 
       # The data branch holds a single commit, replaced each run, so the repo

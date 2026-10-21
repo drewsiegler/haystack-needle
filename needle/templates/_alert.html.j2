@@ -26,6 +26,9 @@
 {% endfor %}
 </ul>
 {% endif %}
+{% if a.get("records") %}
+<p style="margin:12px 0 0"><a href="{{ a.records }}">Ask for the records</a> <span style="color:#777">(opens an email to your records-request tracker, which drafts a request for this item's agreement and related records on its next run)</span></p>
+{% endif %}
 {% if a.votes %}
 <p style="margin:12px 0 0">Was this useful? <a href="{{ a.votes.useful }}">Useful</a> · <a href="{{ a.votes.noise }}">Noise</a> <span style="color:#777">(each opens an email for you to send; nothing is tracked)</span></p>
 {% endif %}

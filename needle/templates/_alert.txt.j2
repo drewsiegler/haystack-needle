@@ -26,6 +26,12 @@ Prior history:
 {% else %}
 Prior history: none found
 {% endif %}
+{% if a.get("records") %}
+
+Ask for the records: {{ a.records }}
+(Opens an email to your records-request tracker, which drafts a request for
+this item's agreement and related records on its next run.)
+{% endif %}
 {% if a.votes %}
 
 Useful? {{ a.votes.useful }}

@@ -35,7 +35,7 @@ The tests never touch the network. `needle.run --dry-run` reads the live agendas
 
 Each alert ends with Useful and Noise links. Each opens an email for you to send, to the agenda inbox's votes address, with the alert's watchlist, term and id in the subject; don't change the subject, or the vote won't count. Each run counts the votes: one per person per alert. The state is public, so it keeps no email address, only a scrambled code made with a secret key, which no one can match to an address. The morning digest lists the votes since the last digest, and names a term to review once it has 3 noise votes and no useful ones in 30 days. The app never changes the watchlists: say which terms to change, and Drew decides.
 
-It needs five Actions secrets (Settings → Secrets and variables → Actions), which never go in this repo, and two more to email other organizers (below):
+It needs five Actions secrets (Settings → Secrets and variables → Actions), which never go in this repo, two more to email other organizers (below), and two for the "Ask for the records" link (below that):
 
 | Secret | What it is |
 | --- | --- |
@@ -46,10 +46,18 @@ It needs five Actions secrets (Settings → Secrets and variables → Actions), 
 | `HEALTHCHECKS_URL` | The ping URL of a Healthchecks.io check, which emails if runs stop arriving |
 | `SUBSCRIBERS` | The other organizers who get alerts, and what each picked (below) |
 | `SUBSCRIBERS_KEY` | A random key that turns each address into a code for the public state file |
+| `PRA_LINK_TO` | Where "Ask for the records" links go: your records-request tracker's inbox (optional) |
+| `PRA_LINK_KEY` | A random key the tracker shares, so it can tell a link came from an alert (optional) |
 
 The workflow runs hourly, plus three tries at 2:47, 4:47 and 6:47 a.m. California time for the digest; the first run after 2 a.m. each day sends it. GitHub often starts scheduled runs hours late and drops many of them (only 5 to 7 of the 24 hourly runs fired each day on Oct 15-17, 2026), so the digest usually comes around 6 a.m., and on a day GitHub isn't behind it can come before 3. Set the Healthchecks.io check to a period of 1 hour with a 6-hour grace time, so it emails you only when no run has finished for about 7 hours. If it does, run the workflow by hand (Actions → Check agendas → Run workflow).
 
 To check the mail setup, run the workflow by hand (Actions → Check agendas → Run workflow) with "Send one sample alert" ticked.
+
+## Asking for the records
+
+Drew's own surveillance alerts end with an **Ask for the records** link, for PRA Tracker, Drew's private records-request tracker. It opens an email to the tracker's inbox with what the agenda says about the item (the body, the meeting date, the item's number and title, and the term that matched); send it as it is, and the tracker drafts a public records request for the item's agreement and related records on its next run. The request is filled in on the tracker's side, and nothing from the tracker comes back here. Other organizers' alerts never have the link, the public state never holds it, and without both secrets no alert has it.
+
+To turn it on, set two secrets here: `PRA_LINK_TO`, the tracker's address for these emails, and `PRA_LINK_KEY`, a random key the tracker keeps too. The tracker's own README has a command that makes the key and gives it to both repos without showing it on screen.
 
 ## Other organizers
 

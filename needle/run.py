@@ -28,7 +28,7 @@ import httpx
 import yaml
 
 from adapters import agendamail, civicband, civicclerk, civicplus, escribe, iqm2, legistar, midpen
-from needle import alerts, health, mailer, subscribers, votes
+from needle import alerts, health, mailer, records, subscribers, votes
 from needle import state as statefile
 from needle.fetch import Deferred, Fetcher
 from needle.matcher import DEEP_SCORE, compile_terms, match_meeting, snippet
@@ -464,8 +464,9 @@ def sending_notes(sends: dict) -> list[str]:
 def run(state: dict, fetcher, outbox: Outbox, now: datetime, adapters: dict = ADAPTERS,
         watchlists_path: Path = WATCHLISTS, full: bool | None = None,
         max_downloads: int = MAX_DOWNLOADS, budget: timedelta = BUDGET, clock=time.monotonic,
-        load_roster=lambda watchlists: None) -> None:
-    """load_roster(watchlists) gives the subscribers (needle/subscribers.py), or None."""
+        load_roster=lambda watchlists: None, records_to: records.Settings | None = None) -> None:
+    """load_roster(watchlists) gives the subscribers (needle/subscribers.py), or None.
+    records_to: where the owner's "Ask for the records" links go (needle/records.py)."""
     deadline = clock() + budget.total_seconds()
     pacific = now.astimezone(PACIFIC)
     today = pacific.date()
@@ -540,7 +541,7 @@ def run(state: dict, fetcher, outbox: Outbox, now: datetime, adapters: dict = AD
     for plan in plans:
         alert = alert_for(plan, owner_wants, priorities)
         if alert and alert["priority"] == "high":
-            outbox.send(*alerts.alert_email(alert))
+            outbox.send(*alerts.alert_email(alert, records_to=records_to))
         elif alert:
             state["digest"].append(alert)
     digest_due = pacific.hour >= DIGEST_HOUR
@@ -557,7 +558,7 @@ def run(state: dict, fetcher, outbox: Outbox, now: datetime, adapters: dict = AD
             outbox.send(*alerts.digest_email(state["digest"], [state["boilerplate"][k]["note"] for k in pending],
                                              today, sorted(posted, key=lambda v: v["date"]),
                                              votes.since_digest(state), votes.to_review(state, today, owner_terms),
-                                             voted["skipped"], new_terms, sending))
+                                             voted["skipped"], new_terms, sending, records_to=records_to))
             for entry in posted:
                 entry["reported"] = True
             state["digest"], voted["new"], voted["skipped"] = [], [], 0
@@ -634,7 +635,8 @@ def main(argv: list[str] | None = None) -> None:
     try:
         run(state, Fetcher(cache_dir=args.cache, slow_budget=SLOW_BUDGET.total_seconds()), outbox,
             datetime.now(timezone.utc), adapters={args.only: ADAPTERS[args.only]} if args.only else ADAPTERS,
-            full=True if args.full else None, max_downloads=args.max_downloads, load_roster=load_roster)
+            full=True if args.full else None, max_downloads=args.max_downloads, load_roster=load_roster,
+            records_to=records.settings_from_env())
     except Exception as error:
         if ping_url:
             health.ping(ping_url, fail=True)
