@@ -14,7 +14,7 @@ from urllib.parse import urlsplit
 
 import httpx
 
-VERSION = "0.1"
+VERSION = "1.0.0"
 USER_AGENT = (
     f"Mozilla/5.0 (compatible; HaystackNeedle/{VERSION}; "
     "+https://github.com/drewsiegler/haystack-needle)"
