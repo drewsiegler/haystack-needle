@@ -69,10 +69,10 @@ Drew's own address (`ALERT_TO`) still gets everything on the watchlists, plus th
 
 ### The Subscribers page
 
-The **Haystack Needle** app in your Applications folder opens a Subscribers page in your browser, where you approve sign-ups and send the list to GitHub without the terminal.
+The **Haystack Admin** app in your Applications folder is your own tool for running Haystack Needle; organizers never see it. It opens a Subscribers page in your browser, where you approve sign-ups and send the list to GitHub without the terminal.
 
 1. In CryptPad, open the form's responses and export them as CSV.
-2. Open Haystack Needle (double-click it, or click it in the Dock). Under "Read the CryptPad export", pick the file and press **Read it**.
+2. Open Haystack Admin (double-click it, or click it in the Dock). Under "Read the CryptPad export", pick the file and press **Read it**.
 3. The page lists who's new and whose picks changed since you last looked. For each, choose Approve, Decline or Decide later, then press **Save these decisions**. If one address has several answers, the last one counts.
 4. Press **Update GitHub**. It sends the list to the `SUBSCRIBERS` secret, straight from the page and never on screen. The next run emails anyone new and forgets anyone taken off.
 
@@ -80,9 +80,9 @@ Each person on the list has **Change** and **Take off** buttons, and **Add someo
 
 The page keeps your copy of the list in `~/Library/Application Support/Haystack Needle/subscribers.json`, readable by you alone and outside every repo. It keeps your decisions, not the export, so you can delete the CSV once you've read it in. Like PRA Tracker's form, the page is at an address only your Mac can reach (http://127.0.0.1:8738/), answers only to that address, and loads nothing from anywhere else. It reaches GitHub through GitHub's command-line tool, `gh`, signed in as you.
 
-**The first time,** the page doesn't have the list GitHub has (that came from the terminal on Oct 18), and Update GitHub replaces GitHub's list with the page's. So read your latest export in first and approve everyone who's on the list now. If nobody has signed up yet, tick "Nobody has signed up yet" and press Update GitHub instead: GitHub's list becomes empty too, and from then on the two match. macOS also asks once whether Haystack Needle may use your Documents folder: click Allow, since that's where this folder is.
+**The first time,** the page doesn't have the list GitHub has (that came from the terminal on Oct 18), and Update GitHub replaces GitHub's list with the page's. So read your latest export in first and approve everyone who's on the list now. If nobody has signed up yet, tick "Nobody has signed up yet" and press Update GitHub instead: GitHub's list becomes empty too, and from then on the two match. macOS also asks once whether Haystack Admin may use your Documents folder: click Allow, since that's where this folder is.
 
-To stop the page, right-click the Dock icon and choose Quit. To make the app, or make it again (if this folder moves, or after a change in `packaging/macos/`), quit it and double-click **Make the Haystack Needle app.command** in this folder in Finder. It's built on your Mac rather than downloaded, so macOS doesn't ask about apps from the internet. `.venv/bin/python -m needle.signups` opens the same page from the terminal.
+To stop the page, right-click the Dock icon and choose Quit. To make the app, or make it again (if this folder moves, or after a change in `packaging/macos/`), quit it and double-click **Make the Haystack Admin app.command** in this folder in Finder. It's built on your Mac rather than downloaded, so macOS doesn't ask about apps from the internet. `.venv/bin/python -m needle.signups` opens the same page from the terminal.
 
 ### From the terminal
 

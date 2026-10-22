@@ -1,4 +1,5 @@
--- The Haystack Needle app: it opens the Subscribers page (python -m
+-- The Haystack Admin app, Drew's own tool for running Haystack Needle
+-- (organizers never see it): it opens the Subscribers page (python -m
 -- needle.signups) in your browser, clicking its Dock icon opens the page
 -- again, and quitting it (from the Dock, or with Command-Q) stops the page
 -- after any change that's under way.
@@ -6,7 +7,7 @@
 -- It holds no code and no addresses. It runs the .venv and code in the
 -- haystack-needle folder that build_app.sh made it from (HaystackNeedleFolder
 -- in its Info.plist), so changes you pull there take effect the next time it
--- opens. What the page prints goes to ~/Library/Logs/Haystack Needle.log (the
+-- opens. What the page prints goes to ~/Library/Logs/Haystack Admin.log (the
 -- Console app shows it); it never prints an address.
 
 global repo, pageURL, logFile, serverPid
@@ -14,12 +15,12 @@ global repo, pageURL, logFile, serverPid
 on run
 	set repo to do shell script "plutil -extract HaystackNeedleFolder raw -o - " & quoted form of (POSIX path of (path to me) & "Contents/Info.plist")
 	set pageURL to "http://127.0.0.1:8738/"
-	set logFile to POSIX path of (path to library folder from user domain) & "Logs/Haystack Needle.log"
+	set logFile to POSIX path of (path to library folder from user domain) & "Logs/Haystack Admin.log"
 	set serverPid to ""
 	try
 		do shell script "test -x " & quoted form of (repo & "/.venv/bin/python")
 	on error
-		display alert "Haystack Needle can't open its folder" message "It runs the page from " & repo & ", which needs its .venv (the README's \"Trying it\" says how). If that folder has moved, double-click \"Make the Haystack Needle app.command\" in it to make the app again." & return & return & "If macOS asked whether Haystack Needle may use your Documents folder and you said no, turn it on in System Settings > Privacy & Security > Files & Folders." as critical
+		display alert "Haystack Admin can't open its folder" message "It runs the page from " & repo & ", which needs its .venv (the README's \"Trying it\" says how). If that folder has moved, double-click \"Make the Haystack Admin app.command\" in it to make the app again." & return & return & "If macOS asked whether Haystack Admin may use your Documents folder and you said no, turn it on in System Settings > Privacy & Security > Files & Folders." as critical
 		quit
 		return
 	end try
@@ -38,9 +39,9 @@ on idle
 		set serverPid to ""
 		set problem to do shell script "sed -n '/^Problem: /,$p' " & quoted form of logFile & " 2> /dev/null | sed '1s/^Problem: //'"
 		if problem is "" and (do shell script "grep -q '^Traceback' " & quoted form of logFile & " && echo yes || true") is "yes" then
-			set problem to "The page stopped because of an error. What it said is in Haystack Needle.log, which the Console app shows under Log Reports."
+			set problem to "The page stopped because of an error. What it said is in Haystack Admin.log, which the Console app shows under Log Reports."
 		end if
-		if problem is not "" then display alert "Haystack Needle couldn't open the page" message problem as critical
+		if problem is not "" then display alert "Haystack Admin couldn't open the page" message problem as critical
 		quit
 	end try
 	return 2

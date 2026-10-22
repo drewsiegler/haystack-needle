@@ -22,7 +22,7 @@ change anything, and loads nothing from elsewhere. Addresses appear on its
 pages, in the list file and in the secret, and nowhere else: never in what it
 prints, and never in the repo.
 
-The Haystack Needle app (packaging/macos/) runs it with --app: see run_for_app.
+The Haystack Admin app (packaging/macos/) runs it with --app: see run_for_app.
 """
 
 from __future__ import annotations
@@ -591,7 +591,7 @@ def _watch(pid: int, stop: threading.Event, every: float) -> None:
 
 def run_for_app(app_pid: int, list_path: Path = LIST, port: int = PORT, open_page=None,
                 stop: threading.Event | None = None, every: float = 1.0, **kwargs) -> int:
-    """What the Haystack Needle app runs (`python -m needle.signups --app PID`):
+    """What the Haystack Admin app runs (`python -m needle.signups --app PID`):
     the page, but only on port, so the app's Dock icon can always reopen it. If
     the page is already running there, it opens that one instead. It stops when
     the app quits (or process app_pid is gone), finishing a change under way
@@ -610,14 +610,14 @@ def run_for_app(app_pid: int, list_path: Path = LIST, port: int = PORT, open_pag
         load_list(list_path)
     except (OSError, ValueError) as error:
         print(f"Problem: The subscriber list on this Mac ({list_path}) couldn't be read: "
-              f"{error.__class__.__name__}. If you changed it by hand, undo that, then open Haystack Needle again.",
+              f"{error.__class__.__name__}. If you changed it by hand, undo that, then open Haystack Admin again.",
               flush=True)
         return 1
     try:
         server, app = serve(list_path, port=port, fallback=False, **kwargs)
     except OSError:
         print(f"Problem: Another program on this Mac is using port {port}, which the page needs. Quit that "
-              "program (or restart the Mac), then open Haystack Needle again.", flush=True)
+              "program (or restart the Mac), then open Haystack Admin again.", flush=True)
         return 1
     if threading.current_thread() is threading.main_thread():
         for signum in (signal.SIGTERM, signal.SIGHUP, signal.SIGINT):  # the app's Quit sends SIGTERM
@@ -643,7 +643,7 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument("--no-browser", action="store_true", help="print the address instead of opening it")
     parser.add_argument("--port", type=int, default=PORT, help=f"the port on 127.0.0.1 (default: {PORT})")
     parser.add_argument("--app", type=int, metavar="PID",
-                        help="how the Haystack Needle app runs it: stop when process PID does (packaging/macos/)")
+                        help="how the Haystack Admin app runs it: stop when process PID does (packaging/macos/)")
     args = parser.parse_args(argv)
     if args.list.resolve().is_relative_to(ROOT):
         sys.exit("Keep the list outside the repo, so it's never committed.")
@@ -651,7 +651,7 @@ def main(argv: list[str] | None = None) -> None:
         sys.exit(run_for_app(args.app, args.list, port=args.port))
     url = f"http://127.0.0.1:{args.port}/"
     if running(args.port):
-        print(f"The page is already running at {url} (in the Haystack Needle app or another terminal), so this opens it.")
+        print(f"The page is already running at {url} (in the Haystack Admin app or another terminal), so this opens it.")
         if not args.no_browser:
             webbrowser.open(url)
         return

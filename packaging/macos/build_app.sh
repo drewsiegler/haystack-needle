@@ -1,8 +1,8 @@
 #!/bin/bash
-# Makes the Haystack Needle app, which opens the Subscribers page with a
+# Makes the Haystack Admin app, which opens the Subscribers page with a
 # double-click:
 #     packaging/macos/build_app.sh [folder]
-# It puts "Haystack Needle.app" in /Applications (or ~/Applications if that
+# It puts "Haystack Admin.app" in /Applications (or ~/Applications if that
 # isn't writable, or the folder given), replacing an older one.
 #
 # The app is the small AppleScript wrapper beside this file. It runs this
@@ -13,7 +13,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/../.."
 REPO=$(pwd -P)
-NAME="Haystack Needle"
+NAME="Haystack Admin"
 if [ -n "${1:-}" ]; then
   DEST=$1
 elif [ -w /Applications ]; then
@@ -27,7 +27,7 @@ if [ ! -x .venv/bin/python ]; then
   exit 1
 fi
 if pgrep -qf "/$NAME.app/Contents/MacOS/applet"; then
-  echo "Haystack Needle is open. Quit it first (right-click its Dock icon, then Quit), and try again." >&2
+  echo "Haystack Admin is open. Quit it first (right-click its Dock icon, then Quit), and try again." >&2
   exit 1
 fi
 
@@ -36,7 +36,7 @@ trap 'rm -rf "$STAGE"' EXIT
 APP="$STAGE/$NAME.app"
 osacompile -s -o "$APP" "packaging/macos/$NAME.applescript" 2> /dev/null  # -s: stays open until you quit it
 PLIST="$APP/Contents/Info.plist"
-plutil -replace CFBundleIdentifier -string io.github.drewsiegler.haystackneedle "$PLIST"
+plutil -replace CFBundleIdentifier -string io.github.drewsiegler.haystackadmin "$PLIST"
 plutil -replace CFBundleName -string "$NAME" "$PLIST"
 plutil -replace HaystackNeedleFolder -string "$REPO" "$PLIST"  # where the app finds the page
 # The icon: osacompile's own comes from Assets.car, which wins over applet.icns.

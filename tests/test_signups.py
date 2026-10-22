@@ -327,7 +327,7 @@ def test_another_site_cant_change_anything(page):
     assert not path.exists()
 
 
-# What the Haystack Needle app runs
+# What the Haystack Admin app runs
 
 def free_port():
     with socket.socket() as s:

@@ -1,5 +1,5 @@
-// Draws the Haystack Needle app's icon: a needle in a haystack, on the macOS
-// icon grid. AppIcon.icns beside this file is what it made, so building the
+// Draws the Haystack Admin app's icon: a needle in a haystack with a gear
+// badge, on the macOS icon grid. AppIcon.icns beside this file is what it made, so building the
 // app doesn't need it; run it again only to change the icon:
 //     swift packaging/macos/make_icon.swift /tmp/AppIcon.iconset
 //     iconutil -c icns /tmp/AppIcon.iconset -o packaging/macos/AppIcon.icns
@@ -92,6 +92,33 @@ func draw(_ ctx: CGContext) {
         ctx.addLine(to: CGPoint(x: to.0, y: to.1))
         ctx.strokePath()
     }
+    ctx.restoreGState()
+
+    // The admin badge: a gear in a white ring over the stack's corner.
+    let center = CGPoint(x: 694, y: 296)
+    ctx.saveGState()
+    ctx.setShadow(offset: CGSize(width: 0, height: -6), blur: 14, color: color(0x000000, 0.35))
+    ctx.addEllipse(in: CGRect(x: center.x - 168, y: center.y - 168, width: 336, height: 336))
+    ctx.setFillColor(color(0xFFFFFF))
+    ctx.fillPath()
+    ctx.restoreGState()
+    ctx.addEllipse(in: CGRect(x: center.x - 142, y: center.y - 142, width: 284, height: 284))
+    ctx.setFillColor(color(0x44566B))
+    ctx.fillPath()
+    let gear = CGMutablePath()
+    let teeth = 8, outer: CGFloat = 104, inner: CGFloat = 80
+    for n in 0..<(teeth * 4) {
+        // Each tooth: up the flank, across the top, down, across the root.
+        let angle = CGFloat(n) / CGFloat(teeth * 4) * 2 * .pi + .pi / CGFloat(teeth * 4)
+        let r = (n % 4 == 1 || n % 4 == 2) ? outer : inner
+        let p = CGPoint(x: center.x + r * cos(angle), y: center.y + r * sin(angle))
+        if n == 0 { gear.move(to: p) } else { gear.addLine(to: p) }
+    }
+    gear.closeSubpath()
+    gear.addEllipse(in: CGRect(x: center.x - 34, y: center.y - 34, width: 68, height: 68))
+    ctx.addPath(gear)
+    ctx.setFillColor(color(0xFFFFFF))
+    ctx.fillPath(using: .evenOdd)
     ctx.restoreGState()
 }
 
