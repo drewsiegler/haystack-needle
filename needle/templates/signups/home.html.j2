@@ -13,7 +13,7 @@
 {% elif saved.sent %}
 <p class="note">You've changed the list since you last sent it ({{ status.sent_at | when }}). Update GitHub to send the change.</p>
 {% elif status.github_set %}
-<p class="note">GitHub's list was set {{ status.github_set | when }}, from outside this page, and the page doesn't have a copy of it yet. Read your CryptPad export below and approve the people who are on GitHub's list now, then update GitHub. Updating replaces GitHub's list with the one here.</p>
+<p class="note">GitHub's list was set {{ status.github_set | when }}, from outside this page, and the page doesn't have a copy of it yet. Read your CryptPad export below and approve the people who are on GitHub's list now, then update GitHub. Updating replaces GitHub's list with the one here.{% if not saved.people %} If nobody has signed up yet, there's no one to keep: tick the box below and press Update GitHub, and GitHub's list will match this page's empty one.{% endif %}</p>
 {% else %}
 <p class="muted">GitHub has no list yet.</p>
 {% endif %}
@@ -26,10 +26,12 @@
   <form method="post" action="/key" style="margin-top:8px">{{ hidden() }}<button>Make the key</button></form>
 </div>
 {% endif %}
-{% if saved.people or saved.sent %}
+{% if (saved.people or saved.sent or status.github_set) and not (status.current and not saved.people) %}
 <form method="post" action="/send">
   {{ hidden() }}
-  {% if not saved.people %}
+  {% if not saved.people and not saved.sent %}
+  <label class="check"><input type="checkbox" name="everyone" value="yes"> Nobody has signed up yet. Make GitHub's list empty too.</label>
+  {% elif not saved.people %}
   <label class="check"><input type="checkbox" name="everyone" value="yes"> The list here is empty. Take everyone off GitHub's list.</label>
   {% endif %}
   <button{% if status.current %} class="plain"{% endif %}>Update GitHub</button>

@@ -225,8 +225,20 @@ def test_the_first_time_it_says_githubs_list_came_from_elsewhere(page):
     assert status == 200 and "from outside this page" in html and "Nobody yet" in html
     assert "default-src 'none'" in headers["Content-Security-Policy"]
     assert headers["Referrer-Policy"] == "same-origin"  # no-referrer makes browsers send "Origin: null"
-    assert "Update GitHub</button>" not in html  # nothing to send yet
     assert "Make the key" not in html  # GitHub has it
+    # Nobody's signed up yet, so it offers to empty GitHub's list too, only with the box ticked.
+    assert "If nobody has signed up yet" in html and "Nobody has signed up yet. Make GitHub" in html
+
+
+def test_with_no_list_anywhere_theres_nothing_to_send(tmp_path):
+    srv, _ = signups.serve(tmp_path / "s.json", FakeGitHub(), port=0, watchlists=WATCHLISTS, places=PLACES)
+    threading.Thread(target=srv.serve_forever, daemon=True).start()
+    try:
+        _, html, _ = call(srv, "GET", "/")
+        assert "GitHub has no list yet" in html and "Update GitHub</button>" not in html
+    finally:
+        srv.shutdown()
+        srv.server_close()
 
 
 def test_an_export_through_the_page_then_github(page, capsys):
@@ -280,6 +292,9 @@ def test_an_empty_list_goes_only_when_you_say_so(page):
     assert "take everyone off" in html and github.sent == {}
     _, html, _ = call(srv, "POST", "/send", {"token": app.token, "once": "e2", "everyone": "yes"})
     assert github.sent == {"SUBSCRIBERS": "[]"}
+    # Now the two match, so the warning and the button are gone.
+    assert "GitHub has this list." in html and "from outside this page" not in html
+    assert "Update GitHub</button>" not in html
 
 
 def test_each_form_saves_once(page):
