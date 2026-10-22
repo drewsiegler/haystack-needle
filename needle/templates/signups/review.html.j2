@@ -1,0 +1,67 @@
+{% extends "base.html.j2" %}
+{% macro picks(e) %}
+  <div class="picks">Watchlists: {{ e.watchlists | join(", ") or "none" }}</div>
+  <div class="picks">Terms: {{ (e.terms + e.custom) | join(", ") or "none" }}</div>
+  <div class="picks">Places: {{ e.places | join(", ") or "all of them" }}</div>
+{% endmacro %}
+{% macro choices(n, options, default) %}
+  <div class="choices">
+  {% for value, label in options %}
+    <label class="check"><input type="radio" name="decide-{{ n }}" value="{{ value }}"{% if value == default %} checked{% endif %}> {{ label }}</label>
+  {% endfor %}
+  </div>
+{% endmacro %}
+{% block body %}
+<h1>The export</h1>
+<p>{{ [(review.new | length ~ " new") if review.new else "",
+       (review.changed | length ~ " with changed picks") if review.changed else "",
+       (review.same ~ " on the list already as they are") if review.same else "",
+       (review.set_aside | length ~ " you declined or took off before") if review.set_aside else ""]
+      | select | join(", ") or "No answers" }}.</p>
+{% if review.notes %}
+<p class="hint">Left out of the export:</p>
+<ul class="hint">{% for note in review.notes %}<li>{{ note }}</li>{% endfor %}</ul>
+{% endif %}
+{% if review.pending %}
+<form method="post" action="/decide">
+  <input type="hidden" name="token" value="{{ token }}"><input type="hidden" name="once" value="{{ once }}">
+  <input type="hidden" name="review" value="{{ code }}">
+  {% set n = namespace(i=0) %}
+  {% if review.new %}<h2>New</h2>{% endif %}
+  {% for entry in review.new %}
+  <div class="card">
+    <h3>{{ entry.email }}</h3>
+    {{ picks(entry) }}
+    {{ choices(n.i, [("approve", "Approve"), ("decline", "Decline"), ("later", "Decide later")], "later") }}
+  </div>
+  {% set n.i = n.i + 1 %}
+  {% endfor %}
+  {% if review.changed %}<h2>Changed</h2>{% endif %}
+  {% for old, new in review.changed %}
+  <div class="card">
+    <h3>{{ new.email }}</h3>
+    <div class="side">
+      <div><strong>On the list now</strong>{{ picks(old) }}</div>
+      <div><strong>In the form</strong>{{ picks(new) }}</div>
+    </div>
+    {{ choices(n.i, [("approve", "Use the form's answer"), ("decline", "Keep what they have"), ("later", "Decide later")], "later") }}
+  </div>
+  {% set n.i = n.i + 1 %}
+  {% endfor %}
+  {% if review.set_aside %}<h2>Declined or taken off before</h2>{% endif %}
+  {% for entry in review.set_aside %}
+  <div class="card">
+    <h3>{{ entry.email }}</h3>
+    {{ picks(entry) }}
+    {{ choices(n.i, [("approve", "Approve now"), ("later", "Leave it aside")], "later") }}
+  </div>
+  {% set n.i = n.i + 1 %}
+  {% endfor %}
+  <p><button>Save these decisions</button> <a href="/">Back without saving</a></p>
+  <p class="hint">Saving changes your list here. GitHub's copy changes only when you press Update GitHub.</p>
+</form>
+{% else %}
+<p class="ok">Nothing to decide: everyone in the export is on the list already as they are.</p>
+<p><a href="/">Back to the list</a></p>
+{% endif %}
+{% endblock %}

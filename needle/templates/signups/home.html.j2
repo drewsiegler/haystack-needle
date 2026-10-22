@@ -1,0 +1,70 @@
+{% extends "base.html.j2" %}
+{% macro hidden() %}<input type="hidden" name="token" value="{{ token }}"><input type="hidden" name="once" value="{{ once }}">{% endmacro %}
+{% block body %}
+<h1>Subscribers</h1>
+{% if notice %}<p class="ok">{{ notice }}</p>{% endif %}
+{% for problem in problems %}<p class="note">{{ problem }}</p>{% endfor %}
+
+<h2>GitHub's copy</h2>
+{% if status.problem %}
+<p class="note">{{ status.problem }}</p>
+{% elif status.current %}
+<p class="ok">GitHub has this list. You sent it {{ status.sent_at | when }}.</p>
+{% elif saved.sent %}
+<p class="note">You've changed the list since you last sent it ({{ status.sent_at | when }}). Update GitHub to send the change.</p>
+{% elif status.github_set %}
+<p class="note">GitHub's list was set {{ status.github_set | when }}, from outside this page, and the page doesn't have a copy of it yet. Read your CryptPad export below and approve the people who are on GitHub's list now, then update GitHub. Updating replaces GitHub's list with the one here.</p>
+{% else %}
+<p class="muted">GitHub has no list yet.</p>
+{% endif %}
+{% if status.elsewhere and saved.sent %}
+<p class="note">GitHub's list was changed {{ status.github_set | when }}, after this page last sent it, from somewhere else (the terminal, say). Updating replaces that change with the list here.</p>
+{% endif %}
+{% if not status.has_key %}
+<div class="note">
+  <p style="margin:0">GitHub has no SUBSCRIBERS_KEY yet. The run needs it before it can email anyone on the list. Make it once and keep it: a new key welcomes everyone again.</p>
+  <form method="post" action="/key" style="margin-top:8px">{{ hidden() }}<button>Make the key</button></form>
+</div>
+{% endif %}
+{% if saved.people or saved.sent %}
+<form method="post" action="/send">
+  {{ hidden() }}
+  {% if not saved.people %}
+  <label class="check"><input type="checkbox" name="everyone" value="yes"> The list here is empty. Take everyone off GitHub's list.</label>
+  {% endif %}
+  <button{% if status.current %} class="plain"{% endif %}>Update GitHub</button>
+  <p class="hint">This sends the list to the SUBSCRIBERS secret, straight from here. GitHub never shows a secret again, to anyone, so this page keeps your copy. The next run emails anyone new and forgets anyone taken off.</p>
+</form>
+{% else %}
+<p class="hint">Once someone's on the list here, an Update GitHub button sends it.</p>
+{% endif %}
+
+<h2>Read the CryptPad export</h2>
+<form method="post" action="/import" enctype="multipart/form-data">
+  <input type="hidden" name="token" value="{{ token }}">
+  <p style="margin-top:0">In CryptPad, open the form's responses and export them as CSV. Then pick the file here.</p>
+  <p><input type="file" name="export" accept=".csv,text/csv"> <button>Read it</button></p>
+  <p class="hint">The page shows who's new and whose picks changed, and asks you about each one. It keeps your decisions, not the file, so you can delete the export afterwards.</p>
+</form>
+
+<h2>On the list ({{ saved.people | length }})</h2>
+{% for line in checks %}<p class="note">{{ line }}</p>{% endfor %}
+{% for person in saved.people %}
+<div class="card">
+  <h3>{{ loop.index }}. {{ person.email }}</h3>
+  <div class="picks">Watchlists: {{ person.watchlists | join(", ") or "none" }}</div>
+  <div class="picks">Terms: {{ (person.terms + person.custom) | join(", ") or "none" }}</div>
+  <div class="picks">Places: {{ person.places | join(", ") or "all of them" }}</div>
+  <div class="actions">
+    <span class="muted">Approved {{ person.approved }}</span>
+    <a href="/person?who={{ who(person.email) }}">Change</a>
+    <form method="post" action="/remove" class="inline" onsubmit="return confirm('Take ' + this.email.value + ' off the list?')">
+      {{ hidden() }}<input type="hidden" name="email" value="{{ person.email }}"><button class="plain">Take off</button>
+    </form>
+  </div>
+</div>
+{% else %}
+<p class="muted">Nobody yet. Read the CryptPad export, or <a href="/person">add someone by hand</a>.</p>
+{% endfor %}
+<p class="hint">Each number is the person's place in the list. Once GitHub has this list, it's how the morning digest names someone whose email didn't go through. Your copy of the list is in {{ list_path }}.</p>
+{% endblock %}

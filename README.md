@@ -67,7 +67,24 @@ Each person gets alerts only for what they picked: high-priority matches right a
 
 Drew's own address (`ALERT_TO`) still gets everything on the watchlists, plus the health warnings, the boilerplate notes and the vote counts. Once a week the morning digest lists the terms organizers added themselves, with how many people chose each, to consider for watchlists.yaml.
 
-To add, change or remove people:
+### The Subscribers page
+
+The **Haystack Needle** app in your Applications folder opens a Subscribers page in your browser, where you approve sign-ups and send the list to GitHub without the terminal.
+
+1. In CryptPad, open the form's responses and export them as CSV.
+2. Open Haystack Needle (double-click it, or click it in the Dock). Under "Read the CryptPad export", pick the file and press **Read it**.
+3. The page lists who's new and whose picks changed since you last looked. For each, choose Approve, Decline or Decide later, then press **Save these decisions**. If one address has several answers, the last one counts.
+4. Press **Update GitHub**. It sends the list to the `SUBSCRIBERS` secret, straight from the page and never on screen. The next run emails anyone new and forgets anyone taken off.
+
+Each person on the list has **Change** and **Take off** buttons, and **Add someone** adds a person by hand (when someone writes to you, say). Answers you decline, and people you take off, stay set aside, so the next export doesn't ask about them again; it asks only if they fill in the form again with different picks.
+
+The page keeps your copy of the list in `~/Library/Application Support/Haystack Needle/subscribers.json`, readable by you alone and outside every repo. It keeps your decisions, not the export, so you can delete the CSV once you've read it in. Like PRA Tracker's form, the page is at an address only your Mac can reach (http://127.0.0.1:8738/), answers only to that address, and loads nothing from anywhere else. It reaches GitHub through GitHub's command-line tool, `gh`, signed in as you.
+
+**The first time,** the page doesn't have the list GitHub has (that came from the terminal on Oct 18), and Update GitHub replaces GitHub's list with the page's. So read your latest export in first and approve everyone who's on the list now. macOS also asks once whether Haystack Needle may use your Documents folder: click Allow, since that's where this folder is.
+
+To stop the page, right-click the Dock icon and choose Quit. To make the app, or make it again (if this folder moves, or after a change in `packaging/macos/`), quit it and double-click **Make the Haystack Needle app.command** in this folder in Finder. It's built on your Mac rather than downloaded, so macOS doesn't ask about apps from the internet. `.venv/bin/python -m needle.signups` opens the same page from the terminal.
+
+### From the terminal
 
 1. Export the form's answers as CSV and save it **outside this repo**. Delete the rows you haven't approved; to remove someone or change what they get, delete or edit their row. If one address has several rows, the last one counts.
 2. Turn it into the secret. This sends the list straight to GitHub and never shows it on screen:
@@ -83,9 +100,11 @@ To add, change or remove people:
    python -m needle.subscribers key | gh secret set SUBSCRIBERS_KEY
    ```
 
-GitHub won't show a secret again, so the CSV export is your copy of the list. The next run emails anyone new and forgets anyone taken off. A new term someone adds means every agenda is read again once, over a few runs, just like a term added to watchlists.yaml.
+Done this way, the CSV export is your only copy of the list, since GitHub won't show a secret again. The next run emails anyone new and forgets anyone taken off. Either way, a new term someone adds means every agenda is read again once, over a few runs, just like a term added to watchlists.yaml.
 
-**What's public.** The repo, its Actions logs and the `data` branch are public. None of them holds an address or a name. The state file knows each person only by a code made from their address with `SUBSCRIBERS_KEY`, which no one without the key can match to an address, and their own terms by codes made the same way. Alerts waiting for someone's digest sit in the state under their code until the digest goes out, quoting the agenda as every alert does. The logs give only a count of emails sent to organizers, not their subjects. If Proton refuses an address, Drew's digest names the subscriber by number (their place in the list), not by address.
+### What's public
+
+The repo, its Actions logs and the `data` branch are public. None of them holds an address or a name; the Subscribers page's copy of the list stays on your Mac. The state file knows each person only by a code made from their address with `SUBSCRIBERS_KEY`, which no one without the key can match to an address, and their own terms by codes made the same way. Alerts waiting for someone's digest sit in the state under their code until the digest goes out, quoting the agenda as every alert does. The logs give only a count of emails sent to organizers, not their subjects. If Proton refuses an address, Drew's digest names the subscriber by number (their place in the list), not by address.
 
 ### Sending limits
 

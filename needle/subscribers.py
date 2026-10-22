@@ -1,7 +1,8 @@
 """Other organizers' alerts: the subscriber list, which matches each person gets,
 and the keyed hashes that stand in for them in the public state file.
 
-The list lives only in the SUBSCRIBERS Actions secret, as JSON, one entry per person:
+The list lives in the SUBSCRIBERS Actions secret (and in the Subscribers page's
+copy on Drew's Mac: needle/signups.py), as JSON, one entry per person:
 
     [{"email": "someone@example.org", "watchlists": ["immigration"], "terms": ["Flock"],
       "custom": ["Measure A"], "places": ["San José"]}]

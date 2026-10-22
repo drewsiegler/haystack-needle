@@ -1,0 +1,35 @@
+{% extends "base.html.j2" %}
+{% block body %}
+<h1>{% if was %}Change {{ was }}{% else %}Add someone{% endif %}</h1>
+{% for problem in problems %}<p class="note">{{ problem }}</p>{% endfor %}
+<form method="post" action="/person">
+  <input type="hidden" name="token" value="{{ token }}"><input type="hidden" name="once" value="{{ once }}">
+  <input type="hidden" name="was" value="{{ was }}">
+  <label for="email">Email address</label>
+  <input type="text" id="email" name="email" value="{{ one(fields, 'email') }}" autocomplete="off">
+  {% set picked = many(fields, "watchlists") %}
+  <fieldset>
+    <legend>Watchlists</legend>
+    <div class="columns">
+    {% for name in watchlists %}
+      <label class="check"><input type="checkbox" name="watchlists" value="{{ name }}"{% if name in picked %} checked{% endif %}> {{ name | replace("-", " ") }}</label>
+    {% endfor %}
+    </div>
+  </fieldset>
+  <label for="terms">Terms</label>
+  <textarea id="terms" name="terms">{{ (fields.terms or [""])[0] }}</textarea>
+  <p class="hint">One per line. A term from the watchlists, like Flock, matches as that term; anything else is matched for this person alone, and waits for their morning digest.</p>
+  {% set chosen = many(fields, "places") %}
+  <fieldset>
+    <legend>Places</legend>
+    <p class="hint" style="margin-top:0">Leave them all unticked for all of them.</p>
+    <div class="columns">
+    {% for place in places %}
+      <label class="check"><input type="checkbox" name="places" value="{{ place }}"{% if place in chosen %} checked{% endif %}> {{ place }}</label>
+    {% endfor %}
+    </div>
+  </fieldset>
+  <p><button>Save</button> <a href="/">Back without saving</a></p>
+  <p class="hint">Saving changes your list here. GitHub's copy changes only when you press Update GitHub.</p>
+</form>
+{% endblock %}
