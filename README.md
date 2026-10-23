@@ -4,6 +4,8 @@ Haystack Needle reads every public meeting agenda in Santa Clara County as it's 
 
 It's built for catching an item at its first public appearance, often a committee referral, a study session or a consent-calendar line, while there's still time to organize.
 
+**Organizers:** see what it watches, a sample alert and the sign-up form at [drewsiegler.github.io/haystack-needle](https://drewsiegler.github.io/haystack-needle/).
+
 ## Status
 
 **Version 1.0.0 (Oct 2026): v1 is done.** Phases 1 to 4 of 6 are built: the Legistar, IQM2, CivicClerk, CivicPlus, eScribe, Midpen, Civic Band and agenda-email adapters, the matcher, the backtest, email alerts, health checks and sign-up for other organizers. The [release notes](docs/release-notes.md) say what 1.0.0 covers and what isn't in yet. Phase 5 (reach) is next; school boards wait for a later release.

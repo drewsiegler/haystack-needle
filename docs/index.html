@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- This page loads nothing from anywhere else: no analytics, fonts or scripts. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src data:; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<title>Haystack Needle: agenda alerts for Santa Clara County organizers</title>
+<meta name="description" content="Free email alerts when a public meeting agenda in Santa Clara County mentions surveillance, policing contracts, immigration enforcement, tenant protections and more.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23a3460f'/%3E%3Cpath d='M8 24 21 11' stroke='white' stroke-width='3' stroke-linecap='round'/%3E%3Cellipse cx='23' cy='9' rx='2.2' ry='3.2' transform='rotate(45 23 9)' fill='none' stroke='white' stroke-width='1.6'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --bg: #fbfaf6;
+    --surface: #ffffff;
+    --text: #1c1b19;
+    --muted: #5d5a53;
+    --line: #e4e0d6;
+    --accent: #a3460f;
+    --accent-text: #ffffff;
+    --accent-soft: #f6e7dc;
+    --chip: #f1eee6;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #161513;
+      --surface: #1f1e1b;
+      --text: #ece8df;
+      --muted: #aaa498;
+      --line: #34322d;
+      --accent: #f0a46b;
+      --accent-text: #1a1209;
+      --accent-soft: #3a2a1d;
+      --chip: #2a2824;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 17px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  main, footer { max-width: 760px; margin: 0 auto; padding: 0 16px; }
+  main { padding-top: 56px; }
+  a { color: var(--accent); }
+  a:focus-visible, .button:focus-visible { outline: 3px solid var(--text); outline-offset: 3px; }
+  .kicker { color: var(--accent); font-weight: 600; font-size: .95rem; margin: 0 0 8px; }
+  h1 { font-size: 2.6rem; line-height: 1.05; letter-spacing: -0.02em; margin: 0 0 18px; }
+  .lead { font-size: 1.2rem; margin: 0 0 12px; }
+  h2 { font-size: 1.45rem; line-height: 1.25; margin: 60px 0 12px; }
+  h3 { font-size: 1rem; margin: 22px 0 8px; color: var(--muted); font-weight: 600; }
+  p { margin: 0 0 12px; }
+  .signup { margin: 28px 0 0; }
+  .signup p { color: var(--muted); font-size: .95rem; margin: 12px 0 0; max-width: 34em; }
+  .button {
+    display: inline-block;
+    background: var(--accent);
+    color: var(--accent-text);
+    text-decoration: none;
+    font-weight: 650;
+    font-size: 1.1rem;
+    padding: 14px 30px;
+    border-radius: 10px;
+  }
+  .button:hover { filter: brightness(1.08); }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; padding: 0; margin: 0; }
+  .chips li { background: var(--chip); border-radius: 999px; padding: 4px 12px; font-size: .95rem; }
+  .lists {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+    gap: 12px;
+    margin: 18px 0 14px;
+  }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+  .card h4 { margin: 0; font-size: 1.02rem; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 4px 10px; }
+  .card p { margin: 6px 0 0; color: var(--muted); font-size: .93rem; line-height: 1.45; }
+  .badge { font-size: .76rem; font-weight: 650; padding: 2px 9px; border-radius: 999px; white-space: nowrap; }
+  .badge.now { background: var(--accent-soft); color: var(--accent); }
+  .badge.digest { background: var(--chip); color: var(--muted); }
+  ul.points, ul.plain { padding-left: 1.2em; margin: 0; }
+  ul.points li, ul.plain li { margin: 0 0 10px; }
+  ol.steps { list-style: none; counter-reset: step; padding: 0; margin: 0 0 24px; }
+  ol.steps li { counter-increment: step; position: relative; padding-left: 46px; margin: 0 0 16px; }
+  ol.steps li::before {
+    content: counter(step);
+    position: absolute; left: 0; top: 0;
+    width: 30px; height: 30px; border-radius: 50%;
+    background: var(--accent-soft); color: var(--accent);
+    font-weight: 700; font-size: .95rem;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .note { color: var(--muted); font-size: .93rem; }
+
+  /* The sample alert: drawn as an email, light in both themes, like the real one. */
+  .email {
+    background: #fff; color: #111;
+    border: 1px solid var(--line); border-radius: 12px; overflow: hidden;
+    box-shadow: 0 1px 2px rgba(0,0,0,.05), 0 10px 28px rgba(0,0,0,.08);
+    margin: 18px 0 10px;
+  }
+  .email-head { background: #f3f3f0; border-bottom: 1px solid #e2e2dd; padding: 12px 18px; font-size: .88rem; line-height: 1.5; color: #222; }
+  .email-head div { overflow-wrap: anywhere; }
+  .email-head span { color: #6b6b66; display: inline-block; min-width: 4.6em; }
+  .email-body {
+    padding: 18px;
+    font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    font-size: 15px; line-height: 1.45; color: #111;
+    overflow-wrap: anywhere;
+  }
+  .email-body a { color: #0b57d0; }
+  .email-body a[aria-disabled] { text-decoration: underline; cursor: default; }
+
+  footer { margin-top: 64px; padding-bottom: 48px; color: var(--muted); font-size: .93rem; }
+  footer div { border-top: 1px solid var(--line); padding-top: 22px; }
+  footer p { margin: 0 0 8px; }
+
+  @media (max-width: 520px) {
+    main { padding-top: 36px; }
+    h1 { font-size: 2.1rem; }
+    .lead { font-size: 1.1rem; }
+    h2 { margin-top: 48px; }
+    .email-head, .email-body { padding-left: 14px; padding-right: 14px; }
+  }
+</style>
+</head>
+<body>
+<main>
+
+<p class="kicker">Free agenda alerts for Santa Clara County organizers</p>
+<h1>Haystack Needle</h1>
+<p class="lead">Haystack Needle reads public meeting agendas across Santa Clara County as they're posted, and emails you when an item matches what you work on: a surveillance contract, a policing agreement, a rent ordinance.</p>
+<p>It's built to catch an item the first time it shows up, often on a committee agenda or a consent calendar, while there's still time to organize. There's nothing to download: you sign up once, and alerts come by email.</p>
+
+<div class="signup">
+  <a class="button" href="https://cryptpad.fr/form/#/3/form/view/7fb8b29689083b5e0fe8ca82e415b13a/" rel="noreferrer">Sign up</a>
+  <p>Opens an end-to-end encrypted form on CryptPad. It asks for your email address and what you want to follow, not your name. Each sign-up is approved by hand.</p>
+</div>
+
+<h2>What it reads</h2>
+<p>The agendas of these councils, boards and agencies, with the committees and commissions they post. It reads each item's title and text and, where a site posts them, the staff reports, contracts and resolutions attached to it, not just the agenda's cover. It checks for new and amended agendas several times a day, and more often in the three days before a meeting.</p>
+<h3>County and regional</h3>
+<ul class="chips">
+  <li>Santa Clara County Board of Supervisors, with its committees, boards and commissions</li>
+  <li>VTA</li>
+  <li>Valley Water</li>
+  <li>Midpeninsula Regional Open Space District</li>
+  <li>Open Space Authority</li>
+</ul>
+<h3>Cities</h3>
+<ul class="chips">
+  <li>Campbell</li>
+  <li>Cupertino</li>
+  <li>Gilroy</li>
+  <li>Los Altos</li>
+  <li>Los Altos Hills</li>
+  <li>Milpitas</li>
+  <li>Morgan Hill</li>
+  <li>Mountain View</li>
+  <li>Palo Alto</li>
+  <li>San José</li>
+  <li>Santa Clara</li>
+  <li>Saratoga</li>
+  <li>Sunnyvale</li>
+</ul>
+<p class="note" style="margin-top:14px">Los Gatos, Monte Sereno, the County Board of Education and school boards aren't read yet. See <a href="#not-yet">what isn't covered</a>.</p>
+
+<h2>What it watches for</h2>
+<p>Eight watchlists, each a set of words and phrases. Pick whole watchlists, single terms from them (just Flock, say), or both, and add words of your own.</p>
+<div class="lists">
+  <div class="card">
+    <h4>Surveillance <span class="badge now">Right away</span></h4>
+    <p>Flock, license plate readers (ALPR), ShotSpotter, real-time crime centers, drones as first responders, surveillance use policies</p>
+  </div>
+  <div class="card">
+    <h4>Policing contracts <span class="badge now">Right away</span></h4>
+    <p>Law enforcement services, police services contracts, Sheriff's Office contracts</p>
+  </div>
+  <div class="card">
+    <h4>Immigration enforcement <span class="badge now">Right away</span></h4>
+    <p>ICE, 287(g), immigration detainers, SB 54, sanctuary, rapid response networks</p>
+  </div>
+  <div class="card">
+    <h4>Tenant protections <span class="badge digest">Morning digest</span></h4>
+    <p>Rent stabilization, just cause eviction, tenant relocation, anti-displacement, right to counsel</p>
+  </div>
+  <div class="card">
+    <h4>Jails <span class="badge digest">Morning digest</span></h4>
+    <p>Main Jail, Elmwood, solitary confinement, juvenile hall, pretrial release, in-custody deaths</p>
+  </div>
+  <div class="card">
+    <h4>Data centers <span class="badge digest">Morning digest</span></h4>
+    <p>Data centers, hyperscale, colocation, large load, backup generators</p>
+  </div>
+  <div class="card">
+    <h4>Mobile crisis response <span class="badge digest">Morning digest</span></h4>
+    <p>Mobile crisis, co-responders, unarmed response, PERT, Trusted Response Urgent Support Team</p>
+  </div>
+  <div class="card">
+    <h4>Housing and homelessness <span class="badge digest">Morning digest</span></h4>
+    <p>Encampments, safe parking, interim housing, Homekey, Housing Element, RHNA</p>
+  </div>
+</div>
+<p class="note">These are a few terms from each. <a href="https://github.com/drewsiegler/haystack-needle/blob/main/watchlists.yaml" rel="noreferrer">See every term</a>.</p>
+
+<h2>What you get</h2>
+<ul class="points">
+  <li><strong>Only what you picked:</strong> the watchlists, terms and places you chose, or every place if you don't choose.</li>
+  <li><strong>Right away when it can't wait:</strong> matches for surveillance, policing contracts and immigration enforcement are emailed as soon as they're found. The rest, including your own words, come in one morning digest, usually by 7 a.m.</li>
+  <li><strong>What you need to act:</strong> each alert names the meeting and the item, quotes the words that matched and says where they were (the item's title, its text or a page of a staff report), links the agenda, and says how to send public comment when the agenda does.</li>
+  <li><strong>Items that move:</strong> when a matter goes from committee to council in San José, Sunnyvale, Mountain View, Santa Clara, Cupertino or Valley Water, the alert says it moved forward instead of looking like a new item.</li>
+  <li><strong>Email to you alone:</strong> one message to you, never a group email. Your first email says what you picked. To change it or stop, reply to any alert.</li>
+  <li><strong>Useful and Noise links</strong> in every alert, so the watchlists get better over time.</li>
+</ul>
+
+<h2>A sample alert</h2>
+<p>This is the alert Haystack Needle would have sent someone following the surveillance watchlist, for a real item on the Los Altos Hills City Council's agenda of September 18, 2025. It was made by running that agenda through Haystack Needle. Four months later, in January 2026, the council took up ending its Flock contract.</p>
+
+<div class="email" aria-label="Sample alert email">
+  <div class="email-head">
+    <div><span>From</span> Haystack Needle &lt;alerts@andrewsiegler.com&gt;</div>
+    <div><span>To</span> you</div>
+    <div><span>Subject</span> <strong>[Haystack Needle: surveillance] Los Altos Hills City Council, Thu Sep 18, Item 11.A</strong></div>
+  </div>
+  <div class="email-body">
+<div style="margin:0 0 28px">
+<p style="margin:0;color:#555">Los Altos Hills City Council, Thu Sep 18, 6:00 PM</p>
+<p style="margin:4px 0 12px;font-size:17px;font-weight:bold">Item 11.A: External Access and Data Security Concerns re: Flock ALPR Data (Vice Mayor Bhateja)</p>
+<p style="margin:0 0 8px">Matched <b>“Flock”</b> (surveillance) in item title<br>
+<span style="color:#444">“External Access and Data Security Concerns re: Flock ALPR Data (Vice Mayor Bhateja)”</span></p>
+<p style="margin:0 0 8px">Matched <b>“ALPR”</b> (surveillance) in item title<br>
+<span style="color:#444">“External Access and Data Security Concerns re: Flock ALPR Data (Vice Mayor Bhateja)”</span></p>
+<p style="margin:0 0 8px">Matched <b>“Flock Safety”</b> (surveillance) in ITEM 11A, p. 1<br>
+<span style="color:#444">“…LPR Data Evanston shuts down license plate cameras, terminates contract with Flock Safety - Evanston RoundTable https://evanstonroundtable.com/2025/08/26/evanston-shuts…”</span></p>
+<p style="margin:0 0 8px">Matched <b>“license plate recognition”</b> (surveillance) in ITEM 11A, p. 1<br>
+<span style="color:#444">“…denver7.com/news/local-news/denver-city-council-rejects-contract- expansion-for-license-plate-recognition-cameras-in-the-city Flock admits federal agents access local police data | 9…”</span></p>
+<p style="margin:12px 0 0">
+<a href="https://losaltoshillsca.api.civicclerk.com/v1/Meetings/GetMeetingFileStream(fileId=8202,plainText=false)" rel="noreferrer">Agenda</a> · <a href="https://losaltoshillsca.portal.civicclerk.com/event/4196/overview" rel="noreferrer">Meeting page</a> · <a href="https://losaltoshillsca.api.civicclerk.com/v1/Meetings/GetAttachmentFile(fileId=12977)" rel="noreferrer">ITEM 11A</a></p>
+<p style="margin:12px 0 0"><b>Comment by:</b> “…k at the meeting. To participate in the meeting via Zoom Video Conference, please follow the instructions below: Public comment will also be accepted via email at citycouncil@losaltoshills.ca.gov prior to the start of the meeting. Written comments will be posted on the website and distributed to the Council. If yo…” (from agenda; address: citycouncil@losaltoshills.ca.gov)</p>
+<p style="margin:12px 0 0"><b>Prior history:</b> none found</p>
+<p style="margin:12px 0 0">Was this useful? <a aria-disabled="true">Useful</a> · <a aria-disabled="true">Noise</a> <span style="color:#777">(each opens an email for you to send; nothing is tracked)</span></p>
+</div>
+<p style="margin:24px 0 0;color:#777;font-size:12px">Haystack Needle reads public meeting agendas in Santa Clara County and matches them against the <a href="https://github.com/drewsiegler/haystack-needle/blob/main/watchlists.yaml" rel="noreferrer">watchlists</a>. Agenda text above is quoted as posted; check the agenda before acting on it. Free to use, always. Want to help keep it running? <a href="https://ko-fi.com/andrewsiegler" rel="noreferrer">Support Haystack Needle on Ko-fi</a>.</p>
+<p style="margin:12px 0 0">To stop these emails or change what you get, reply to this email.</p>
+  </div>
+</div>
+<p class="note">The agenda links are real. In this sample the Useful and Noise links are turned off.</p>
+
+<h2>How signing up works</h2>
+<ol class="steps">
+  <li><strong>Fill in the form.</strong> It's end-to-end encrypted, on CryptPad. It asks for your email address, the watchlists and terms you want, any words of your own, and which places (all of them if you leave it blank). It doesn't ask your name.</li>
+  <li><strong>Drew Siegler, who runs Haystack Needle, approves each sign-up by hand.</strong></li>
+  <li><strong>Your first email says what you picked.</strong> After that, you hear about matches found after you joined, not earlier ones. Alerts come from alerts@andrewsiegler.com, so add it to your contacts to keep them out of spam.</li>
+  <li><strong>To change what you get or stop,</strong> reply to any alert.</li>
+</ol>
+<a class="button" href="https://cryptpad.fr/form/#/3/form/view/7fb8b29689083b5e0fe8ca82e415b13a/" rel="noreferrer">Sign up</a>
+
+<h2>Privacy</h2>
+<ul class="plain">
+  <li>Your email address is kept in the encrypted form, in an encrypted GitHub secret and on Drew's own computer. It never appears in Haystack Needle's public code, its logs or its public state file, which knows each person only by a scrambled code.</li>
+  <li>Nothing tracks whether you open an email or click a link. A Useful or Noise vote is an email you choose to send, and it's counted without recording who sent it.</li>
+  <li>Alerts are sent from Proton Mail.</li>
+  <li>This page has no analytics, cookies or outside scripts. GitHub, which hosts it, sees visitors' IP addresses, as any web host does.</li>
+</ul>
+
+<h2 id="not-yet">Not covered yet</h2>
+<ul class="plain">
+  <li><strong>Los Gatos:</strong> its agenda emails say an agenda is posted but don't include it, so Los Gatos items aren't matched yet.</li>
+  <li><strong>Monte Sereno and the County Board of Education</strong> have been asked to email their agendas. Reading starts with the first one that arrives.</li>
+  <li><strong>School district and community college boards</strong> come in a later release.</li>
+  <li><strong>The Housing Authority, Central Fire and the El Camino Healthcare District</strong> aren't read yet.</li>
+  <li><strong>Agendas without staff reports:</strong> for Palo Alto, Saratoga, and Campbell's and Los Altos Hills' commissions and committees, only the agenda itself is matched.</li>
+  <li><strong>Slow sites:</strong> the county's agenda site asks for a minute between requests, so a full Board of Supervisors agenda takes most of a day to read. The Campbell City Council's staff reports can take a few tries, since that site limits downloads.</li>
+  <li>It doesn't read minutes, video or transcripts.</li>
+</ul>
+
+</main>
+<footer><div>
+  <p>Haystack Needle is free, and its code is open: <a href="https://github.com/drewsiegler/haystack-needle" rel="noreferrer">github.com/drewsiegler/haystack-needle</a> (AGPL-3.0).</p>
+  <p>If it helps your work, you can <a href="https://ko-fi.com/andrewsiegler" rel="noreferrer">support it on Ko-fi</a>.</p>
+</div></footer>
+</body>
+</html>

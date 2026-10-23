@@ -29,6 +29,8 @@ Layout: `adapters/` has one file per platform; `needle/` has the shared data mod
 
 Alerts, the README and error messages are read by organizers. Use plain language, no jargon, and say what to do next.
 
+So is the sign-up page, `docs/index.html`, served by GitHub Pages from `docs/` on `main`. Keep it in step with the release notes, claim no more than they do, and keep it loading nothing from anywhere else: no analytics, fonts or scripts (its Content-Security-Policy blocks them). Its sample alert is a real one, rendered by the app's own templates, with the vote links turned off and no "Ask for the records" link.
+
 ## Commits and boundaries
 
 - Commit subjects are a plain-English imperative sentence with no prefix. The body says what changed and why, with numbers where they matter.
