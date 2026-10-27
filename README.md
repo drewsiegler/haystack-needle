@@ -63,7 +63,7 @@ To turn it on, set two secrets here: `PRA_LINK_TO`, the tracker's address for th
 
 ## Other organizers
 
-Organizers sign up on a CryptPad form (end-to-end encrypted), and Drew approves each one by hand. The form asks for an email address, which watchlists they want, single terms from the watchlists, any terms of their own, and which cities or agencies (all of them if left blank). It asks for no name. `python -m needle.subscribers places` lists the city and agency names the form should offer.
+Organizers sign up on a CryptPad form (end-to-end encrypted), and Drew approves each one by hand. The form asks for an email address, which watchlists they want, single terms from the watchlists, any terms of their own, and which places: cities and agencies in one question, school boards in another, since CryptPad allows 25 checkboxes in a question. Each question starts with an option for the whole group ("All cities and agencies", "All school boards"), which takes in places added later too; leaving both blank means everything. It asks for no name. `python -m needle.subscribers places` lists what each question should offer. When school boards pass 24, add a third question with "school" in its title; every question that names cities, agencies, places or schools is read.
 
 Each person gets alerts only for what they picked: high-priority matches right away, the rest in their own morning digest, one email each, never a CC or BCC. Their own terms are matched for them alone and always wait for the digest. Their first email says what they picked. Every email they get ends with how to stop or change it: reply to it, and Drew updates the list. They hear about matches found after they sign up, not earlier ones.
 

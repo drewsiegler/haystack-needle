@@ -99,7 +99,7 @@ def test_someone_by_hand_is_checked_like_an_export():
                                        WATCHLISTS, PLACES)
     assert entry == {"email": "b@example.org", "watchlists": ["tenants"], "terms": ["Flock"], "custom": ["Measure A"],
                      "places": ["San José"]}
-    assert notes == ['"Gotham" isn\'t a city or agency the app reads; left out.']
+    assert notes == ['"Gotham" isn\'t a place the app reads; left out.']
     assert signups.person_from({"email": ["nope"], "watchlists": ["tenants"]}, WATCHLISTS, PLACES) == (
         None, ["Give their email address."])
     assert signups.person_from({"email": ["b@example.org"]}, WATCHLISTS, PLACES) == (

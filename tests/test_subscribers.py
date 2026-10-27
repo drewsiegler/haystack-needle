@@ -96,9 +96,9 @@ def test_the_form_export_becomes_the_list():
     entries, notes = read_form(FORM, WATCHLISTS, PLACES)
     assert entries == [
         {"email": "a@example.org", "watchlists": ["immigration"], "terms": ["Flock"], "custom": ["Measure B"],
-         "places": []},
+         "places": ["All cities and agencies"]},
         {"email": "b@example.org", "watchlists": [], "terms": ["ICE"], "custom": [], "places": ["San José"]}]
-    assert notes == ['Row 3: "Gotham" isn\'t a city or agency the app reads; left out.',
+    assert notes == ['Row 3: "Gotham" isn\'t a place the app reads; left out.',
                      "Row 4: no usable email address; left out.",
                      "Row 5 replaces row 2, from the same address."]
 
@@ -116,6 +116,52 @@ def test_questions_are_found_by_whole_words_in_their_titles():
                                      "flock\nMeasure A", "San Jose"]], WATCHLISTS, PLACES)
     assert entries == [{"email": "a@example.org", "watchlists": ["tenants", "surveillance"], "terms": ["Flock"],
                         "custom": ["Measure A"], "places": ["San José"]}]
+
+
+def test_places_come_from_every_places_question():
+    # CryptPad allows 25 checkboxes in a question, so school boards have their own.
+    header = ["Time", "Participant", "Email", "Categories",
+              "Cities & Agencies (leave blank if you want all of them)", "School boards"]
+    places = PLACES + ["Cambrian SD", "Palo Alto Unified"]
+    form = [header,
+            ["", "", "a@example.org", "tenants", "San Jose", "Cambrian SD,Palo Alto Unified"],
+            ["", "", "b@example.org", "tenants", "All cities and agencies", ""],
+            ["", "", "c@example.org", "tenants", "Campbell", "All school boards"],
+            ["", "", "d@example.org", "tenants", "All cities and agencies", "All school boards"],
+            ["", "", "e@example.org", "tenants", "", ""]]
+    entries, notes = read_form(form, WATCHLISTS, places)
+    assert notes == []
+    assert [e["places"] for e in entries] == [
+        ["San José", "Cambrian SD", "Palo Alto Unified"], ["All cities and agencies"],
+        ["Campbell", "All school boards"], [], []]
+
+
+def test_a_whole_group_takes_in_its_places_later_ones_too(monkeypatch):
+    monkeypatch.setattr(subscribers, "school_names", lambda: frozenset({"cambrian sd", "fremont union hsd"}))
+    tenants = frozenset({"tenants"})
+    cities = subscribers.Subscriber(1, "a@example.org", tenants, places=("All cities and agencies",))
+    schools = subscribers.Subscriber(2, "b@example.org", tenants, places=("Campbell", "All school boards"))
+    assert cities.wants("tenants", "rent control", "San José") and cities.wants("tenants", "rent control", "VTA")
+    assert not cities.wants("tenants", "rent control", "Cambrian SD")
+    assert schools.wants("tenants", "rent control", "Fremont Union HSD")
+    assert schools.wants("tenants", "rent control", "Campbell")
+    assert not schools.wants("tenants", "rent control", "San José")
+
+
+def test_the_places_questions_split_cities_from_school_boards(monkeypatch):
+    monkeypatch.setattr(subscribers, "place_names", lambda: ["Campbell", "Cambrian SD", "San José", "VTA"])
+    monkeypatch.setattr(subscribers, "school_names", lambda: frozenset({"cambrian sd"}))
+    assert subscribers.place_questions() == {
+        "Cities and agencies": ["All cities and agencies", "Campbell", "San José", "VTA"],
+        "School boards": ["All school boards", "Cambrian SD"]}
+
+
+def test_every_school_board_is_named_as_one():
+    names = subscribers.school_names()
+    for name in ("Foothill-De Anza CCD", "Fremont Union HSD", "Mountain View-Los Altos HSD", "Cambrian SD",
+                 "Palo Alto Unified", "East Side Union HSD"):
+        assert subscribers.fold(name) in names
+    assert not {subscribers.fold(n) for n in ("Santa Clara County", "San José", "Palo Alto")} & names
 
 
 class Screen(io.StringIO):

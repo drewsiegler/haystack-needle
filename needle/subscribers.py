@@ -8,10 +8,16 @@ copy on Drew's Mac: needle/signups.py), as JSON, one entry per person:
       "custom": ["Measure A"], "places": ["San José"]}]
 
 watchlists and terms come from watchlists.yaml. custom terms are the person's
-own, matched for them alone. places are cities and agencies, named as the
-adapters name them; an empty list means all of them. A person gets a match when
-its place is one of theirs and it's in one of their watchlists, one of their
-terms or one of their own terms.
+own, matched for them alone. places are cities, agencies and school boards,
+named as the adapters name them, or a whole group: "All cities and agencies" or
+"All school boards", which take in places added later too. An empty list means
+all of them. A person gets a match when its place is one of theirs and it's in
+one of their watchlists, one of their terms or one of their own terms.
+
+The form asks for places in more than one question, since CryptPad allows 25
+checkboxes in one: cities and agencies in one, school boards in another (and a
+third once there are more than 24 school boards). Every question whose title
+names cities, agencies, places or schools is read.
 
 The state file is public, so a person is known there only by an HMAC of their
 address, keyed with the SUBSCRIBERS_KEY secret, and their own terms only by an
@@ -19,7 +25,7 @@ HMAC of the term. Nothing here prints or logs an address.
 
     python -m needle.subscribers import responses.csv | gh secret set SUBSCRIBERS
     python -m needle.subscribers key | gh secret set SUBSCRIBERS_KEY
-    python -m needle.subscribers places      # the names the sign-up form should offer
+    python -m needle.subscribers places      # the names each places question should offer
 """
 
 from __future__ import annotations
@@ -33,6 +39,7 @@ import secrets
 import sys
 import unicodedata
 from dataclasses import dataclass
+from functools import cache
 from hashlib import sha256
 from pathlib import Path
 
@@ -45,6 +52,8 @@ CUSTOM = "custom"  # the watchlist a person's own terms match under
 SHOWN = "your terms"  # what their alerts call it
 MIN_KEY = 32  # characters
 MAX_TERM = 100  # characters in a person's own term
+ALL_CITIES = "All cities and agencies"  # a whole group of places, later ones too
+ALL_SCHOOLS = "All school boards"
 _EMAIL = re.compile(r"[^@\s<>,;\"']+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}")
 
 
@@ -73,11 +82,26 @@ class Subscriber:
         return f"Subscriber({self.number})"
 
     def wants(self, watchlist: str, term: str, place: str) -> bool:
-        if self.places and fold(place) not in {fold(p) for p in self.places}:
+        if self.places and not covers(self.places, place):
             return False
         if watchlist == CUSTOM:
             return any(term == label for label, _ in self.custom)
         return watchlist in self.watchlists or term in self.terms
+
+
+@cache
+def school_names() -> frozenset[str]:
+    """The school boards among the places, folded."""
+    from adapters import agendamail, boardable, icboard
+    names = [s.name for s in (*boardable.SOURCES.values(), *icboard.SOURCES.values())]
+    return frozenset(fold(n) for n in names + [s.name for s in agendamail.SENDERS if s.school])
+
+
+def covers(places, place: str) -> bool:
+    """Whether a person's places take in this one, by its name or its whole group."""
+    picked = {fold(p) for p in places}
+    group = ALL_SCHOOLS if fold(place) in school_names() else ALL_CITIES
+    return fold(place) in picked or fold(group) in picked
 
 
 class Roster:
@@ -176,18 +200,27 @@ COLUMNS = (  # field, the words in a question's title that name it; checked in t
     ("custom", re.compile(r"\b(?:new|own|other) terms?\b")),
     ("terms", re.compile(r"\bterms?\b")),
     ("watchlists", re.compile(r"\b(?:categor|watchlist|topic)")),
-    ("places", re.compile(r"\b(?:cit(?:y|ies)|agenc|place)")),
+    ("places", re.compile(r"\b(?:cit(?:y|ies)|agenc|place|school)")),
 )
 
 
+def _field(title: str) -> str | None:
+    return next((field for field, words in COLUMNS if words.search(title.lower())), None)
+
+
 def columns(header: list[str]) -> dict[str, int]:
+    """Each field's question, the first one that names it."""
     found = {}
     for index, name in enumerate(header):
-        for field, words in COLUMNS:
-            if words.search(name.lower()):
-                found.setdefault(field, index)
-                break
+        field = _field(name)
+        if field:
+            found.setdefault(field, index)
     return found
+
+
+def place_columns(header: list[str]) -> list[int]:
+    """Every places question: cities and agencies in one, school boards in another."""
+    return [index for index, name in enumerate(header) if _field(name) == "places"]
 
 
 def values(cell: str) -> list[str]:
@@ -200,12 +233,19 @@ def place_names() -> list[str]:
     return sorted({s.name for a in ADAPTERS.values() for s in a.SOURCES.values()}, key=fold)
 
 
+def place_questions() -> dict[str, list[str]]:
+    """What each places question on the form offers, its whole-group option first."""
+    names = place_names()
+    return {"Cities and agencies": [ALL_CITIES] + [n for n in names if fold(n) not in school_names()],
+            "School boards": [ALL_SCHOOLS] + [n for n in names if fold(n) in school_names()]}
+
+
 def read_form(rows: list[list[str]], watchlists: dict, places: list[str]) -> tuple[list[dict], list[str]]:
     """The subscriber list from a CryptPad form export (header row first), and notes
     on what was left out. The notes name rows, never addresses."""
     if not rows:
         return [], ["The file is empty."]
-    found = columns(rows[0])
+    found, place_cells = columns(rows[0]), place_columns(rows[0])
     if "email" not in found:
         raise SubscriberError(f"No email column among: {', '.join(rows[0])}")
     names = {fold(n): n for n in watchlists}
@@ -235,14 +275,19 @@ def read_form(rows: list[list[str]], watchlists: dict, places: list[str]) -> tup
                 entry["terms"].append(terms[fold(value)])
             elif value:
                 entry["custom"].append(value)
-        for value in values(cell(row, "places")):
-            if fold(value).startswith("all"):
-                entry["places"] = []
-                break
-            if fold(value) in place_by:
-                entry["places"].append(place_by[fold(value)])
+        everywhere = False
+        for value in (v for i in place_cells for v in values(row[i] if i < len(row) else "")):
+            key = fold(value)
+            if key.startswith("all"):  # a whole group, or with neither named, everything
+                group = ALL_SCHOOLS if "school" in key else ALL_CITIES if re.search(r"cit|agenc", key) else None
+                everywhere |= group is None
+                entry["places"].append(group)
+            elif key in place_by:
+                entry["places"].append(place_by[key])
             else:
-                notes.append(f'Row {number}: "{value}" isn\'t a city or agency the app reads; left out.')
+                notes.append(f'Row {number}: "{value}" isn\'t a place the app reads; left out.')
+        if everywhere or {ALL_CITIES, ALL_SCHOOLS} <= set(entry["places"]):
+            entry["places"] = []
         for field in ("watchlists", "terms", "custom", "places"):
             entry[field] = list(dict.fromkeys(entry[field]))
         if not (entry["watchlists"] or entry["terms"] or entry["custom"]):
@@ -275,11 +320,12 @@ def main(argv: list[str] | None = None) -> None:
     form.add_argument("--out", type=Path, help="write to this file (outside the repo) instead of a pipe")
     key = commands.add_parser("key", help="make a SUBSCRIBERS_KEY")
     key.add_argument("--out", type=Path, help="write to this file (outside the repo) instead of a pipe")
-    commands.add_parser("places", help="list the cities and agencies the app reads")
+    commands.add_parser("places", help="list what each places question on the form should offer")
     args = parser.parse_args(argv)
 
     if args.command == "places":
-        print("\n".join(place_names()))
+        print("\n\n".join(f"{question} ({len(names)} options; CryptPad allows 25):\n" + "\n".join(names)
+                          for question, names in place_questions().items()))
     elif args.command == "key":
         _write(secrets.token_hex(32), args.out, "key")
     else:

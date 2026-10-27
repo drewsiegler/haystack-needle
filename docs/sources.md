@@ -40,7 +40,7 @@ Shelved for a later release on Oct 15, 2026 and back since Oct 27, because organ
 
 Dry runs on Oct 27, as of a few days before each board's last meeting, show what to expect. MVLA's Oct 26 agenda would have sent one alert, for its board policy updates (item 12.2): "immigration enforcement" and "homelessness" in the policies' lists of cross-references and legal citations, which school board policies all carry, so likely noise. Foothill-De Anza's Oct 5 agenda would have sent one alert, for "law enforcement services" on page 7 of its annual campus security report (the campus police's own description, also likely noise), and four matches to the digest: "affordable housing" in draft minutes and a Measure G update, and "DHS" deep in a purchasing contract.
 
-A board read on its own site needs its name in the sign-up form's list of places (`python -m needle.subscribers places` prints them), or organizers who picked places won't hear about it.
+Each board read needs its name in the sign-up form's school boards question (`python -m needle.subscribers places` prints what each places question should offer), or organizers who picked places won't hear about it, unless they picked "All school boards". CryptPad allows 25 checkboxes in a question, so the form asks for cities and agencies and for school boards separately (since Oct 27).
 
 ## By body
 
