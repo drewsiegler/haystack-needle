@@ -4,9 +4,9 @@ Phase 1 source check, done Oct 14, 2026. It replaces the platform table in [scop
 
 ## The short version
 
-**School boards are shelved for a later release** (decided Oct 15, 2026): v1 doesn't read K-12 districts or the community college districts, since so many of them sit behind robots.txt or bot checks. The County Board of Education is the exception: it stays in v1, read from its agenda emails. That leaves Simbli, BoardDocs, Diligent Community, Boardable and ElectronicSchoolBoard out of v1; what was learned about them stays below for the later release.
+**School boards are back** (Oct 27, 2026). They were shelved for a later release on Oct 15, since so many of them sit behind robots.txt or bot checks, and brought back because organizers asked for them. Each board is switched on when its route is tested; [School boards](#school-boards) lists every board's route and where it stands. The County Board of Education was never shelved: it's read from its agenda emails.
 
-Ten adapters were built for about 53 bodies, and v1 runs six of them (Legistar, IQM2, CivicClerk, CivicPlus, eScribe and Midpen's own website). Four of them read an official JSON API or a plain agenda page and need no scraping tricks. The hard part isn't the platforms, it's **robots.txt**: BoardDocs, Diligent Community and PrimeGov tell every bot except search engines to stay out. On Oct 15, 2026 that covered 11 bodies, including the County Board of Education, three community college districts and Palo Alto, and Drew decided to cover them through their own agenda emails instead of scraping (see [Agenda emails](#decided-agenda-emails-for-boarddocs-diligent-community-and-primegov)).
+Ten adapters were built for about 53 bodies, and the run reads eight of them (Legistar, IQM2, CivicClerk, CivicPlus, eScribe and Midpen's own website, and since Oct 27, 2026 Boardable and ElectronicSchoolBoard). Four of them read an official JSON API or a plain agenda page and need no scraping tricks. The hard part isn't the platforms, it's **robots.txt**: BoardDocs, Diligent Community and PrimeGov tell every bot except search engines to stay out. On Oct 15, 2026 that covered 11 bodies, including the County Board of Education, three community college districts and Palo Alto, and Drew decided to cover them through their own agenda emails instead of scraping (see [Agenda emails](#decided-agenda-emails-for-boarddocs-diligent-community-and-primegov)).
 
 | Adapter | Bodies | How it reads | robots.txt | Phase |
 | --- | --- | --- | --- | --- |
@@ -15,14 +15,30 @@ Ten adapters were built for about 53 bodies, and v1 runs six of them (Legistar, 
 | CivicClerk | 5 | Public OData API, JSON (agenda items and attachments) | none (404) | 4, built |
 | CivicPlus AgendaCenter | 3 | Agenda search page + PDFs | `Disallow: /Search`, `/RSS.aspx` (not `/AgendaCenter/`) | 4, built |
 | eScribe | 1 | Meeting calendar (JSON POST) + HTML agenda, PDFs | none (404); a Cloudflare bot check on files | 4, built |
-| Simbli (eBoardSolutions) | 21 (15 confirmed) | Meeting list (HTML) + agenda JSON, one request per item | none (the URL is an error page); **an Imperva bot check** | later release (schools); stopped by a bot check |
-| BoardDocs | 6 (1 in v1) | Their own agenda emails | **disallows all but search engines** | County Board of Education in v1 by email; the rest later (schools); emails requested |
-| Diligent Community | 3 | Their own agenda emails | **disallows all** | later release (schools); emails requested |
+| Simbli (eBoardSolutions) | 21 (15 confirmed) | Meeting list (HTML) + agenda JSON, one request per item | none (the URL is an error page); **an Imperva bot check** | schools; stopped by a bot check |
+| BoardDocs | 6 (1 in v1) | Their own agenda emails | **disallows all but search engines** | by email: the County Board of Education in v1, the school boards as their emails arrive |
+| Diligent Community | 3 | Their own agenda emails | **disallows all** | schools, by email as their emails arrive |
 | PrimeGov | 2 | Their own agenda emails (the public API works, but robots.txt says no) | **`Disallow: /`** | 4, by email (planned) |
-| iCompass ElectronicSchoolBoard | 1 | RSS feed + agenda and item pages, PDFs | none (404) | built; later release (schools) |
-| Boardable | 1 (4 of its groups) | Public site pages, which carry their data, + PDFs from S3 | the site allows every bot; **the app host and its JSON API disallow all** | built; later release (schools) |
+| iCompass ElectronicSchoolBoard | 1 | RSS feed + agenda and item pages, PDFs | none (404) | read since Oct 27, 2026 (schools) |
+| Boardable | 1 (4 of its groups) | Public site pages, which carry their data, + PDFs from S3 | the site allows every bot; **the app host and its JSON API disallow all** | read since Oct 27, 2026 (schools) |
 | Midpen's website (Drupal) | 1 (its board and committees) | Public meetings table + meeting pages, PDFs | Drupal's stock file; meeting pages and files allowed | 4, built |
 | One-offs | 5 | Municode Meetings, CivicWeb, AgendaOnline, Granicus | varies | later |
+
+## School boards
+
+Shelved for a later release on Oct 15, 2026 and back since Oct 27, because organizers asked for them. Drew approved this order on Oct 27: the two adapters already built, then the agenda emails already requested, then new agenda-email requests for the Simbli districts, then the districts whose platform isn't known yet. Each board is switched on when its route is tested. Checked Oct 27:
+
+| Route | Boards | Where it stands |
+| --- | --- | --- |
+| Boardable adapter | Foothill-De Anza CCD: the Board of Trustees and three committees | **Read** since Oct 27. The adapter read the Oct 5 board meeting (34 items, 26 files) in 11 requests |
+| ElectronicSchoolBoard adapter | Mountain View-Los Altos HSD | **Read** since Oct 27. The adapter read the Oct 26 board meeting (39 items, 36 files) in 41 requests |
+| Agenda emails, requested Oct 15 and 16 | Palo Alto Unified, Moreland, East Side Union HSD, Campbell Union HSD, Evergreen, West Valley-Mission CCD, San José-Evergreen CCD, Gavilan CCD | Palo Alto Unified (Oct 15) and Moreland have emailed; the others haven't yet |
+| Simbli, which answered with a bot check | Alum Rock, Berryessa, Cupertino Union, Loma Prieta, Los Altos SD, Los Gatos Union, Los Gatos-Saratoga HSD, Luther Burbank, Morgan Hill Unified, Mount Pleasant, Mountain View Whisman, Oak Grove, Saratoga Union, Sunnyvale SD, Union SD | Agenda emails to be requested |
+| Not known yet | Fremont Union HSD (its IQM2 portal lists its board meetings, but not their agendas; see [IQM2](#granicus-iqm2-phase-3)); Cambrian, Campbell Union SD, Franklin-McKinley, Orchard, San José Unified and Santa Clara Unified (each has a Simbli site, but whether it posts meetings there isn't confirmed); Milpitas Unified and Gilroy Unified (AgendaOnline; gilroy.agendaonline.net's robots.txt didn't answer in 25 seconds on Oct 15 or Oct 27); Lakeside Joint and Montebello | Find each platform from the district's own site, with no requests to Simbli |
+
+Dry runs on Oct 27, as of a few days before each board's last meeting, show what to expect. MVLA's Oct 26 agenda would have sent one alert, for its board policy updates (item 12.2): "immigration enforcement" and "homelessness" in the policies' lists of cross-references and legal citations, which school board policies all carry, so likely noise. Foothill-De Anza's Oct 5 agenda would have sent one alert, for "law enforcement services" on page 7 of its annual campus security report (the campus police's own description, also likely noise), and four matches to the digest: "affordable housing" in draft minutes and a Measure G update, and "DHS" deep in a purchasing contract.
+
+A board read on its own site needs its name in the sign-up form's list of places (`python -m needle.subscribers places` prints them), or organizers who picked places won't hear about it.
 
 ## By body
 
@@ -47,13 +63,15 @@ Tested and **not** on Legistar: `milpitas`, `paloalto`, `campbell`, `gilroy`, `m
 | --- | --- |
 | Board of Supervisors, its committees, county boards and commissions | sccgov.iqm2.com |
 | VTA board and committees | santaclaravta.iqm2.com |
-| Fremont Union High School District (not read: shelved with the schools) | fremontunionhighschoolca.iqm2.com |
+| Fremont Union High School District (not read: no agendas posted) | fremontunionhighschoolca.iqm2.com |
 
 IQM2's robots.txt asks for **one request a minute** (`Crawl-delay: 60`). The RSS calendar is at `/Services/RSS.aspx?Feed=Calendar` (`/Citizens/RSS.aspx` is an error page); on Oct 14, 2026 it worked for VTA but showed the error page for the county, and it lists only meetings with published documents. So the adapter reads `/Citizens/Calendar.aspx?From=MM/DD/YYYY&To=MM/DD/YYYY` instead: one request per portal per run, about 215 KB for the county's 32-day window (without the dates it's the whole year, 1.6 MB and about 800 meetings). Each meeting's `Detail_Meeting.aspx?ID=` page has the whole agenda in one request: items, their "possible action" notes, legislative file links and attachments. The adapter keeps those outlines in the state and reads a page again only when its calendar row changes, or after 110 minutes in the 3 days before the meeting and a day before that.
 
 A run is one thread, so every minute waiting on IQM2 holds up the rest. A run may spend its first 25 minutes waiting on IQM2; after that, an IQM2 request that would have to wait is left for the next run, while one whose minute passed during other work still goes out. That leaves Legistar at least 15 of the run's 40 minutes. Measured on Oct 14, 2026, a first run with an empty state made 31 IQM2 requests in 24 minutes (both calendars, all 20 posted agendas, then staff reports and attachments, soonest meetings first) and left 343 for later runs, about a day's worth. After that a run reads only what's new. For scale, the January 27, 2026 Board agenda had 81 legislative files and 148 attachments.
 
 Gilroy's site still links an old `gilroyca.iqm2.com` portal; it has moved to CivicClerk.
+
+Fremont Union HSD's portal lists its board meetings (Oct 6, Oct 20, Nov 17 and Nov 30, 2026, checked Oct 27) but posts no agendas there: the Oct 20 meeting's calendar row has no agenda link, and its page says "The meeting is not available at this time." So the IQM2 adapter doesn't read it; where the district posts its agendas is still to be found (see [School boards](#school-boards)).
 
 ### CivicClerk (phase 4, built)
 
@@ -120,7 +138,7 @@ Each meeting gets an "Agenda" item with the agenda PDF and one item per packet f
 
 A test on Oct 15, 2026 (`--dry-run --only midpen --full`) read the list, four meeting pages and 12 PDFs: the Oct 14 board meeting's agenda and 11 packet files; the three meetings ahead had no agenda yet. Nothing matched the watchlists; with test terms, item titles and PDF pages both matched.
 
-### Boardable (built, shelved with the schools)
+### Boardable (read since Oct 27, 2026)
 
 The Foothill-De Anza Community College District left BoardDocs for Boardable. Its public site is `https://site.boardable.com/foothill-de-anza-community-college-district`. Checked Oct 15, 2026 with the project's `Fetcher`, one request a second.
 
@@ -148,7 +166,7 @@ A run asks for the two list pages, then one page per meeting in the window. That
 
 Those five meet about weekly during terms, and their business is mostly student events, club funding, courses and faculty matters. Anything that becomes district policy or a contract goes to the Board. To read one, add its name to `GROUPS` in `adapters/boardable.py`.
 
-### iCompass ElectronicSchoolBoard (built, shelved with the schools)
+### iCompass ElectronicSchoolBoard (read since Oct 27, 2026)
 
 Mountain View-Los Altos HSD's Board of Trustees, at mvlapub.ic-board.com (the public site; mvla.ic-board.com is the staff side). Neither host has a robots.txt (404), so the usual one request a second applies. Its board policies are on Simbli, which isn't read. What the adapter relies on (checked Oct 15, 2026):
 
@@ -157,7 +175,7 @@ Mountain View-Los Altos HSD's Board of Trustees, at mvlapub.ic-board.com (the pu
 - An item page has labelled fields (Summary, Funding, Recommendation, Enclosure, and any others the district filled in) and its PDF attachments at `/Attachments/{guid}.pdf`. The printable agenda (`/com/agenda_print.aspx`) has titles only, so the item pages are the only place for text and files.
 - An agenda has about 40 items, one request each (about 40 seconds). The adapter keeps each item's fields and file list in the run's state and reads the page again only when the item's title or revised mark changes, or once a day; a second read the same day is two requests (the feed and the agenda).
 
-### Simbli (shelved with the schools; stopped by a bot check)
+### Simbli (stopped by a bot check)
 
 Simbli is eBoardSolutions' board portal, `https://simbli.eboardsolutions.com`, with one site per district, named by a site id (`?S=`). Checked Oct 14, 2026 with the project's `Fetcher`.
 
@@ -207,7 +225,7 @@ Options, for Drew:
 
 Whichever it is, `Fetcher` now recognizes Imperva's page as a bot check (since Oct 14, 2026), so an adapter won't read the block page as a district with no meetings. It looks at the start of HTML answers only, for a page titled "Pardon Our Interruption" or Imperva's older "Request unsuccessful. Incapsula incident ID" page, raises `BotCheck` and sends nothing more to the host that run. The `_Incapsula_Resource` script alone isn't a sign: every normal page has it.
 
-### BoardDocs (by email: the County Board of Education in v1, the others shelved with the schools)
+### BoardDocs (by email)
 
 Checked again Oct 15, 2026 from each body's own website, six still post their agendas on BoardDocs: the Santa Clara County Office of Education (County Board of Education), Palo Alto Unified, Evergreen, West Valley-Mission CCD, San José-Evergreen CCD and Gavilan CCD. They're covered by their own agenda emails (see [Agenda emails](#decided-agenda-emails-for-boarddocs-diligent-community-and-primegov)).
 
@@ -219,7 +237,7 @@ Seven of the 13 found in phase 1 have moved, and BoardDocs keeps their older mee
 
 `go.boarddocs.com/robots.txt` disallows every user agent (`User-agent: * / Disallow: /`) and allows only Googlebot, Bingbot, msnbot and Slurp. Separately, it returns 403 to any user agent that doesn't start with `Mozilla/5.0`.
 
-### Diligent Community (shelved with the schools; agenda emails requested)
+### Diligent Community (by email)
 
 | Body | Portal |
 | --- | --- |
@@ -246,12 +264,12 @@ PrimeGov's public API (`/api/v2/PublicPortal/ListUpcomingMeetings`) returned Pal
 | --- | --- | --- |
 | Los Gatos Town Council and commissions | Municode Meetings (losgatos-ca.municodemeetings.com) | **Can't be read as things stand** (checked Oct 15, 2026). The portal lists every Los Gatos body's meetings, but it drops a scripted connection before answering, even for robots.txt, which the app takes as a no. Each agenda is on hosts that allow scripts: an HTML agenda at `meetings.municode.com/adaHtmlDocument/index?cc=LOSGATOS&me={meeting id}` (no robots.txt) and PDFs at `mccmeetings.blob.core.usgovcloudapi.net/losgatos-pubu/MEET-Agenda-{id}.pdf` and `MEET-Packet-{id}.pdf`. But the meeting id is a random 32-character code, and nothing outside the portal lists them: Municode's `PublishPage` needs a page id the town doesn't publish (without one it answers 500), and the town calendar links only to the portal's front page. Ways in: the agenda-email route, or asking the town or Municode to let the app's user agent through, or for the PublishPage id. **Agenda emails chosen** (Oct 15): the Town Clerk answered the written request by pointing to the town's Notify Me lists, which have one "Agenda - …" list per body (see the agenda-email table). Whether those notices carry the meeting id is unknown until one arrives, and it looks unlikely: the lists keep no archive, and the town's weekly newsletter, sent with the same tool, links agendas only to the portal's front page. The portal itself offers no sign-up. The agenda inbox is on the lists (Oct 15). **The town said no to the other ways in** (recorded Oct 27, 2026). Drew asked it for its Municode `PublishPage` link (code LOSGATOS), and to ask CivicPlus, through the town's account, to let the app's user agent read the portal. Town staff answered that the publish page is no longer in use, that the town's IT department has concerns about the second request, and that the town can't do either. So Los Gatos stays on the agenda-email route only, and the app doesn't try the portal, Municode or the storage folder again |
 | Monte Sereno | iCompass CivicWeb (montesereno.civicweb.net) | **Blocked by robots.txt** (checked Oct 15, 2026): `User-agent: *` / `Disallow: /`, with only search engines allowed (at a 120-second crawl delay). Its calendar service (`/Services/MeetingsService.svc/meetings?from=&to=`) answers JSON with each meeting's id, type and date. It and the meeting type list were each asked once on Oct 15, in the same batch as robots.txt and before it was read; nothing since. A candidate for the agenda-email route, like BoardDocs and PrimeGov |
-| Milpitas Unified | AgendaOnline (per its website) | Not tested; shelved with the schools |
-| Gilroy Unified | AgendaOnline (gilroy.agendaonline.net); also links Simbli | Not tested; shelved with the schools |
+| Milpitas Unified | AgendaOnline (per its website) | Not tested; see [School boards](#school-boards) |
+| Gilroy Unified | AgendaOnline (gilroy.agendaonline.net); also links Simbli | Not tested: robots.txt didn't answer (Oct 15, Oct 27); see [School boards](#school-boards) |
 | Housing Authority of the County of Santa Clara | Granicus (hacsc.granicus.com) | **Later version** (Drew, Oct 15, 2026): an appointed board. Its robots.txt allows only search engines (checked Oct 15), so it would need the agenda-email route |
 | Midpeninsula Regional Open Space District | Its own website (www.openspace.org) | **Read** since Oct 15, 2026; see [Midpen's website](#midpens-website-phase-4-built). The Laserfiche portal holds older records |
 
-Left for a later version (Drew, Oct 15, 2026), platform not yet found: El Camino Healthcare District (an elected board) and Santa Clara County Central Fire (governed by the Board of Supervisors sitting as its board; its agendas may come through the county's IQM2 site, not checked). Lakeside Joint SD is shelved with the schools.
+Left for a later version (Drew, Oct 15, 2026), platform not yet found: El Camino Healthcare District (an elected board) and Santa Clara County Central Fire (governed by the Board of Supervisors sitting as its board; its agendas may come through the county's IQM2 site, not checked). Lakeside Joint SD's platform isn't known yet (see [School boards](#school-boards)).
 
 ## What this means for the collector
 
@@ -264,7 +282,7 @@ Left for a later version (Drew, Oct 15, 2026), platform not yet found: El Camino
 
 BoardDocs, Diligent Community and PrimeGov say no to every bot that isn't a search engine, and the scope says to honor robots.txt. On Oct 15, 2026 Drew decided to leave them out of the scraper and cover their bodies through the bodies' own agenda emails, matched like any agenda. It's slower and thinner (an email may only say that an agenda is up, with a link the app can't follow), but it's within the rules. The other options were asking each body for permission to fetch, or fetching anyway, which would break the scope's rule.
 
-Later on Oct 15 Drew shelved school boards for a later release. Eight of the thirteen bodies below are school districts; their requests had gone out, so their emails will arrive, and v1 reads only the other five: Palo Alto, the Open Space Authority, Los Gatos, Monte Sereno and the County Board of Education (kept in v1 at Drew's request). The school emails are kept for the later release.
+Later on Oct 15 Drew shelved school boards for a later release. Eight of the thirteen bodies below are school districts; their requests had gone out, so their emails will arrive, and v1 reads only the other five: Palo Alto, the Open Space Authority, Los Gatos, Monte Sereno and the County Board of Education (kept in v1 at Drew's request). The school emails were kept for the later release, and since Oct 27 they're read as each body's line in `SENDERS` is switched on (see [School boards](#school-boards)).
 
 Also on Oct 15 Drew added two towns on the same terms: Monte Sereno, whose CivicWeb robots.txt also says no, and Los Gatos, whose Municode portal refuses scripts (see [One-offs](#one-offs)). If a Los Gatos agenda email carries the meeting's Municode id, the app can read the agenda itself from meetings.municode.com, which allows scripts; the town's Notify Me notices may not (see the table). Since Oct 27 Los Gatos is on this route only, and the app doesn't read Municode: the town turned down the other ways in (see [One-offs](#one-offs)).
 

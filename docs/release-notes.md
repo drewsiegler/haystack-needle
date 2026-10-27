@@ -1,5 +1,9 @@
 # Release notes
 
+## Since 1.0.0
+
+- **School boards are coming in** (from Oct 27, 2026), one at a time as each is tested. Read now: the Foothill-De Anza Community College District (its Board of Trustees, Audit and Finance Committee, Citizens' Bond Oversight Committee and Financing Corporation) and the Mountain View-Los Altos High School District's Board of Trustees. Many school boards turn automated readers away, so most of the others will be read from the agendas they email.
+
 ## 1.0.0 (October 2026)
 
 Haystack Needle reads public meeting agendas across Santa Clara County as they're posted and emails organizers when an item matches what they follow: a surveillance contract, a policing agreement, a rent ordinance. It's built to catch an item at its first public appearance, often a committee referral or a consent-calendar line, while there's still time to organize.

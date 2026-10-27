@@ -59,7 +59,7 @@ With the project now called Haystack Needle, the names no longer clash. It's sti
 
 ## v1 scope
 
-v1 runs through phase 4: the Legistar and IQM2 bodies and the other long-tail platforms, but not school district boards, which wait for a later release (decided Oct 15, 2026). The County Board of Education stays in v1, read from its agenda emails. It reads every item title and attached staff report and emails matches to you. Everything else waits until v1 has caught a real item.
+v1 runs through phase 4: the Legistar and IQM2 bodies and the other long-tail platforms. School district boards were left for a later release on Oct 15, 2026 and brought back on Oct 27, because organizers asked for them: each is switched on as its route is tested (see [sources.md](sources.md#school-boards)). The County Board of Education was in v1 all along, read from its agenda emails. It reads every item title and attached staff report and emails matches to you. Everything else waits until v1 has caught a real item.
 
 **v1 does**
 
@@ -76,7 +76,8 @@ v1 runs through phase 4: the Legistar and IQM2 bodies and the other long-tail pl
 - Read minutes, video or transcripts.
 - Offer self-serve sign-up, accounts or a web dashboard. Sign-up is the CryptPad form; changing or stopping is a reply to any alert. A self-serve web app may come later.
 - Use AI triage (planned for after v1).
-- Read school district boards: K-12 districts and the community college districts (the County Board of Education is in v1, by email). So many sit behind robots.txt or bot checks (BoardDocs, Diligent Community, Simbli) that they're shelved for a later release; the two adapters already built for them (Boardable, ElectronicSchoolBoard) are kept but not run.
+
+**School boards** (back since Oct 27, 2026). K-12 districts and the community college districts come in one at a time. Many sit behind robots.txt or bot checks (BoardDocs, Diligent Community, Simbli), so most are read from the agendas they email under Gov. Code 54954.1; the Boardable (Foothill-De Anza CCD) and ElectronicSchoolBoard (Mountain View-Los Altos HSD) adapters read those two boards' own sites, since Oct 27.
 
 ## Matching
 
@@ -180,7 +181,7 @@ Start with a backtest, not code: a list of past items the app should have caught
 1. **Backtest set and source check.** List 5 to 10 past items (the Saratoga policing proposal, local Flock contracts, rent items) with the body and date each first appeared. Finish the platform table above, Saratoga first.
 2. **Legistar + email.** One adapter for the six Legistar bodies, the watchlist file, the matcher, and email alerts. If Saratoga's platform turns out to be simple, add it here.
 3. **IQM2.** Board of Supervisors, its committees and VTA, plus per-source health checks.
-4. **Long tail.** CivicClerk (Milpitas and others), CivicPlus (Saratoga and others), eScribe (Campbell), and agenda emails for the bodies whose sites turn bots away (Palo Alto, Los Gatos and others). This completes v1. School boards (BoardDocs, Diligent Community, Simbli and others) wait for a later release.
+4. **Long tail.** CivicClerk (Milpitas and others), CivicPlus (Saratoga and others), eScribe (Campbell), and agenda emails for the bodies whose sites turn bots away (Palo Alto, Los Gatos and others). This completes v1. School boards (BoardDocs, Diligent Community, Simbli and others) were left for a later release on Oct 15, 2026, and come in one at a time since Oct 27.
 5. **Reach.** RSS feeds, a simple public page of recent matches, District Lookup tagging, Signal.
 6. **Open it up.** Let partner groups bring their own watchlists. The first part came early, in v1: organizers approved by hand pick their own watchlists, terms and places, and add terms of their own (Oct 2026).
 
@@ -246,7 +247,7 @@ All six are settled, and the Claude Code prompt above reflects them.
 - [x] **Name.** Haystack Needle (Agenda Watch was taken).
 - [x] **Who gets v1 alerts.** Just you at first. From Oct 2026, other organizers too (decided Oct 18): a CryptPad form and approval by hand, not a self-serve web app, which may come later.
 - [x] **Hosting.** GitHub: a public repo with scheduled Actions, $0, with credentials in Actions secrets.
-- [x] **School boards in v1.** No: shelved for a later release (decided Oct 15, 2026), since so many sit behind robots.txt or bot checks. The County Board of Education is the exception and stays in v1, read from its agenda emails. Earlier that day the answer was yes, with BoardDocs and Diligent Community boards covered by their own agenda emails; those requests have gone out, and the emails are kept for the later release (see [sources.md](sources.md)).
+- [x] **School boards.** Yes, since Oct 27, 2026, because organizers asked for them: each board is switched on as its route is tested, in the order in [sources.md](sources.md#school-boards). Before that they were shelved for a later release (decided Oct 15), since so many sit behind robots.txt or bot checks, with the County Board of Education the exception, read from its agenda emails. Earlier on Oct 15 the answer was yes, with BoardDocs and Diligent Community boards covered by their own agenda emails; those requests went out and the emails were kept.
 - [x] **AI triage later.** Yes, after v1. It would summarize matches and drop false positives for a small per-run cost.
 - [x] **License.** AGPL-3.0, so anyone running a modified copy as a service has to share their changes.
 
