@@ -12,7 +12,6 @@ import pytest
 from adapters import agendamail
 from conftest import FIXTURES, load
 from needle.matcher import compile_terms, match_meeting
-from needle.models import Source
 from needle.pdftext import pdf_pages
 from needle.run import Reader
 from pdfs import make_pdf
@@ -87,25 +86,24 @@ def jmap(monkeypatch):
 
 
 @pytest.fixture
-def pausd_on(monkeypatch):
-    """Palo Alto Unified as it would be once school boards are read: one flag on its line."""
-    monkeypatch.setattr(agendamail, "SENDERS", [replace(s, read=True) if s.client == "pausd" else s
+def pausd_shelved(monkeypatch):
+    """Palo Alto Unified as it was while school boards were shelved: one flag on its line."""
+    monkeypatch.setattr(agendamail, "SENDERS", [replace(s, read=False) if s.client == "pausd" else s
                                                 for s in agendamail.SENDERS])
-    monkeypatch.setitem(agendamail.SOURCES, "pausd", Source("agendamail", "pausd", "Palo Alto Unified"))
+    monkeypatch.delitem(agendamail.SOURCES, "pausd")
 
 
 def collect(cache, today=TODAY, **window):
     return agendamail.collect(clients=tuple(agendamail.SOURCES), today=today, cache=cache, **window)
 
 
-def test_shelved_school_emails_stay_unread(jmap):
+def test_a_shelved_senders_emails_stay_unread(jmap, pausd_shelved):
     cache = {}
-    assert "pausd" not in agendamail.SOURCES
     assert collect(cache) == ([], {})
     assert cache == {} and jmap.downloads == 0
 
 
-def test_reads_an_agenda_email(jmap, pausd_on, capsys):
+def test_reads_an_agenda_email(jmap, capsys):
     cache = {}
     meetings, failures = collect(cache)
     assert failures == {}
@@ -129,7 +127,7 @@ def test_reads_an_agenda_email(jmap, pausd_on, capsys):
     assert meeting.notice == "Thu Oct 22: October 22, 2026, City Schools Liaison Committee Meeting"
 
 
-def test_reads_each_email_once(jmap, pausd_on):
+def test_reads_each_email_once(jmap):
     cache = {}
     collect(cache)
     [meeting], _ = collect(cache)
@@ -141,7 +139,7 @@ def test_reads_each_email_once(jmap, pausd_on):
     assert jmap.downloads == 2
 
 
-def test_returns_read_emails_only_in_the_window(jmap, pausd_on):
+def test_returns_read_emails_only_in_the_window(jmap):
     cache = {}
     collect(cache)
     assert collect(cache, today=date(2026, 10, 18), days_back=0, days_ahead=3)[0] == []
@@ -150,7 +148,7 @@ def test_returns_read_emails_only_in_the_window(jmap, pausd_on):
     assert cache == {}
 
 
-def test_reads_an_attached_agenda_pdf(monkeypatch, pausd_on):
+def test_reads_an_attached_agenda_pdf(monkeypatch):
     message = EmailMessage()
     message["From"], message["Subject"] = "sender@pausd.org", "Board of Education Agenda"
     message.set_content("The agenda for Tuesday, October 20, 2026 is attached.")
@@ -265,7 +263,7 @@ def test_reads_palo_altos_weekly_notice(monkeypatch):
     assert [m.id for m in collect(cache)[0]] == ["pa#1", "pa#2", "pa#3", "pa#4"]
 
 
-def test_rereads_an_email_kept_by_the_first_version(jmap, pausd_on):
+def test_rereads_an_email_kept_by_the_first_version(jmap):
     cache = {"M-pausd": {"received": "2026-10-15T21:00:05+00:00", "blob": "G-pausd", "client": "pausd",
                          "body": "City Schools Liaison Committee", "subject": "...", "date": "2026-10-22",
                          "url": None, "files": []}}

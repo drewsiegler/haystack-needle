@@ -90,11 +90,10 @@ class Sender:
     lists: bool = False  # one email lists several meetings, each its own meeting here
 
 
-# Who sends agendas, one line each. School districts are shelved for a later
-# release (docs/scope.md): their emails arrive and wait, and read=True turns one
-# on. The Palo Alto, Los Gatos and Open Space Authority lines are confirmed by
-# their first emails; the others use each body's own domain until its first
-# email confirms the sender.
+# Who sends agendas, one line each. read=False shelves a line: its emails arrive
+# and wait. The Palo Alto, Los Gatos, Open Space Authority and Palo Alto Unified
+# lines are confirmed by their first emails; the others use each body's own
+# domain until its first email confirms the sender.
 # Mail from a domain not listed is named in the run's log and left unread.
 SENDERS = [
     Sender("paloalto.gov", "paloalto", "Palo Alto", "City Council",
@@ -115,8 +114,23 @@ SENDERS = [
            ("montesereno.civicweb.net", "www.cityofmontesereno.org")),
     Sender("sccoe.org", "sccoe", "Santa Clara County", "Board of Education",
            "https://www.sccoe.org/", ("go.boarddocs.com", "www.sccoe.org")),
+    # School boards, read since Oct 27, 2026 (docs/sources.md, "School boards").
+    # BoardDocs and Diligent Community say no to bots, so an email that only links
+    # the agenda there goes in the digest's list to check by hand.
     Sender("pausd.org", "pausd", "Palo Alto Unified", "Board of Education",
-           "https://go.boarddocs.com/ca/pausd/Board.nsf/Public", ("go.boarddocs.com",), read=False, notice=True),
+           "https://go.boarddocs.com/ca/pausd/Board.nsf/Public", ("go.boarddocs.com",), notice=True),
+    Sender("eesd.org", "eesd", "Evergreen SD", "Board of Trustees",
+           "https://go.boarddocs.com/ca/eesd/Board.nsf/Public", ("go.boarddocs.com",), notice=True),
+    Sender("wvm.edu", "wvm", "West Valley-Mission CCD", "Board of Trustees",
+           "https://go.boarddocs.com/ca/wvm/Board.nsf/Public", ("go.boarddocs.com",), notice=True),
+    Sender("sjeccd.edu", "sjeccd", "San José-Evergreen CCD", "Board of Trustees",
+           "https://go.boarddocs.com/ca/sjeccd/Board.nsf/Public", ("go.boarddocs.com",), notice=True),
+    Sender("gavilan.edu", "gavilan", "Gavilan CCD", "Board of Trustees",
+           "https://go.boarddocs.com/ca/gjccd/Board.nsf/Public", ("go.boarddocs.com",), notice=True),
+    Sender("esuhsd.org", "esuhsd", "East Side Union HSD", "Board of Trustees",
+           "https://esuhsd.community.highbond.com/Portal/", ("esuhsd.community.highbond.com",), notice=True),
+    Sender("cuhsd.org", "cuhsd", "Campbell Union HSD", "Board of Trustees",
+           "https://cuhsd.community.highbond.com/Portal/", ("cuhsd.community.highbond.com",), notice=True),
 ]
 
 SOURCES = {s.client: Source("agendamail", s.client, s.name) for s in SENDERS if s.read}
