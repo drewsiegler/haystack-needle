@@ -139,6 +139,20 @@ def test_build_meeting_reads_the_board_meeting_item_by_item():
     assert [i.number for i in meeting.items[-4:]] == ["14.1", "14.2.1", "14.2.2", "15.1"]
 
 
+def test_fremont_union_reads_its_board_meetings_group():
+    slug = "1ad658-board-of-trustees-regular-meeting-agenda"
+    data = boardable.page_data((DIR / "fuhsd_meeting_2026-10-20_board.html").read_text())
+    meeting = boardable.build_meeting("fuhsd", boardable.organization(data), data[f"meeting-{slug}"])
+    assert (meeting.body.name, meeting.body.source.name) == ("Board of Trustees", "Fremont Union HSD")
+    assert (meeting.date, meeting.time) == (date(2026, 10, 20), "4:30 PM")
+    assert meeting.url == f"https://site.boardable.com/fuhsd_board/meetings/{slug}"
+    assert len(meeting.items) == 40 and sum(len(i.attachments) for i in meeting.items) == 23
+    minutes = next(i for i in meeting.items if i.number == "11.1")
+    assert minutes.title == "Approval of September 22, 2026 Board Meeting Minutes"
+    assert minutes.attachments[0].url.startswith(
+        "https://app.boardable.com/fremont-union-high-school-district-1/public-site-data/meetings/")
+
+
 def test_attachments_are_downloaded_from_s3_and_linked_to_the_public_viewer():
     meeting = board_meeting()
     contracts = next(i for i in meeting.items if i.title == "Ratification of Contracts and Purchase Orders")
@@ -208,7 +222,7 @@ def test_times_are_read_in_pacific_time():
 def test_collect_reads_only_listed_meetings_of_the_groups_it_reads():
     fetcher = SiteFetcher(site_pages(**{
         SENATE_OCT12: meeting_page(SENATE_OCT12, 518885, "Mon, Oct 12, 2026 2:00 PM PDT", SENATE)}))
-    meetings, failures = boardable.collect(fetcher, today=date(2026, 10, 14))
+    meetings, failures = boardable.collect(fetcher, clients=("fhda",), today=date(2026, 10, 14))
     assert meetings == [] and failures == {}
     # The past list doesn't name groups, so the Oct 12 page is read to find out; the
     # upcoming student council meeting is listed with its group, so its page isn't.
@@ -223,7 +237,7 @@ def test_collect_reads_the_board_from_the_past_list_and_steps_back_past_its_end(
         BOARD_SLUG: BOARD,
         ASFC_OCT1: meeting_page(ASFC_OCT1, 510000, "Thu, Oct 1, 2026 2:00 PM PDT", ASFC, next_slug=BOARD_SLUG),
     }))
-    meetings, failures = boardable.collect(fetcher, today=date(2026, 10, 6))
+    meetings, failures = boardable.collect(fetcher, clients=("fhda",), today=date(2026, 10, 6))
     assert failures == {}
     assert [(m.body.name, m.date) for m in meetings] == [("Board of Trustees", date(2026, 10, 5))]
     # All four past meetings are in the window, so there may be more: the board meeting's
@@ -243,7 +257,7 @@ def test_collect_steps_forward_when_more_meetings_are_upcoming_than_listed():
         board_nov9: meeting_page(board_nov9, 520800, "Mon, Nov 9, 2026 4:00 PM PST", BOARD_GROUP, next_slug=later),
         later: meeting_page(later, 520900, "Mon, Nov 16, 2026 2:00 PM PST", BOARD_GROUP, next_slug="ff44aa-never"),
     }) | {f"{SITE}/meetings": page(listing)})
-    meetings, failures = boardable.collect(fetcher, today=date(2026, 10, 14))
+    meetings, failures = boardable.collect(fetcher, clients=("fhda",), today=date(2026, 10, 14))
     assert failures == {}
     assert [(m.body.name, m.date, m.time) for m in meetings] == [
         ("Audit and Finance Committee", date(2026, 10, 19), "1:00 PM"),
@@ -258,7 +272,7 @@ def test_collect_steps_forward_when_more_meetings_are_upcoming_than_listed():
 ])
 def test_collect_reports_what_went_wrong(home, failure):
     fetcher = SiteFetcher({SITE: home})
-    meetings, failures = boardable.collect(fetcher, today=date(2026, 10, 14))
+    meetings, failures = boardable.collect(fetcher, clients=("fhda",), today=date(2026, 10, 14))
     assert meetings == [] and failures == {"fhda": failure}
     assert fetcher.calls == [SITE]
 
@@ -267,7 +281,7 @@ def test_an_unexpected_slug_never_goes_into_a_url():
     home = boardable.page_data(HOME)
     home["past-meetings"][0]["slug"] = "../../admin"
     fetcher = SiteFetcher({SITE: page(home), f"{SITE}/meetings": MEETINGS})
-    meetings, failures = boardable.collect(fetcher, today=date(2026, 10, 14))
+    meetings, failures = boardable.collect(fetcher, clients=("fhda",), today=date(2026, 10, 14))
     assert failures == {"fhda": "ValueError: a meeting had an unexpected slug: '../../admin'"}
     assert fetcher.calls == [SITE, f"{SITE}/meetings"]
 

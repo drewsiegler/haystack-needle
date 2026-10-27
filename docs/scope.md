@@ -77,7 +77,7 @@ v1 runs through phase 4: the Legistar and IQM2 bodies and the other long-tail pl
 - Offer self-serve sign-up, accounts or a web dashboard. Sign-up is the CryptPad form; changing or stopping is a reply to any alert. A self-serve web app may come later.
 - Use AI triage (planned for after v1).
 
-**School boards** (back since Oct 27, 2026). K-12 districts and the community college districts come in one at a time. Many sit behind robots.txt or bot checks (BoardDocs, Diligent Community, Simbli), so most are read from the agendas they email under Gov. Code 54954.1; the Boardable (Foothill-De Anza CCD) and ElectronicSchoolBoard (Mountain View-Los Altos HSD) adapters read those two boards' own sites, since Oct 27.
+**School boards** (back since Oct 27, 2026). K-12 districts and the community college districts come in one at a time. Many sit behind robots.txt or bot checks (BoardDocs, Diligent Community, Simbli), so most are read from the agendas they email under Gov. Code 54954.1; the Boardable (Foothill-De Anza CCD, Fremont Union HSD) and ElectronicSchoolBoard (Mountain View-Los Altos HSD, Cambrian SD) adapters read four boards' own sites, since Oct 27.
 
 ## Matching
 

@@ -1,8 +1,10 @@
-"""Boardable adapter: the Foothill-De Anza Community College District.
+"""Boardable adapter: the Foothill-De Anza Community College District and Fremont Union HSD.
 
 Foothill-De Anza's board agendas moved from BoardDocs to Boardable. Its public
 site is https://site.boardable.com/foothill-de-anza-community-college-district,
-and site.boardable.com's robots.txt allows every bot. Boardable's app host is
+and site.boardable.com's robots.txt allows every bot. Fremont Union HSD posts its
+agendas at https://site.boardable.com/fuhsd_board (found Oct 27, 2026; its first
+meeting there is Oct 20). Boardable's app host is
 another matter: app.boardable.com's robots.txt disallows everything but /login
 and /start-trial, and that's where the public site's own JSON calls
 (/api/public-sites/...) and its document links go. So the adapter reads only the
@@ -64,8 +66,9 @@ MAX_TITLE = 300  # a longer title is cut here and the whole of it goes in the it
 TEXT_TTL = timedelta(0)
 PACIFIC = ZoneInfo("America/Los_Angeles")
 
-SOURCES = {"fhda": Source("boardable", "fhda", "Foothill-De Anza CCD")}
-SITES = {"fhda": "foothill-de-anza-community-college-district"}
+SOURCES = {"fhda": Source("boardable", "fhda", "Foothill-De Anza CCD"),
+           "fuhsd": Source("boardable", "fuhsd", "Fremont Union HSD")}
+SITES = {"fhda": "foothill-de-anza-community-college-district", "fuhsd": "fuhsd_board"}
 # The groups read on each site, by Boardable's name for them, and what alerts
 # call them. The site's other groups are left out on purpose (docs/sources.md).
 GROUPS = {
@@ -75,6 +78,8 @@ GROUPS = {
         "Citizens' Bond Oversight Committee": "Citizens' Bond Oversight Committee",
         "Financing Corporation Board of Directors": "Financing Corporation Board of Directors",
     },
+    # Its board meetings are filed under one group for everyone invited to them.
+    "fuhsd": {"All Board Meeting Users": "Board of Trustees"},
 }
 
 _DATA = re.compile(r'<script\b[^>]*\bid="__NUXT_DATA__"[^>]*>(.*?)</script>', re.S)

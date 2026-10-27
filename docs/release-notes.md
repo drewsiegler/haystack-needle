@@ -2,7 +2,7 @@
 
 ## Since 1.0.0
 
-- **School boards are coming in** (from Oct 27, 2026), one at a time as each is tested. Read now: the Foothill-De Anza Community College District (its Board of Trustees, Audit and Finance Committee, Citizens' Bond Oversight Committee and Financing Corporation) and the Mountain View-Los Altos High School District's Board of Trustees. Many school boards turn automated readers away, so most of the others will be read from the agendas they email.
+- **School boards are coming in** (from Oct 27, 2026), one at a time as each is tested. Read now: the Foothill-De Anza Community College District (its Board of Trustees, Audit and Finance Committee, Citizens' Bond Oversight Committee and Financing Corporation), and the boards of the Fremont Union and Mountain View-Los Altos high school districts and the Cambrian School District. Many school boards turn automated readers away, so most of the others will be read from the agendas they email.
 - **School boards by email:** Palo Alto Unified, Evergreen, East Side Union HSD, Campbell Union HSD and the West Valley-Mission, San José-Evergreen and Gavilan community college districts have been asked to email their agendas, and reading starts with the first one that arrives. Palo Alto Unified's emails only link to its agenda, so its items aren't matched yet.
 
 ## 1.0.0 (October 2026)

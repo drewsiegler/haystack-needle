@@ -4,3 +4,7 @@ Pages from Foothill-De Anza's public Boardable site, `site.boardable.com/foothil
 - `fhda_meetings.html`: the meetings page. Its upcoming list as served: one meeting (Oct 15, 2026, a student council), the group names and the paging details.
 - `fhda_meeting_2026-10-05_board.html`: the Oct 5, 2026 regular meeting of the Board of Trustees, with its whole agenda: 15 sections, 34 items and 26 attachments. Removed: the list of members and their email addresses, the attendance list, most of the meeting's description, and the per-item fields the adapter doesn't use (people responsible, notes, time stamps, and copies of the meeting nested in each attachment). One closed session item's claimant name is removed. The S3 links keep their form but not their signature.
 - No attachment PDFs are saved.
+
+Fremont Union HSD's site, `site.boardable.com/fuhsd_board`, saved on Oct 27, 2026 the same way:
+
+- `fuhsd_meeting_2026-10-20_board.html`: the Oct 20, 2026 regular meeting of the Board of Trustees (its first on Boardable), with 40 items and 23 attachments. Written with the tests' own `flatten`, so it has no reactive wrappers, and cut to the fields the adapter reads: the members and guests with their email addresses, the meeting's description and the per-item fields the adapter doesn't use are removed, and so is a student board member's name. The S3 links keep their form but not their signature.

@@ -1,7 +1,8 @@
-"""iCompass ElectronicSchoolBoard (ic-board.com) adapter: Mountain View-Los Altos HSD.
+"""iCompass ElectronicSchoolBoard (ic-board.com) adapter: Mountain View-Los Altos HSD and Cambrian SD.
 
-The district's public board site is mvlapub.ic-board.com. It has no robots.txt,
-so the usual one request a second applies.
+The districts' public board sites are mvlapub.ic-board.com and
+cambrianpublic.ic-board.com (found Oct 27, 2026). Neither has a robots.txt, so
+the usual one request a second applies.
 
 - /Reference_Library/ESB_RSS/rss.xml lists the published agendas of the last
   three months: date and time, meeting type, and the meeting id (rssid=). An
@@ -36,8 +37,9 @@ DAYS_BACK = 2
 DAYS_AHEAD = 30
 PACIFIC = ZoneInfo("America/Los_Angeles")
 
-SOURCES = {"mvla": Source("icboard", "mvla", "Mountain View-Los Altos HSD")}
-HOSTS = {"mvla": "mvlapub.ic-board.com"}
+SOURCES = {"mvla": Source("icboard", "mvla", "Mountain View-Los Altos HSD"),
+           "cambrian": Source("icboard", "cambrian", "Cambrian SD")}
+HOSTS = {"mvla": "mvlapub.ic-board.com", "cambrian": "cambrianpublic.ic-board.com"}
 BODY = ("board", "Board of Trustees")
 # Item page fields that aren't item text: the meeting, the subject (the title
 # again), the attachment list, the LCAP goal's heading and who signed off.
